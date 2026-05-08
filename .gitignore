@@ -1,0 +1,37 @@
+# Secrets and Keys
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+*.crt
+*.csr
+secrets.yml
+vault.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+build/
+dist/
+
+# Ansible
+*.retry
+
+# System and Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and Temporaries
+*.log
+tmp/
+temp/
