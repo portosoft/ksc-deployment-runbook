@@ -3,7 +3,7 @@ import sys
 import paramiko
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '../../configs/.env'))
 
 def run_ssh_commands_with_sudo(host, user, password, commands):
     client = paramiko.SSHClient()
@@ -12,7 +12,8 @@ def run_ssh_commands_with_sudo(host, user, password, commands):
         client.connect(host, username=user, password=password, timeout=30)
         results = []
         for cmd in commands:
-            full_cmd = f"sudo -S {cmd}"
+            # Injetando LD_LIBRARY_PATH no SUDO
+            full_cmd = f"sudo -S LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib {cmd}"
             stdin, stdout, stderr = client.exec_command(full_cmd)
             stdin.write(password + '\n')
             stdin.flush()
@@ -29,18 +30,13 @@ def run_ssh_commands_with_sudo(host, user, password, commands):
 def main():
     host = os.getenv('KSC_HOST', '***REMOVED***')
     user = os.getenv('KSC_USER', '***REMOVED***')
-    password = os.getenv('KSC_PASS')
-    db_pass = os.getenv('KSC_DB_PASS', 'REDACTED_DB_PASS')
+    password = os.getenv('KSC_PASS', '***REMOVED***')
+    db_pass = '***REMOVED***'
     fqdn = "***REMOVED***"
-
-    if not password:
-        print("Erro: KSC_PASS não definido.")
-        sys.exit(1)
 
     setup_cmds = [
         f"echo 'EULA_ACCEPTED=1' > /tmp/ans.txt",
         f"echo 'PP_ACCEPTED=1' >> /tmp/ans.txt",
-        f"echo 'KSN_ACCEPTED=1' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_DBMS_TYPE=PostgreSQL' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_DBMS_INSTANCE=127.0.0.1' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_DBMS_PORT=5432' >> /tmp/ans.txt",
@@ -54,12 +50,12 @@ def main():
         f"echo 'KLSRV_UNATT_DBMS_IAM_PASSWORD={db_pass}' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_DB_IAM_NAME=ksciam' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_SERVERADDRESS={fqdn}' >> /tmp/ans.txt",
-        f"echo 'KLSRV_UNATT_IAM_ADDRESS=127.0.0.1' >> /tmp/ans.txt",
+        f"echo 'KLSRV_UNATT_IAM_ADDRESS={fqdn}' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_KLSVCUSER=ksc' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_KLADMINSGROUP=kladmins' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_KLIAMUSER=ksc' >> /tmp/ans.txt",
         f"echo 'KLSRV_UNATT_KLSRVUSER=ksc' >> /tmp/ans.txt",
-        "sudo -E bash -c 'KLAUTOANSWERS=/tmp/ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'",
+        "bash -c 'KLAUTOANSWERS=/tmp/ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'",
         "rm -f /tmp/ans.txt"
     ]
 
