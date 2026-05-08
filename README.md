@@ -45,8 +45,11 @@ Localizadas em `automation/python/`:
 - `ksc_audit.py`: Executa uma auditoria completa (SO, Rede, Banco de Dados, Firewall) para validar o estado da instalação.
 - `ksc_harden_db.py`: Aplica otimizações críticas no PostgreSQL (`max_connections`, `scram-sha-256`, etc.) baseadas em boas práticas.
 
-> [!NOTE]
-> Todos os scripts utilizam o arquivo `configs/.env` para carregar as credenciais de forma segura.
+> [!IMPORTANT]
+> **Notas de Troubleshooting (Rocky Linux 9):**
+> 1. **Bibliotecas**: Os binários do KSC exigem `LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib` para evitar crashes de GLIBCXX.
+> 2. **SELinux**: Deve estar em modo `permissive` (`setenforce 0`) durante o setup.
+> 3. **DBMS_TYPE**: Deve ser definido exatamente como `Postgres` no arquivo de respostas.
 
 ---
 **Mantido pela equipe DevOps Portosoft.**
