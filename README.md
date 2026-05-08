@@ -35,8 +35,18 @@ Padronizar e automatizar o processo de instalação do KSC para garantir a repet
 
 ## Segurança
 - **NÃO versione segredos**: Jamais comite senhas, arquivos de licença `.key`, certificados privados ou arquivos `.env`.
-- Utilize o arquivo `ksc.env.example` como base para suas configurações locais.
+- Utilize o arquivo `configs/ksc_vars.env.example` como base para suas configurações locais.
 - Para automação, prefira o uso de Ansible Vault ou secrets do GitHub Actions.
+
+## Ferramentas de Automação (Python)
+Localizadas em `automation/python/`:
+
+- `ksc_setup.py`: Realiza a instalação silenciosa do KSC Server utilizando um arquivo de respostas dinâmico.
+- `ksc_audit.py`: Executa uma auditoria completa (SO, Rede, Banco de Dados, Firewall) para validar o estado da instalação.
+- `ksc_harden_db.py`: Aplica otimizações críticas no PostgreSQL (`max_connections`, `scram-sha-256`, etc.) baseadas em boas práticas.
+
+> [!NOTE]
+> Todos os scripts utilizam o arquivo `configs/.env` para carregar as credenciais de forma segura.
 
 ---
 **Mantido pela equipe DevOps Portosoft.**
