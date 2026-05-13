@@ -12,4 +12,4 @@ O servidor é CLI, mas o console de administração é via Web (HTTPS).
 Edite o arquivo de configuração em `/etc/opt/kaspersky/ksc-web-console/setup.json`.
 
 ---
-[Voltar ao Índice](00-index.md)
+[Próximo Passo: Contrato Operacional >>](13-contrato-operacional.md)
