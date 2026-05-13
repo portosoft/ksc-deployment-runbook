@@ -1,0 +1,10 @@
+chore: complete repository refactor for operational readiness
+
+- Implemented structured operator journey (docs/00-12)
+- Rewrote README.md with SRE focus
+- Added critical diagnostic and DoD checklist
+- Established operational contract for automation
+- Added governance artifacts (Security, Versioning, Templates)
+- Reorganized directory structure for better UX
+- Refactored core Python automation with unified CLI patterns
+- Added smoke-tests for post-deployment validation

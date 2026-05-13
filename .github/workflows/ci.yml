@@ -33,7 +33,9 @@ jobs:
           python-version: '3.x'
 
       - name: Check Python Syntax
-        run: python3 -m py_compile automation/python/env_to_ansible.py
+        run: |
+          python3 -m py_compile automation/python/*.py
 
       - name: Check Bash Syntax
-        run: bash -n automation/bash/validate-ksc.sh
+        run: |
+          find automation/bash -name "*.sh" -exec bash -n {} +
