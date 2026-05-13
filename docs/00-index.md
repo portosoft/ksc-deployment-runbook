@@ -18,6 +18,7 @@ Bem-vindo ao guia oficial de implantação do KSC 16. Siga as etapas na ordem nu
 | **P4: Suporte** | [10-Troubleshooting](10-troubleshooting.md) | Guia de erros. | 🆘 |
 | | [11-Rollback](11-rollback.md) | Plano de emergência. | 🔄 |
 | | [12-FAQ](12-faq.md) | Dúvidas comuns. | ❓ |
+| | [13-Contrato Operacional](13-contrato-operacional.md) | Variáveis e Scripts. | 📝 |
 
 ---
 [Próximo Passo: Visão Geral >>](01-visao-geral.md)
