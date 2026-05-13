@@ -1,0 +1,14 @@
+{
+  "address": "<FQDN-DO-SERVIDOR>",
+  "port": 8080,
+  "trusted_cert": "",
+  "trusted_cert_key": "",
+  "defaultLanguageId": "pt-BR",
+  "openAPIServers": [
+    {
+      "address": "<FQDN-DO-SERVIDOR>",
+      "port": 13000,
+      "openApiPort": 13299
+    }
+  ]
+}
