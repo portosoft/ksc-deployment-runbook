@@ -29,7 +29,7 @@ O servidor encontra-se em um estado **inconsistente**. Embora tenha sido relatad
 
 ## 6. Próximos Passos (Plano de Ação)
 1.  **Limpeza**: `sudo kill -9 40080` para remover o processo órfão do Web Console.
-2.  **Instalação do Servidor**: 
+2.  **Instalação do Servidor**:
     ```bash
     sudo dnf install /home/***REMOVED***/ksc64-16.2.0-1023.x86_64.rpm
     ```

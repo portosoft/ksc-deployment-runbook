@@ -41,3 +41,5 @@ temp/
 # Arquivos de resposta com dados reais
 ksc-web-console-setup.json
 /etc/ksc-web-console-setup.json
+configs/secrets.bin
+scratch/
