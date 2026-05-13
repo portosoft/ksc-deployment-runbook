@@ -28,11 +28,15 @@ def run_ssh_commands_with_sudo(host, user, password, commands):
         return None
 
 def main():
-    host = os.getenv('KSC_HOST', '***REMOVED***')
-    user = os.getenv('KSC_USER', '***REMOVED***')
-    password = os.getenv('KSC_PASS', '***REMOVED***')
-    db_pass = '***REMOVED***'
-    fqdn = "***REMOVED***"
+    host = os.getenv('KSC_HOST')
+    user = os.getenv('KSC_USER')
+    password = os.getenv('KSC_PASS')
+    db_pass = os.getenv('KSC_DB_PASS')
+    fqdn = os.getenv('KSC_FQDN', 'kscserver.exemplo.ts.net')
+
+    if not all([host, user, password, db_pass]):
+        print("Erro: defina KSC_HOST, KSC_USER, KSC_PASS, KSC_DB_PASS")
+        sys.exit(1)
 
     setup_cmds = [
         f"echo 'EULA_ACCEPTED=1' > /tmp/ans.txt",

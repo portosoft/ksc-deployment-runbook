@@ -17,7 +17,7 @@ def run_ssh_commands(host, user, password, commands):
             stdin, stdout, stderr = client.exec_command(full_cmd)
             stdin.write(password + '\n')
             stdin.flush()
-            
+
             res = {
                 'command': cmd,
                 'stdout': stdout.read().decode('utf-8'),
@@ -52,7 +52,7 @@ def main():
     ]
 
     results = run_ssh_commands(host, user, password, harden_cmds)
-    
+
     if results:
         for r in results:
             print(f"STATUS: {r['status']} | CMD: {r['command']}")

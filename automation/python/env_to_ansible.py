@@ -25,13 +25,13 @@ def main():
             lines = env_file.readlines()
 
         yaml_vars = ["---", "# Gerado automaticamente a partir do .env", "# NÃO EDITE ESTE ARQUIVO DIRETAMENTE"]
-        
+
         for line in lines:
             line = line.strip()
             # Ignorar comentários e linhas em branco
             if not line or line.startswith('#'):
                 continue
-            
+
             if '=' in line:
                 key, value = line.split('=', 1)
                 # Converter chave para minúscula conforme pedido
