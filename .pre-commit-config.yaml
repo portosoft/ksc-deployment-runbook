@@ -3,7 +3,9 @@ repos:
     rev: v4.6.0
     hooks:
       - id: detect-private-key
+        exclude: 'ARCHIVED/'
       - id: check-added-large-files
+        exclude: 'ARCHIVED/'
       - id: check-merge-conflict
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -13,4 +15,4 @@ repos:
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-        exclude: '(\.example|ARCHIVED|\.md)$'
+        exclude: '(.*ARCHIVED.*|\.example|\.md)$'

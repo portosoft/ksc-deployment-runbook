@@ -1,0 +1,25 @@
+● ksc-web-console.service - Kaspersky Security Center Web Console
+     Loaded: loaded (/etc/systemd/system/ksc-web-console.service; enabled; preset: disabled)
+     Active: active (running) since Mon 2026-05-11 12:54:36 -04; 57min ago
+   Main PID: 566717 (node)
+      Tasks: 29 (limit: 48747)
+     Memory: 126.5M (peak: 157.0M)
+        CPU: 42.642s
+     CGroup: /system.slice/ksc-web-console.service
+             ├─566717 /var/opt/kaspersky/ksc-web-console/node /var/opt/kaspersky/ksc-web-console/start_console.js
+             ├─566724 ./node pm.js ./pm.config.js
+             └─566735 /var/opt/kaspersky/ksc-web-console/node ./index.js
+
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.122Z","level":"info","message":"[BusinessLogicServer] IPM::RotateContent => Preparing to remove files"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.122Z","level":"info","message":"[BusinessLogicServer] Start to init server"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.136Z","level":"info","message":"Start to init DB"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.136Z","level":"info","message":"[DB] Start to init DatabaseConnector"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.136Z","level":"info","message":"[DB] Start load DB"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.137Z","level":"info","message":"[DB] Database file found for interactive console"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: [winston] Attempt to write logs with no transports, which can increase memory usage: {"tags":["OS Hostname: kscserver.tail8b9ae.ts.net"],"component":"KSC-Web-Console-server","version":"","timestamp":"2026-05-11T16:54:38.141Z","level":"info","message":"Metric \"nwc_socket_connections_count ({}): 0"}
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: Warning: connect.session() MemoryStore is not
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: designed for a production environment, as it will leak
+mai 11 12:54:38 kscserver.tail8b9ae.ts.net node[566735]: memory, and will not scale past a single process.
+
+--- STDERR ---
+[sudo] senha para suporte:
