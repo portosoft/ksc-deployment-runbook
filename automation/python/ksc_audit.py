@@ -19,7 +19,7 @@ def run_ssh_commands(host, user, password, commands):
             stdin, stdout, stderr = client.exec_command(full_cmd)
             stdin.write(password + '\n')
             stdin.flush()
-            
+
             res = {
                 'command': cmd,
                 'stdout': stdout.read().decode('utf-8'),
@@ -56,7 +56,7 @@ def main():
     ]
 
     results = run_ssh_commands(host, user, password, audit_cmds)
-    
+
     if results:
         for r in results:
             print(f"\n[+] Comando: {r['command']}")
@@ -65,7 +65,7 @@ def main():
             else:
                 print(f"AVISO: Comando retornou status {r['status']}")
                 if r['stderr']: print(f"ERRO: {r['stderr'].strip()}")
-    
+
     print("\n--- Auditoria Finalizada ---")
 
 if __name__ == "__main__":
