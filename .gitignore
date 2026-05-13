@@ -1,4 +1,4 @@
-# Secrets and Keys
+# Credenciais e Segredos
 .env
 .env.*
 *.key
@@ -9,21 +9,23 @@
 *.csr
 secrets.yml
 vault.yml
+configs/.env
+configs/ksc_vars.env
+
+# Arquivos gerados pelo Ansible
+automation/ansible/group_vars/generated_from_env.yml
+*.retry
 
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 .venv/
 venv/
 ENV/
 build/
 dist/
 
-# Ansible
-*.retry
-
-# System and Editor
+# Sistema e Editor
 .DS_Store
 Thumbs.db
 .idea/
@@ -31,7 +33,11 @@ Thumbs.db
 *.swp
 *.swo
 
-# Logs and Temporaries
+# Logs e Temporários
 *.log
 tmp/
 temp/
+
+# Arquivos de resposta com dados reais
+ksc-web-console-setup.json
+/etc/ksc-web-console-setup.json
