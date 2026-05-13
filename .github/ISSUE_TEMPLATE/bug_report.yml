@@ -1,0 +1,36 @@
+name: Bug Report
+description: Comunique um erro para nos ajudar a melhorar o runbook.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar um bug! Por favor, preencha as informações abaixo.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Descrição do Bug
+      placeholder: O que aconteceu?
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: Versão do SO
+      placeholder: Ex: Rocky Linux 9.4
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Passos para Reproduzir
+      placeholder: |
+        1. Rodei o script ksc_setup.py
+        2. Falhou na etapa X...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Comportamento Esperado
+      placeholder: O que deveria ter acontecido?
