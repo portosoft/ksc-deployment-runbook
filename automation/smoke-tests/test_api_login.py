@@ -11,7 +11,8 @@ from dotenv import load_dotenv
 load_dotenv("configs/env/ksc_vars.env")
 context = ssl._create_unverified_context()
 
-SERVER = "https://127.0.0.1:13299"
+KSC_HOST = os.getenv('KSC_HOST', '127.0.0.1')
+SERVER = f"https://{KSC_HOST}:13299"
 ADMIN_USER = os.getenv('KSC_ADMIN_USER', 'KLAdmins')
 ADMIN_PASS = os.getenv('KSC_ADMIN_PASS')
 
