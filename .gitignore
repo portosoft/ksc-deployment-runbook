@@ -1,6 +1,8 @@
 # Credenciais e Segredos
 .env
 .env.*
+*.env
+**/*.env
 *.key
 *.pem
 *.pfx
@@ -10,7 +12,7 @@
 secrets.yml
 vault.yml
 configs/.env
-configs/ksc_vars.env
+configs/env/*.env
 
 # Arquivos gerados pelo Ansible
 automation/ansible/group_vars/generated_from_env.yml
