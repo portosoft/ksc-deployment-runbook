@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import os
-import sys
 import paramiko
 from dotenv import load_dotenv
 
-# Diagnóstico KSC 16.2 - Remediação Script SQL
+# Diagnóstico KSC 16.2 - Depuração Manual IAM
 # Autor: Antigravity (Expert KSC Linux)
 
-def remediate_sql_script():
+def debug_iam_manual():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv('KSC_HOST')
     user = os.getenv('KSC_USER')
@@ -19,27 +18,22 @@ def remediate_sql_script():
     try:
         client.connect(host, username=user, password=password)
 
-        sql = """
-        UPDATE mfa_totp_settings SET \"bMfaRequiredForAll\" = 0;
-        SELECT \"bMfaRequiredForAll\" FROM mfa_totp_settings;
-        """
-
-        # Criar script temporário no servidor
-        print("--- Creating temporary SQL script ---")
-        client.exec_command(f"echo '{sql}' > /tmp/fix_mfa.sql")
-
-        print("--- Executing SQL script as postgres ---")
-        cmd = "sudo -S -u postgres psql -d ksc -f /tmp/fix_mfa.sql"
-        stdin, stdout, stderr = client.exec_command(cmd)
+        print("--- Running kliam debug ---")
+        cmd = "sudo -S -u ksc /opt/kaspersky/ksc64/sbin/kliam --config /var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml"
+        stdin, stdout, stderr = client.exec_command(cmd, timeout=30)
         stdin.write(password + '\n')
         stdin.flush()
 
-        print(f"STDOUT: {stdout.read().decode()}")
-        print(f"STDERR: {stderr.read().decode()}")
+        # O comando deve rodar por um tempo
+        try:
+            print(f"STDOUT: {stdout.read().decode()}")
+            print(f"STDERR: {stderr.read().decode()}")
+        except Exception:
+            print("Finished or timed out.")
 
         client.close()
     except Exception as e:
         print(f"ERROR: {e}")
 
 if __name__ == "__main__":
-    remediate_sql_script()
+    debug_iam_manual()
