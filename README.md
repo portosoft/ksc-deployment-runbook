@@ -18,6 +18,8 @@ Garantir deploys de KSC 16.x repetíveis, seguros e auditáveis através de auto
 | Uso de PostgreSQL 16 local ou remoto. | Versões de KSC anteriores à 15.0. |
 | Necessidade de auditoria e hardening automático. | Ambientes com MySQL/MariaDB. |
 
+> **Nota de Posicionamento:** Este runbook encapsula o "Jeito Portosoft" de implantar KSC. Ele é um produto interno mantido pela engenharia. Empresas que queiram adotá-lo podem usar o core open source e nos consultar para customizações avançadas.
+
 ## 🏗️ Escopo
 - **In-Scope**: Setup do SO, Preparação do Postgres 16, Instalação do KSC Server, Web Console, Hardening de Segurança.
 - **Out-of-Scope**: Configuração de firewalls de borda, licenciamento do Kaspersky, configuração de políticas de endpoint (pós-deploy).
@@ -79,6 +81,12 @@ Este projeto utiliza uma convenção rigorosa de argumentos CLI:
 2. KSC Administration Server rodando (`klnagent` e `klserver` ativos).
 3. Web Console acessível via HTTPS na porta 443.
 4. Relatório de auditoria gerado pelo `ksc_audit.py` com 0 falhas críticas.
+
+## 📏 Service Level Indicators (SLIs) Internos
+Como um produto interno, visamos as seguintes métricas operacionais:
+- **Deploy Time**: O comando `--apply` deve finalizar em menos de 10 minutos (assumindo rede estável).
+- **Audit Time**: O comando `--check` deve executar em menos de 15 segundos.
+- **Fail Rate**: Zero falhas silenciosas. O script deve quebrar barulhentamente em qualquer desvio de pré-requisito (*Fail Fast, Fail Loud*).
 
 ## ⚠️ Riscos Conhecidos
 - **SELinux**: Deve estar em `permissive` durante a instalação para que o instalador crie os contextos corretamente.

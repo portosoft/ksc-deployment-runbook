@@ -17,14 +17,17 @@ Este documento define a relação técnica entre os diferentes componentes do re
 | `DB_PASS` | `KSC_DB_PASS` | `ksc_response.txt` | `ksc_setup.py` | Senha de conexão. | Tentativa de login. |
 | `WEB_PORT` | `KSC_WEB_PORT` | `setup.json` | `ksc_setup.py` | Porta HTTPS do Console. | `netstat -tulpn` |
 
-## Convenções de Saída
-- **Logs**: Todos os scripts devem escrever em `/var/log/kaspersky/automation/`.
-- **Relatórios**: Gerados em `./evidence/`.
+## Convenções de Saída e Observabilidade
+- **Logs**: Todos os scripts devem gerar JSON Lines no diretório `evidence/`.
+- **Relatórios**: Gerados em `evidence/reports/`.
 - **Exit Codes**:
   - `0`: Sucesso total.
-  - `1`: Erro genérico/pré-requisito falhou.
-  - `2`: Erro de configuração (variável ausente).
-  - `3`: Erro de execução (comando falhou).
+  - `1`: Erro crítico em pré-requisitos (abortado de forma segura).
+  - `2`: Erro de configuração (variável ausente ou mal formatada).
+  
+## SLIs de Desempenho do Runbook
+- `ksc_audit.py --check`: < 15 segundos.
+- `ksc_setup.py --apply`: < 10 minutos para ciclo ponta a ponta.
 
 ## Padrão de Argumentos CLI
 Todos os scripts em `automation/python/` devem seguir este padrão:

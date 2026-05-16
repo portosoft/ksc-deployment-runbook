@@ -30,6 +30,22 @@ O repositório `portosoft/ksc-deployment-runbook` possui uma fundação técnica
 ## 6. Por que o projeto não entrega plenamente?
 O projeto entrega **componentes**, mas não entrega um **processo**. Um operador de nível júnior/pleno terá dificuldades em conectar os scripts de automação com os passos manuais descritos na documentação, aumentando a chance de erro humano e inconsistência entre servidores.
 
+## 7. Triagem Rápida de Incidentes Operacionais (Triage Checklist)
+Se após o deploy (ou durante a operação) problemas surgirem, utilize a triagem abaixo:
+
+### Web Console Inacessível
+- [ ] O serviço `klserver` está "active (running)"? (`systemctl status klserver`)
+- [ ] A porta 443 está escutando? (`ss -tulpn | grep 443`)
+- [ ] Há erros recentes no log do ksciam? (`journalctl -u kliam_srv -n 50`)
+
+### Banco de Dados com Alto Consumo
+- [ ] A instância do PostgreSQL está gerando locks excessivos? (Execute o script `57_check_file_locks.py` de operações).
+- [ ] Os parâmetros `max_connections` e limites de memória condizem com o `KscConfig`?
+
+### Tasks de Endpoint Não Executando
+- [ ] A porta 13000 (Agent SSL) está visível externamente?
+- [ ] O certificado da porta KSC bate com a console?
+
 ---
-**Status da Auditoria:** Concluída (Nível Severo)
-**Recomendação:** Refatoração Estrutural Imediata.
+**Status da Auditoria:** Evoluindo para Produto Interno
+**Recomendação:** Adoção estrita da arquitetura Python com testes e CI/CD.
