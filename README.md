@@ -35,8 +35,8 @@ git clone https://github.com/portosoft/ksc-deployment-runbook.git
 cd ksc-deployment-runbook
 
 # 2. Prepare suas variáveis
-cp configs/env/ksc_vars.env.example configs/env/.ksc_vars.env
-vi configs/env/.ksc_vars.env
+cp configs/env/ksc_vars.env.example configs/env/ksc_vars.env
+vi configs/env/ksc_vars.env
 
 # 3. Execute o Pre-check
 python3 automation/python/ksc_audit.py --check
@@ -47,6 +47,24 @@ python3 automation/python/ksc_setup.py --apply
 
 ## 🗺️ Estrutura do Repositório
 - `docs/`: A jornada completa do operador, dividida em 12 etapas numeradas.
+- `automation/`: Scripts Python, Bash e Playbooks Ansible para execução.
+- `configs/`: Templates de arquivos de resposta e configurações de banco de dados.
+- `evidence/`: Local para armazenar logs e outputs de validação para auditoria interna.
+
+## 🛤️ A Jornada do Operador (12 Passos)
+Siga esta trilha para um deploy seguro e auditável:
+1. [01-pre-requisitos.md](docs/01-pre-requisitos.md) - Preparação da Infra e SO.
+2. [02-configuracao-env.md](docs/02-configuracao-env.md) - Setup de credenciais.
+3. [03-auditoria-previa.md](docs/03-auditoria-previa.md) - Uso do `ksc_audit.py --check`.
+4. [04-postgres-setup.md](docs/04-postgres-setup.md) - Preparação do Banco.
+5. [05-selinux-hardening.md](docs/05-selinux-hardening.md) - Regras temporárias.
+6. [06-ksc-server-install.md](docs/06-ksc-server-install.md) - Execução do script `ksc_setup.py`.
+7. [07-web-console.md](docs/07-web-console.md) - Instalação da interface web.
+8. [08-pos-install-hardening.md](docs/08-pos-install-hardening.md) - Fechamento do SELinux.
+9. [09-auditoria-final.md](docs/09-auditoria-final.md) - Uso do `ksc_audit.py --postcheck`.
+10. [10-relatorios.md](docs/10-relatorios.md) - Geração de PDFs de evidência.
+11. [11-troubleshooting.md](docs/11-troubleshooting.md) - Resolução de problemas.
+12. [12-handover.md](docs/12-handover.md) - Entrega do ambiente operante.
 - `automation/`: Scripts Python, Bash e Playbooks Ansible para execução.
 - `configs/`: Templates de arquivos de resposta e configurações de banco de dados.
 - `evidence/`: Local para armazenar logs e outputs de validação para auditoria interna.

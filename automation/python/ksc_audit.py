@@ -1,92 +1,113 @@
 #!/usr/bin/env python3
-import os
 import sys
 import argparse
-import logging
-import paramiko
-from dotenv import load_dotenv
+from pathlib import Path
 
-# Configuração de Logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s',
-    handlers=[
-        logging.FileHandler("ksc_audit.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+from .config import load_config, ConfigError
+from .logging_utils import init_evidence_dir, configure_logger, log_json
+from .checks import run_precheck, run_postcheck, CheckResult
+from .report_utils import generate_markdown_report, convert_markdown_to_pdf
 
-def run_audit(host, user, password):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    audit_points = [
-        {"desc": "Sistema Operacional", "cmd": "hostnamectl | grep 'Operating System'"},
-        {"desc": "Estado do PostgreSQL", "cmd": "systemctl is-active postgresql-16"},
-        {"desc": "Portas KSC (13000/14000/13291)", "cmd": "ss -tulpn | grep -E '13000|14000|13291'"},
-        {"desc": "Estado do SELinux", "cmd": "getenforce"},
-        {"desc": "Binários KSC", "cmd": "ls -l /opt/kaspersky/ksc64/sbin/klserver"},
-        {"desc": "Conectividade DB", "cmd": "sudo -u postgres psql -c 'SELECT version();'"}
-    ]
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Auditoria do ambiente para Kaspersky Security Center 16.x"
+    )
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "--check",
+        action="store_true",
+        help="Executa pré-check (pré-requisitos antes da instalação).",
+    )
+    group.add_argument(
+        "--postcheck",
+        action="store_true",
+        help="Executa pós-check (após instalação do KSC).",
+    )
+    group.add_argument(
+        "--report",
+        action="store_true",
+        help="Gera relatório consolidado a partir das evidências.",
+    )
+    return parser.parse_args()
 
-    report = []
-    try:
-        logger.info(f"--- Iniciando Auditoria em {host} ---")
-        client.connect(host, username=user, password=password, timeout=15)
 
-        for point in audit_points:
-            full_cmd = f"sudo -S {point['cmd']}"
-            stdin, stdout, stderr = client.exec_command(full_cmd)
-            stdin.write(password + '\n')
-            stdin.flush()
-
-            res = stdout.read().decode('utf-8').strip()
-            status = stdout.channel.recv_exit_status()
-
-            symbol = "✅" if status == 0 else "❌"
-            logger.info(f"{symbol} {point['desc']}: {res if res else 'OK'}")
-            report.append(f"{symbol} {point['desc']}: {res}")
-
-        client.close()
-        return report
-    except Exception as e:
-        logger.error(f"❌ Erro de Conexão: {e}")
-        return None
-
-def main():
-    parser = argparse.ArgumentParser(description="KSC 16 Audit Tool")
-    parser.add_argument('--config', help="Caminho para o arquivo .env", default="configs/env/ksc_vars.env")
-    parser.add_argument('--check', action='store_true', help="Executa a auditoria")
-    parser.add_argument('--report', help="Gera um arquivo de relatório", metavar="FILE")
-
-    args = parser.parse_args()
-
-    if os.path.exists(args.config):
-        load_dotenv(args.config)
-
-    host = os.getenv('KSC_HOST')
-    user = os.getenv('KSC_USER')
-    password = os.getenv('KSC_PASS')
-
-    if not all([host, user, password]):
-        logger.error("Erro: Variáveis de ambiente incompletas.")
-        sys.exit(2)
-
-    if args.check or args.report:
-        report_data = run_audit(host, user, password)
-
-        if args.report and report_data:
-            with open(args.report, 'w', encoding='utf-8') as f:
-                f.write("\n".join(report_data))
-            logger.info(f"\nRelatório salvo em: {args.report}")
-
-        if report_data:
-            sys.exit(0)
-        else:
-            sys.exit(3)
+def print_summary(result: CheckResult) -> None:
+    print("\n=== RESUMO DOS CHECKS ===")
+    for item in result.items:
+        print(f"- [{item.status.upper()}] {item.name}: {item.message}")
+    if result.has_critical:
+        print("\nStatus geral: CRITICAL (há falhas que bloqueiam).")
     else:
-        parser.print_help()
+        print("\nStatus geral: OK (sem falhas críticas).")
+
+
+def main() -> int:
+    args = parse_args()
+
+    try:
+        config = load_config()
+    except ConfigError as exc:
+        print(f"[ERROR] Configuração inválida: {exc}", file=sys.stderr)
+        return 2
+
+    if args.check:
+        evidence_dir = init_evidence_dir("precheck")
+        logger = configure_logger(evidence_dir)
+        log_json(logger, "precheck_start")
+
+        result = run_precheck(config)
+        log_json(
+            logger,
+            "precheck_result",
+            has_critical=result.has_critical,
+            total_items=len(result.items),
+        )
+
+        print_summary(result)
+        return 1 if result.has_critical else 0
+
+    if args.postcheck:
+        evidence_dir = init_evidence_dir("postcheck")
+        logger = configure_logger(evidence_dir)
+        log_json(logger, "postcheck_start")
+
+        result = run_postcheck(config)
+        log_json(
+            logger,
+            "postcheck_result",
+            has_critical=result.has_critical,
+            total_items=len(result.items),
+        )
+
+        print_summary(result)
+        return 1 if result.has_critical else 0
+
+    if args.report:
+        evidence_root = Path("evidence")
+
+        # Para gerar o report dinâmico, rodamos os checks em modo leve
+        # Na prática, isso poderia ler logs de `evidence_root`.
+        print("Coletando estado atual para relatório...")
+        pre = run_precheck(config)
+        post = run_postcheck(config)
+
+        report_dir = init_evidence_dir("reports")
+        md_path = report_dir / "report.md"
+        pdf_path = report_dir / "report.pdf"
+
+        generate_markdown_report(pre, post, evidence_root, md_path)
+        print(f"Relatório Markdown gerado em {md_path}")
+
+        print("Gerando PDF...")
+        convert_markdown_to_pdf(md_path, pdf_path)
+        if pdf_path.exists():
+            print(f"Relatório PDF gerado em {pdf_path}")
+
+        return 0
+
+    return 2
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

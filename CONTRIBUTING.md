@@ -26,6 +26,18 @@ Obrigado por seu interesse em contribuir para a documentação e automação da 
     - Dumps de banco de dados contendo dados sensíveis.
 - Verifique sempre o `.gitignore` antes de commitar.
 
+### Uso do pre-commit e detect-secrets
+Este repositório utiliza o `pre-commit` para garantir a qualidade do código e evitar o vazamento de credenciais via `detect-secrets`.
+Antes de realizar qualquer commit, certifique-se de que instalou os hooks:
+```bash
+pip install pre-commit
+pre-commit install
+```
+Antes de enviar suas mudanças, rode:
+```bash
+pre-commit run --all-files
+```
+O `detect-secrets` baseia-se no arquivo `.secrets.baseline`. Se você adicionou um "falso positivo", precisará atualizar a baseline localmente.
 ## Estilo de Documentação
 - Documentação técnica deve ser direta ao ponto (estilo runbook).
 - Utilize Markdown para formatação.
