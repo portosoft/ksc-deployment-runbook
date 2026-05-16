@@ -35,3 +35,13 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 - Removidas redundâncias de documentação.
 - Padronização de termos técnicos.
+
+## [1.1.1] - 2026-05-16
+### Fixed
+- Hardcoded credential removed from \utomation/python/fix_ksc_auth.py\
+- \.secrets.baseline\ cleaned of references to deleted files
+- \scratch/check_api.py\ removed from repository
+
+### Changed
+- 65 didactic scripts archived to \utomation/archive/didactic-2026-05/\
+
