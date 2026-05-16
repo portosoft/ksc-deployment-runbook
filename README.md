@@ -51,23 +51,22 @@ python3 automation/python/ksc_setup.py --apply
 - `configs/`: Templates de arquivos de resposta e configurações de banco de dados.
 - `evidence/`: Local para armazenar logs e outputs de validação para auditoria interna.
 
-## 🛤️ A Jornada do Operador (12 Passos)
+## 🛤️ A Jornada do Operador
 Siga esta trilha para um deploy seguro e auditável:
-1. [01-pre-requisitos.md](docs/01-pre-requisitos.md) - Preparação da Infra e SO.
-2. [02-configuracao-env.md](docs/02-configuracao-env.md) - Setup de credenciais.
-3. [03-auditoria-previa.md](docs/03-auditoria-previa.md) - Uso do `ksc_audit.py --check`.
-4. [04-postgres-setup.md](docs/04-postgres-setup.md) - Preparação do Banco.
-5. [05-selinux-hardening.md](docs/05-selinux-hardening.md) - Regras temporárias.
-6. [06-ksc-server-install.md](docs/06-ksc-server-install.md) - Execução do script `ksc_setup.py`.
-7. [07-web-console.md](docs/07-web-console.md) - Instalação da interface web.
-8. [08-pos-install-hardening.md](docs/08-pos-install-hardening.md) - Fechamento do SELinux.
-9. [09-auditoria-final.md](docs/09-auditoria-final.md) - Uso do `ksc_audit.py --postcheck`.
-10. [10-relatorios.md](docs/10-relatorios.md) - Geração de PDFs de evidência.
-11. [11-troubleshooting.md](docs/11-troubleshooting.md) - Resolução de problemas.
-12. [12-handover.md](docs/12-handover.md) - Entrega do ambiente operante.
-- `automation/`: Scripts Python, Bash e Playbooks Ansible para execução.
-- `configs/`: Templates de arquivos de resposta e configurações de banco de dados.
-- `evidence/`: Local para armazenar logs e outputs de validação para auditoria interna.
+- [00-index.md](docs/00-index.md)
+- [01-visao-geral.md](docs/01-visao-geral.md)
+- [02-matriz-compatibilidade.md](docs/02-matriz-compatibilidade.md)
+- [03-pre-requisitos.md](docs/03-pre-requisitos.md)
+- [04-precheck.md](docs/04-precheck.md)
+- [05-instalacao-postgresql.md](docs/05-instalacao-postgresql.md)
+- [06-instalacao-ksc.md](docs/06-instalacao-ksc.md)
+- [07-pos-instalacao-validacao.md](docs/07-pos-instalacao-validacao.md)
+- [08-hardening.md](docs/08-hardening.md)
+- [09-operacao.md](docs/09-operacao.md)
+- [10-troubleshooting.md](docs/10-troubleshooting.md)
+- [11-rollback.md](docs/11-rollback.md)
+- [12-faq.md](docs/12-faq.md)
+- [13-contrato-operacional.md](docs/13-contrato-operacional.md)
 
 ## 🤝 Contratos de Automação
 Este projeto utiliza uma convenção rigorosa de argumentos CLI:
