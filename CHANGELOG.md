@@ -5,6 +5,21 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-16
+### Added
+- Arquitetura DevSecOps em Python (`automation/python/`).
+- Módulos utilitários para logs, prechecks e deploy (`config.py`, `shell_utils.py`, `logging_utils.py`, `checks.py`, `setup_steps.py`).
+- Sistema de evidências via JSON Lines e geração de relatórios com `report_utils.py`.
+- Suite de testes via `pytest` validando os contratos CLI (`tests/test_cli_contracts.py`).
+- Workflow de CI/CD para GitHub Actions (`.github/workflows/ci.yml`).
+- Documentos de governança `CONTRATOS_AUTOMACAO.md` e `EVIDENCIAS.md`.
+- Placeholders para os 12 passos da jornada em `docs/`.
+
+### Changed
+- `ksc_audit.py` e `ksc_setup.py` refatorados para consumir a nova arquitetura de forma modular.
+- Expansão do `.pre-commit-config.yaml` com hooks para `black`, `flake8`, `yamllint`, `shellcheck`.
+- Atualização do `README.md` (A Jornada do Operador) e `CONTRIBUTING.md` (DevSecOps).
+
 ## [1.0.0] - 2026-05-13
 ### Added
 - Nova estrutura de documentação numerada (00-12).
