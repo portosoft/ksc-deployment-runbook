@@ -25,9 +25,15 @@ Este checklist deve ser preenchido ao final de cada implantação e arquivado na
 - [ ] Porta 14000 (Agent Non-SSL) aberta no firewall.
 - [ ] Porta 443 (Web) aberta e acessível externamente.
 
-## 📂 5. Governança e Evidências
-- [ ] Log de instalação salvo em `evidence/install.log`.
-- [ ] Output do `ksc_audit.py --check` sem erros críticos.
+## 📂 5. Execução do Runbook (Pre-check)
+- [ ] Arquivo de variáveis `.env` populado sem segredos pendentes.
+- [ ] Executou `python3 automation/python/ksc_audit.py --check`
+- [ ] O output validou o SELinux, Memória e Discos sem falhas críticas.
+
+## 📂 6. Execução do Deploy e Post-check
+- [ ] Executou `python3 automation/python/ksc_setup.py --apply` com sucesso.
+- [ ] Executou `python3 automation/python/ksc_audit.py --postcheck` com sucesso.
+- [ ] O Relatório de Auditoria foi gerado (em `evidence/reports/`).
 - [ ] Backup inicial realizado com sucesso.
 
 ---
