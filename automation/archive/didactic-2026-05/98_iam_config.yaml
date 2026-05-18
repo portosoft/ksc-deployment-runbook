@@ -1,0 +1,25 @@
+ksc_iam:
+    ksc_address: "127.0.0.1"
+    ksc_ca: "/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer"
+dbms_iam:
+    dbms_main:
+        dbms_type: "POSTGRES"
+        dbms_address: "127.0.0.1"
+        dbms_port: "5432"
+        dbms_db: "ksciam"
+        dbms_user: "kluser"
+        dbms_userpassword: "R6whXi4joT&OUj6#"
+        dbms_schema: ""
+    dbms_tls:
+        dbms_tl_opt_ssl_ca: ""
+        dbms_tl_opt_ssl_verify_server_cn: ""
+        dbms_tl_opt_ssl_cert: ""
+        dbms_tl_opt_ssl_key: ""
+        dbms_tl_opt_tls_pasphrase: ""
+        dbms_tl_opt_ssl_cipher: ""
+        dbms_tl_opt_ssl_tlsver_min: ""
+        dbms_tl_opt_ssl_tlsver_max: ""
+certificates_iam:
+    jwe_sign_privkey: "/var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEsign.prk"
+    jwe_sign_cert: "/var/opt/kaspersky/klnagent_srv/1093/cert/klsrvJWEsign.cer"
+    jwe_encrypt_cert:  "/var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEencrypt.cer"
