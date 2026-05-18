@@ -24,7 +24,7 @@ Este documento define a relação técnica entre os diferentes componentes do re
   - `0`: Sucesso total.
   - `1`: Erro crítico em pré-requisitos (abortado de forma segura).
   - `2`: Erro de configuração (variável ausente ou mal formatada).
-  
+
 ## SLIs de Desempenho do Runbook
 - `ksc_audit.py --check`: < 15 segundos.
 - `ksc_setup.py --apply`: < 10 minutos para ciclo ponta a ponta.

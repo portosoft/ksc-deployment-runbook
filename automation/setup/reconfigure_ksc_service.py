@@ -4,16 +4,17 @@ import sys
 import paramiko
 from dotenv import load_dotenv
 
+
 def reconfigure_ksc_service():
     # Carregar variáveis de ambiente de forma segura
     load_dotenv("configs/env/ksc_vars.env")
-    host = os.getenv('KSC_HOST')
-    user = os.getenv('KSC_USER')
-    password = os.getenv('KSC_PASS')
-    db_pass = os.getenv('KSC_DB_PASS')
-    fqdn = os.getenv('KSC_FQDN', host)
-    admin_user = os.getenv('KSC_ADMIN_USER', 'KLAdmins')
-    admin_pass = os.getenv('KSC_ADMIN_PASS')
+    host = os.getenv("KSC_HOST")
+    user = os.getenv("KSC_USER")
+    password = os.getenv("KSC_PASS")
+    db_pass = os.getenv("KSC_DB_PASS")
+    fqdn = os.getenv("KSC_FQDN", host)
+    admin_user = os.getenv("KSC_ADMIN_USER", "KLAdmins")
+    admin_pass = os.getenv("KSC_ADMIN_PASS")
 
     if not all([host, user, password, db_pass, admin_pass]):
         print("ERROR: Variáveis de ambiente obrigatórias ausentes no .env")
@@ -55,25 +56,29 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         print("--- Executando postinstall.pl (Modo Automático) ---")
         cmd = "sudo -S -E bash -c 'KLAUTOANSWERS=/tmp/reconfig_ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'"
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
 
         # Stream output to console
         while True:
             line = stdout.readline()
-            if not line: break
+            if not line:
+                break
             print(line.strip())
 
         print(stderr.read().decode())
         client.exec_command("rm -f /tmp/reconfig_ans.txt")
 
         print("--- Reiniciando serviços principais ---")
-        client.exec_command(f"echo {password} | sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service")
+        client.exec_command(
+            f"echo {password} | sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service"
+        )
 
         client.close()
         print("--- Reconfiguração concluída ---")
     except Exception as e:
         print(f"ERROR: Falha na reconfiguração: {e}")
+
 
 if __name__ == "__main__":
     reconfigure_ksc_service()

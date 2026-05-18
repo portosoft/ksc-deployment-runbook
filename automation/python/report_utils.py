@@ -1,5 +1,4 @@
 from pathlib import Path
-from md2pdf.core import md2pdf
 from .checks import CheckResult
 
 
@@ -28,6 +27,8 @@ def generate_markdown_report(
 
 def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:
     try:
+        from md2pdf.core import md2pdf
+
         md2pdf(pdf_path, md_file_path=str(markdown_path))
     except Exception as e:
         import logging
