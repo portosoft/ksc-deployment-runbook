@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -38,7 +39,7 @@ def main():
         # Consulta para contar registros na tabela de usuários (identidades)
         # Nota: Usamos aspas duplas no nome do esquema e tabela para segurança
         q = "SELECT COUNT(*) FROM iam.users;"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -50,6 +51,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na verificação de dados: {e}")
+
 
 if __name__ == "__main__":
     main()

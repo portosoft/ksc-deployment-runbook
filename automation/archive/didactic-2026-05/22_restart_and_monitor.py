@@ -22,6 +22,7 @@ import paramiko
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,10 +36,10 @@ def main():
         client.connect(host, username=user, password=password)
 
         service = "kliam_srv"
-        print(f"Reiniciando o serviço \"{service}\" e capturando logs iniciais...")
+        print(f'Reiniciando o serviço "{service}" e capturando logs iniciais...')
 
         # Executa o restart
-        cmd_restart = f"sudo -S systemctl restart \"{service}\""
+        cmd_restart = f'sudo -S systemctl restart "{service}"'
         stdin, stdout, stderr = client.exec_command(cmd_restart)
         stdin.write(password + "\n")
         stdin.flush()
@@ -47,7 +48,7 @@ def main():
         time.sleep(3)
 
         # Captura os logs mais recentes (últimas 30 linhas) do Journal
-        cmd_logs = f"sudo -S journalctl -u \"{service}\" -n 30 --no-pager"
+        cmd_logs = f'sudo -S journalctl -u "{service}" -n 30 --no-pager'
         stdin_l, stdout_l, stderr_l = client.exec_command(cmd_logs)
         stdin_l.write(password + "\n")
         stdin_l.flush()
@@ -63,6 +64,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro no reinício/monitoramento: {e}")
+
 
 if __name__ == "__main__":
     main()

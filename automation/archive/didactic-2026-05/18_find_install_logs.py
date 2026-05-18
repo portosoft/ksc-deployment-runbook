@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -46,7 +47,9 @@ def main():
             for f in files:
                 print(f"Lendo o arquivo: {f}")
                 # Lemos as últimas 50 linhas de cada log para ver o erro final
-                stdin_log, stdout_log, stderr_log = client.exec_command(f"sudo -S tail -n 50 \"{f}\"")
+                stdin_log, stdout_log, stderr_log = client.exec_command(
+                    f'sudo -S tail -n 50 "{f}"'
+                )
                 stdin_log.write(password + "\n")
                 stdin_log.flush()
                 print(stdout_log.read().decode())
@@ -57,6 +60,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na busca de logs: {e}")
+
 
 if __name__ == "__main__":
     main()

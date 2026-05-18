@@ -27,6 +27,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -57,6 +58,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro ao verificar status: {e}")
+
 
 if __name__ == "__main__":
     main()

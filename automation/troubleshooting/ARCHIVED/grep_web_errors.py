@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def grep_web_errors(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,13 +13,14 @@ def grep_web_errors(host, user, password):
         print("--- Web Console Errors ---")
         cmd = "sudo -S grep -iE 'error|exception' /var/opt/kaspersky/ksc-web-console/logs/KSC-Web-Console-server.***REMOVED***.2026-05-09.log | grep -v 'NATS' | tail -n 50"
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

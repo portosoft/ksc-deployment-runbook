@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -36,9 +37,9 @@ def main():
         target = "ksciam"
         log_path = "/var/log/kaspersky/ak_server.log"
 
-        print(f"Buscando por menções a \"{target}\" no log do servidor...")
+        print(f'Buscando por menções a "{target}" no log do servidor...')
         # Comando para buscar o padrão ignorando case e mostrando as últimas 20 ocorrências
-        cmd = f"sudo -S grep -i \"{target}\" \"{log_path}\" | tail -n 20"
+        cmd = f'sudo -S grep -i "{target}" "{log_path}" | tail -n 20'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -46,14 +47,15 @@ def main():
 
         results = stdout.read().decode().strip()
         if results:
-            print(f"--- Ocorrências de \"{target}\" Encontradas ---")
+            print(f'--- Ocorrências de "{target}" Encontradas ---')
             print(results)
         else:
-            print(f"Nenhuma menção recente a \"{target}\" encontrada no log.")
+            print(f'Nenhuma menção recente a "{target}" encontrada no log.')
 
         client.close()
     except Exception as e:
         print(f"Erro na busca de logs: {e}")
+
 
 if __name__ == "__main__":
     main()

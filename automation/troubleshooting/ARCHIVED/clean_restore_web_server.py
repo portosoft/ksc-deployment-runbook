@@ -3,13 +3,16 @@ import os
 import sys
 import base64
 
+
 def clean_restore_web_server(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 
-        target_file = "/var/opt/kaspersky/ksc-web-console/server/core/env-local/web-server.js"
+        target_file = (
+            "/var/opt/kaspersky/ksc-web-console/server/core/env-local/web-server.js"
+        )
 
         # Cleaned version (No DEBUG logs)
         clean_content = """\"use strict\";
@@ -191,25 +194,30 @@ exports.WebServer = WebServer;
 """
 
         # Write back
-        b64_content = base64.b64encode(clean_content.encode('utf-8')).decode('utf-8')
+        b64_content = base64.b64encode(clean_content.encode("utf-8")).decode("utf-8")
         print("--- Writing clean restored file ---")
         client.exec_command(f"echo '{b64_content}' > /tmp/web-server-clean.txt")
-        client.exec_command(f"base64 -d /tmp/web-server-clean.txt > /tmp/web-server-fixed.js")
-        stdin, stdout, stderr = client.exec_command(f"sudo -S cp /tmp/web-server-fixed.js {target_file}")
-        stdin.write(password + '\n')
+        client.exec_command(
+            f"base64 -d /tmp/web-server-clean.txt > /tmp/web-server-fixed.js"
+        )
+        stdin, stdout, stderr = client.exec_command(
+            f"sudo -S cp /tmp/web-server-fixed.js {target_file}"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
 
         # Restart
         print("--- Restarting ---")
         client.exec_command("sudo -S killall -9 node")
         client.exec_command("sudo -S systemctl restart KSCWebConsole.service")
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
 
         print("Done!")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

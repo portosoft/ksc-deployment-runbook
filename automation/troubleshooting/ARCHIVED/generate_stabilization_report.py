@@ -2,8 +2,9 @@ import os
 import datetime
 import json
 
+
 def generate_report():
-    report_path = r'C:\Users\FábioMendes\.gemini\antigravity\brain\0359bbcd-87bf-4a81-bca7-f347676bb0f9\ksc_stabilization_report.md'
+    report_path = r"C:\Users\FábioMendes\.gemini\antigravity\brain\0359bbcd-87bf-4a81-bca7-f347676bb0f9\ksc_stabilization_report.md"
 
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -33,9 +34,10 @@ Como o `runtime.tempDataStore` é definido no construtor do `BusinessLogicServer
 *Este relatório é gerado automaticamente por uma rotina de diagnóstico.*
 """
 
-    with open(report_path, 'w', encoding='utf-8') as f:
+    with open(report_path, "w", encoding="utf-8") as f:
         f.write(content)
     print(f"Report updated at {report_path}")
+
 
 if __name__ == "__main__":
     generate_report()

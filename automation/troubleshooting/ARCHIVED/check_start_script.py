@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def check_start_script_fixed(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -10,14 +11,17 @@ def check_start_script_fixed(host, user, password):
 
         # Read the start-console.sh script
         print("--- Reading start-console.sh ---")
-        stdin, stdout, stderr = client.exec_command("sudo -S cat /var/opt/kaspersky/ksc-web-console/start-console.sh")
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S cat /var/opt/kaspersky/ksc-web-console/start-console.sh"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

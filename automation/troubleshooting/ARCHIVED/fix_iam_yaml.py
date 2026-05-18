@@ -2,13 +2,14 @@ import paramiko
 import os
 import sys
 
+
 def fix_iam_yaml(host, user, password, iam_pass):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 
-        iam_config = '/var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml'
+        iam_config = "/var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml"
         print(f"--- Fixing {iam_config} ---")
 
         # Define the CORRECT content
@@ -45,22 +46,29 @@ certificates_iam:
 """
 
         sftp = client.open_sftp()
-        with sftp.file('/tmp/iam_config.yaml', 'w') as f:
+        with sftp.file("/tmp/iam_config.yaml", "w") as f:
             f.write(content)
         sftp.close()
 
-        client.exec_command(f'echo "{password}" | sudo -S mv /tmp/iam_config.yaml {iam_config}')
+        client.exec_command(
+            f'echo "{password}" | sudo -S mv /tmp/iam_config.yaml {iam_config}'
+        )
 
         print("--- Restarting kliam_srv.service ---")
-        client.exec_command(f'echo "{password}" | sudo -S systemctl restart kliam_srv.service')
+        client.exec_command(
+            f'echo "{password}" | sudo -S systemctl restart kliam_srv.service'
+        )
 
         print("--- Restarting ksc-web-console.service ---")
-        client.exec_command(f'echo "{password}" | sudo -S systemctl restart ksc-web-console.service')
+        client.exec_command(
+            f'echo "{password}" | sudo -S systemctl restart ksc-web-console.service'
+        )
 
         client.close()
         print("IAM YAML fixed and services restarted.")
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

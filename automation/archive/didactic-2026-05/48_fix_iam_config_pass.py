@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -40,7 +41,7 @@ def main():
 
         # Comando SED para trocar o valor de dbms_userpassword
         # Usamos o caractere | como delimitador para evitar conflitos com barras na senha
-        cmd = f"sudo -S sed -i \"s|dbms_userpassword:.*|dbms_userpassword: \\\"{new_db_pass}\\\"|\" \"{path}\""
+        cmd = f'sudo -S sed -i "s|dbms_userpassword:.*|dbms_userpassword: \\"{new_db_pass}\\"|" "{path}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -54,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na edição da configuração: {e}")
+
 
 if __name__ == "__main__":
     main()

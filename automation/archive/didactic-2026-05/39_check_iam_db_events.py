@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,10 +35,10 @@ def main():
         client.connect(host, username=user, password=password)
 
         service = "kliam_srv"
-        print(f"Buscando eventos de banco de dados no serviço \"{service}\"...")
+        print(f'Buscando eventos de banco de dados no serviço "{service}"...')
 
         # Busca no log do serviço por termos relacionados a banco de dados
-        cmd_log = f"sudo -S journalctl -u \"{service}\" --since \"24 hours ago\" | grep -iE \"database|connection|sql\" | tail -n 50"
+        cmd_log = f'sudo -S journalctl -u "{service}" --since "24 hours ago" | grep -iE "database|connection|sql" | tail -n 50'
         stdin_log, stdout_log, stderr_log = client.exec_command(cmd_log)
         stdin_log.write(password + "\n")
         stdin_log.flush()
@@ -54,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro no diagnóstico de conexão: {e}")
+
 
 if __name__ == "__main__":
     main()

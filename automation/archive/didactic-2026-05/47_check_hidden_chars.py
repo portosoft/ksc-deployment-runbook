@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -36,7 +37,7 @@ def main():
         path = "/var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml"
         print(f"Auditando caracteres invisíveis em {path}...")
         # Comando para mostrar caracteres especiais
-        cmd = f"sudo -S cat -A \"{path}\" | head -n 20"
+        cmd = f'sudo -S cat -A "{path}" | head -n 20'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -52,6 +53,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria bruta: {e}")
+
 
 if __name__ == "__main__":
     main()

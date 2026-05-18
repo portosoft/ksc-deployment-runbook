@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,7 +36,9 @@ def main():
 
         print("Verificando disponibilidade do módulo 'pexpect' no servidor...")
         # Testa a importação do módulo via linha de comando
-        cmd = "python3 -c \"import pexpect; print('SUCCESS: pexpect is installed')\" 2>&1"
+        cmd = (
+            "python3 -c \"import pexpect; print('SUCCESS: pexpect is installed')\" 2>&1"
+        )
 
         stdin, stdout, stderr = client.exec_command(cmd)
 
@@ -49,6 +52,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na verificação: {e}")
+
 
 if __name__ == "__main__":
     main()

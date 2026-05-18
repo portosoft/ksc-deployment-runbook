@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -43,7 +44,7 @@ def main():
         print(stdout_l.read().decode())
 
         print("\nBuscando termos de banco de dados no binário kliam...")
-        cmd_str = "sudo -S strings /opt/kaspersky/ksc64/sbin/kliam | grep -iE \"postgres|mysql|dbtype|db-type\" | head -n 20"
+        cmd_str = 'sudo -S strings /opt/kaspersky/ksc64/sbin/kliam | grep -iE "postgres|mysql|dbtype|db-type" | head -n 20'
         stdin_s, stdout_s, stderr_s = client.exec_command(cmd_str)
         stdin_s.write(password + "\n")
         stdin_s.flush()
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria tecnológica: {e}")
+
 
 if __name__ == "__main__":
     main()

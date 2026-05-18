@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,9 +35,9 @@ def main():
         client.connect(host, username=user, password=password)
 
         service = "kliam_srv"
-        print(f"Lendo definição da unidade de serviço \"{service}\"...")
+        print(f'Lendo definição da unidade de serviço "{service}"...')
         # Comando para mostrar a unidade do serviço
-        cmd = f"systemctl cat \"{service}\""
+        cmd = f'systemctl cat "{service}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
 
@@ -45,11 +46,12 @@ def main():
             print(f"--- Definição de {service} ---")
             print(results)
         else:
-            print(f"Unidade de serviço \"{service}\" não encontrada.")
+            print(f'Unidade de serviço "{service}" não encontrada.')
 
         client.close()
     except Exception as e:
         print(f"Erro na auditoria da unidade: {e}")
+
 
 if __name__ == "__main__":
     main()

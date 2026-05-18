@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def read_session_manager_code(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,13 +13,14 @@ def read_session_manager_code(host, user, password):
         print("--- core-session-manager.js lines 360-390 ---")
         cmd = "sudo -S sed -n '360,390p' /var/opt/kaspersky/ksc-web-console/node_modules/@kl/openapi-module/lib/local/domains/session-manager/core-session-manager.js"
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

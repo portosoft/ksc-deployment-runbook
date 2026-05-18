@@ -3,18 +3,24 @@ import os
 import sys
 import time
 
+
 def verify(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, username=user, password=password)
 
     print("Restarting KSC services...")
-    client.exec_command("sudo -S systemctl restart kladminserver_srv klnagent_srv klwebsrv_srv kliam_srv")
+    client.exec_command(
+        "sudo -S systemctl restart kladminserver_srv klnagent_srv klwebsrv_srv kliam_srv"
+    )
     time.sleep(5)
 
-    stdin, stdout, stderr = client.exec_command("systemctl is-active kladminserver_srv klnagent_srv klwebsrv_srv kliam_srv")
+    stdin, stdout, stderr = client.exec_command(
+        "systemctl is-active kladminserver_srv klnagent_srv klwebsrv_srv kliam_srv"
+    )
     print(f"Service States:\n{stdout.read().decode()}")
     client.close()
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

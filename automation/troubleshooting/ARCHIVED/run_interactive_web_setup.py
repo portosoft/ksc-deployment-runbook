@@ -3,6 +3,7 @@ import os
 import sys
 import time
 
+
 def run_interactive_web_setup(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -15,10 +16,12 @@ def run_interactive_web_setup(host, user, password):
         chan.settimeout(60)
 
         # Run node setup.js from its directory
-        chan.exec_command("cd /var/opt/kaspersky/ksc-web-console && sudo -S ./node setup.js")
+        chan.exec_command(
+            "cd /var/opt/kaspersky/ksc-web-console && sudo -S ./node setup.js"
+        )
 
         # Send sudo password
-        chan.send(password + '\n')
+        chan.send(password + "\n")
         time.sleep(2)
 
         # We need to capture the output and send answers
@@ -28,7 +31,7 @@ def run_interactive_web_setup(host, user, password):
         output = ""
         for _ in range(20):
             if chan.recv_ready():
-                output += chan.recv(4096).decode('utf-8')
+                output += chan.recv(4096).decode("utf-8")
             time.sleep(0.5)
 
         print(f"SETUP OUTPUT:\n{output}")
@@ -36,6 +39,7 @@ def run_interactive_web_setup(host, user, password):
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

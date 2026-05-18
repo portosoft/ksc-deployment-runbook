@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     # Carregar variáveis de ambiente com aspas de proteção
     load_dotenv("configs/env/ksc_vars.env")
@@ -37,7 +38,7 @@ def main():
         print(f"Conectado ao host: {host}")
 
         path = "/var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml"
-        cmd = f"sudo -S cat \"{path}\""
+        cmd = f'sudo -S cat "{path}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -54,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na execução: {e}")
+
 
 if __name__ == "__main__":
     main()

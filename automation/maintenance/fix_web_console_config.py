@@ -4,13 +4,14 @@ import sys
 import paramiko
 from dotenv import load_dotenv
 
+
 def fix_web_console_config():
     # Carregar variáveis de ambiente de forma segura
     load_dotenv("configs/env/ksc_vars.env")
-    host = os.getenv('KSC_HOST')
-    user = os.getenv('KSC_USER')
-    password = os.getenv('KSC_PASS')
-    fqdn = os.getenv('KSC_FQDN')
+    host = os.getenv("KSC_HOST")
+    user = os.getenv("KSC_USER")
+    password = os.getenv("KSC_PASS")
+    fqdn = os.getenv("KSC_FQDN")
 
     if not all([host, user, password, fqdn]):
         print("ERROR: Variáveis de ambiente obrigatórias ausentes.")
@@ -31,21 +32,28 @@ def fix_web_console_config():
         cmds = [
             f"sudo sed -i 's/\\\\$web_console_port\\\\$/8080/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
             f"sudo sed -i 's/\\\\$web_console_address\\\\$/{fqdn}/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
-            f"sudo sed -i 's/\"port\": \"13000\"/\"port\": \"13299\"/g' /var/opt/kaspersky/ksc-web-console/server/config.json"
+            f'sudo sed -i \'s/"port": "13000"/"port": "13299"/g\' /var/opt/kaspersky/ksc-web-console/server/config.json',
         ]
 
         for cmd in cmds:
-            stdin, stdout, stderr = client.exec_command(f"echo {password} | sudo -S {cmd}")
+            stdin, stdout, stderr = client.exec_command(
+                f"echo {password} | sudo -S {cmd}"
+            )
             # Silently execute, error checking below
 
         print("--- Aplicando correções de permissões e reiniciando ---")
-        client.exec_command(f"echo {password} | sudo -S chown -R ksc:kladmins /var/opt/kaspersky/ksc-web-console/")
-        client.exec_command(f"echo {password} | sudo -S systemctl restart ksc-web-console")
+        client.exec_command(
+            f"echo {password} | sudo -S chown -R ksc:kladmins /var/opt/kaspersky/ksc-web-console/"
+        )
+        client.exec_command(
+            f"echo {password} | sudo -S systemctl restart ksc-web-console"
+        )
 
         print("--- Configuração do Web Console corrigida e serviço reiniciado ---")
         client.close()
     except Exception as e:
         print(f"ERROR: Falha na manutenção do config.json: {e}")
+
 
 if __name__ == "__main__":
     fix_web_console_config()

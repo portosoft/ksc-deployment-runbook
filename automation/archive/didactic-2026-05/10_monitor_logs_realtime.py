@@ -22,6 +22,7 @@ import paramiko
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,18 +36,18 @@ def main():
         client.connect(host, username=user, password=password)
 
         log_path = "/var/log/kaspersky/ak_server.log"
-        print(f"Monitorando \"{log_path}\" por 30 segundos...")
+        print(f'Monitorando "{log_path}" por 30 segundos...')
 
         # Abrir uma sessão SSH dedicada (canal) para o comando contínuo
         transport = client.get_transport()
         channel = transport.open_session()
-        channel.exec_command(f"sudo -S tail -f \"{log_path}\"")
+        channel.exec_command(f'sudo -S tail -f "{log_path}"')
 
         # Enviar senha do sudo
         channel.send(password + "\n")
 
         start_time = time.time()
-        while time.time() - start_time < 30: # Monitorar por 30s
+        while time.time() - start_time < 30:  # Monitorar por 30s
             if channel.recv_ready():
                 print(channel.recv(1024).decode(), end="")
             time.sleep(1)
@@ -55,6 +56,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro no monitoramento: {e}")
+
 
 if __name__ == "__main__":
     main()

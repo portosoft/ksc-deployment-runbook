@@ -20,6 +20,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,8 +35,8 @@ def main():
         client.connect(host, username=user, password=password)
 
         # Consulta para verificar os atributos da role
-        q = f"SELECT rolname, rolcreatedb, rolcreaterole, rolsuper FROM pg_roles WHERE rolname = \"{db_user}\";"
-        cmd = f"sudo -S -u postgres psql -t -c \"{q}\""
+        q = f'SELECT rolname, rolcreatedb, rolcreaterole, rolsuper FROM pg_roles WHERE rolname = "{db_user}";'
+        cmd = f'sudo -S -u postgres psql -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -47,6 +48,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria de roles: {e}")
+
 
 if __name__ == "__main__":
     main()

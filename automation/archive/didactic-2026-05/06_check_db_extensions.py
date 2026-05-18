@@ -20,6 +20,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -33,9 +34,9 @@ def main():
     try:
         client.connect(host, username=user, password=password)
 
-        print(f"Consultando extensões instaladas no banco \"{db_name}\"...")
+        print(f'Consultando extensões instaladas no banco "{db_name}"...')
         q = "SELECT extname, extversion FROM pg_extension;"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -47,6 +48,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro ao auditar extensões: {e}")
+
 
 if __name__ == "__main__":
     main()

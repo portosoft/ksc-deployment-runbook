@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def analyze_setup_split_logic(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,11 +13,12 @@ def analyze_setup_split_logic(host, user, password):
         print("--- Searching for 'split' logic in setup.js ---")
         cmd = "grep -oE '.{0,100}split.{0,100}' /var/opt/kaspersky/ksc-web-console/setup.js | head -n 100"
         stdin, stdout, stderr = client.exec_command(cmd)
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

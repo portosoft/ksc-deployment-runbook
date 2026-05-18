@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -38,7 +39,7 @@ def main():
         print("Buscando tabelas de migração dentro do esquema 'iam'...")
         # Consulta para localizar tabelas que sugiram controle de versão no iam
         q = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'iam' AND table_name LIKE '%migration%';"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -54,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na busca: {e}")
+
 
 if __name__ == "__main__":
     main()

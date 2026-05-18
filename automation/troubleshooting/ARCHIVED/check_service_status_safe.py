@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def check_service_status_safe(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -10,23 +11,28 @@ def check_service_status_safe(host, user, password):
 
         # Check service status
         print("--- KSCWebConsole.service status ---")
-        stdin, stdout, stderr = client.exec_command("sudo -S systemctl status KSCWebConsole.service")
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl status KSCWebConsole.service"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
-        out = stdout.read().decode('utf-8', errors='replace')
-        print(out.encode('ascii', 'ignore').decode('ascii'))
+        out = stdout.read().decode("utf-8", errors="replace")
+        print(out.encode("ascii", "ignore").decode("ascii"))
 
         # Check journalctl
         print("--- KSCWebConsole.service journalctl ---")
-        stdin, stdout, stderr = client.exec_command("sudo -S journalctl -u KSCWebConsole.service -n 50")
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S journalctl -u KSCWebConsole.service -n 50"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
-        out = stdout.read().decode('utf-8', errors='replace')
-        print(out.encode('ascii', 'ignore').decode('ascii'))
+        out = stdout.read().decode("utf-8", errors="replace")
+        print(out.encode("ascii", "ignore").decode("ascii"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

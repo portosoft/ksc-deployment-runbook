@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         print(f"Buscando scripts SQL em {base_path}...")
 
         # Comando para encontrar todos os arquivos .sql recursivamente
-        cmd = f"sudo -S find \"{base_path}\" -name \"*.sql\""
+        cmd = f'sudo -S find "{base_path}" -name "*.sql"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na busca de scripts: {e}")
+
 
 if __name__ == "__main__":
     main()

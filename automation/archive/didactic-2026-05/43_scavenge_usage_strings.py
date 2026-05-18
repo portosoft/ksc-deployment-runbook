@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         print(f"Garimpando instruções de uso em {binary_path}...")
 
         # Busca pelo termo Usage e mostra as 5 linhas seguintes
-        cmd = f"sudo -S strings \"{binary_path}\" | grep -iA 5 \"Usage:\""
+        cmd = f'sudo -S strings "{binary_path}" | grep -iA 5 "Usage:"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na garimpagem: {e}")
+
 
 if __name__ == "__main__":
     main()

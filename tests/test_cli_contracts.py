@@ -4,9 +4,12 @@ from pathlib import Path
 
 
 def run_script(module_name: str, args: list) -> subprocess.CompletedProcess:
+    import os
+
     cmd = [sys.executable, "-m", module_name] + args
-    # Define a variável de ambiente PYTHONPATH para o diretório raiz do projeto
-    env = {"PYTHONPATH": str(Path(__file__).parent.parent)}
+    # Define a variável de ambiente PYTHONPATH para o diretório raiz do projeto, preservando o restante do ambiente
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path(__file__).parent.parent)
     return subprocess.run(cmd, capture_output=True, text=True, env=env)
 
 

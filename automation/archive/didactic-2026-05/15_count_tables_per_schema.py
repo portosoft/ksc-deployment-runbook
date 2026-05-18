@@ -23,11 +23,12 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
-    host = os.getenv('KSC_HOST')
-    user = os.getenv('KSC_USER')
-    password = os.getenv('KSC_PASS')
+    host = os.getenv("KSC_HOST")
+    user = os.getenv("KSC_USER")
+    password = os.getenv("KSC_PASS")
 
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -44,10 +45,10 @@ def main():
         GROUP BY table_schema
         ORDER BY table_schema;
         """
-        cmd = f"sudo -S -u postgres psql -d ksciam -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d ksciam -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
 
         results = stdout.read().decode().strip()
@@ -61,6 +62,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria de volume: {e}")
+
 
 if __name__ == "__main__":
     main()

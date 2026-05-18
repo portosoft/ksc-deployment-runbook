@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,10 +36,10 @@ def main():
     try:
         client.connect(host, username=user, password=password)
 
-        print(f"Consultando tabela de migrações no banco \"{db_name}\"...")
+        print(f'Consultando tabela de migrações no banco "{db_name}"...')
         # Consulta para ver as versões registradas na migração
         q = "SELECT * FROM public.schema_migrations;"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -54,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria de migrations: {e}")
+
 
 if __name__ == "__main__":
     main()

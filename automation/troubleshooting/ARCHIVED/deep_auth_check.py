@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def run_ssh(host, user, password, commands):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -9,11 +10,12 @@ def run_ssh(host, user, password, commands):
     results = {}
     for cmd in commands:
         stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        results[cmd] = stdout.read().decode('utf-8')
+        results[cmd] = stdout.read().decode("utf-8")
     client.close()
     return results
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

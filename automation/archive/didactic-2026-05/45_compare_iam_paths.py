@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -36,13 +37,13 @@ def main():
 
         paths = [
             "/var/opt/kaspersky/klnagent_srv/iam/",
-            "/var/opt/kaspersky/klnagent_srv/1093/iam/"
+            "/var/opt/kaspersky/klnagent_srv/1093/iam/",
         ]
 
         print("Comparando caminhos de configuração IAM...")
         for p in paths:
             print(f"\n--- Detalhes de {p} ---")
-            cmd = f"sudo -S ls -la \"{p}\""
+            cmd = f'sudo -S ls -la "{p}"'
             stdin, stdout, stderr = client.exec_command(cmd)
             stdin.write(password + "\n")
             stdin.flush()
@@ -51,6 +52,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na comparação de caminhos: {e}")
+
 
 if __name__ == "__main__":
     main()

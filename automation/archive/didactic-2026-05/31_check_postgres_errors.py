@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,7 +36,7 @@ def main():
 
         print("Buscando erros no log do Postgres (últimos 30 minutos)...")
         # Busca erros no log do Postgres. Nota: o nome do serviço pode variar (postgresql, postgresql-14, etc)
-        cmd = "sudo -S journalctl -u postgresql* --since \"30 minutes ago\" | grep -i \"error\" | tail -n 20"
+        cmd = 'sudo -S journalctl -u postgresql* --since "30 minutes ago" | grep -i "error" | tail -n 20'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria do banco: {e}")
+
 
 if __name__ == "__main__":
     main()

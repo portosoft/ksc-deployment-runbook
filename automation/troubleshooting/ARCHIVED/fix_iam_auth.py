@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def verify_and_restart_iam(host, user, password, iam_pass):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,8 +13,8 @@ def verify_and_restart_iam(host, user, password, iam_pass):
         # Use a more robust way to pass password to psql
         cmd = f"PGPASSWORD='{iam_pass}' psql -h 127.0.0.1 -U kluser -d ksciam -c 'SELECT 1;'"
         stdin, stdout, stderr = client.exec_command(cmd)
-        out = stdout.read().decode('utf-8')
-        err = stderr.read().decode('utf-8')
+        out = stdout.read().decode("utf-8")
+        err = stderr.read().decode("utf-8")
         print(f"STDOUT: {out}")
         print(f"STDERR: {err}")
 
@@ -26,17 +27,22 @@ def verify_and_restart_iam(host, user, password, iam_pass):
             stdout.read()
 
         print("--- Restarting kliam_srv.service ---")
-        stdin, stdout, stderr = client.exec_command(f'echo "{password}" | sudo -S systemctl restart kliam_srv.service')
+        stdin, stdout, stderr = client.exec_command(
+            f'echo "{password}" | sudo -S systemctl restart kliam_srv.service'
+        )
         stdout.read()
 
         print("--- Restarting ksc-web-console.service ---")
-        stdin, stdout, stderr = client.exec_command(f'echo "{password}" | sudo -S systemctl restart ksc-web-console.service')
+        stdin, stdout, stderr = client.exec_command(
+            f'echo "{password}" | sudo -S systemctl restart ksc-web-console.service'
+        )
         stdout.read()
 
         print("Services restarted.")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

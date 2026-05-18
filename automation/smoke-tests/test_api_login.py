@@ -11,10 +11,11 @@ from dotenv import load_dotenv
 load_dotenv("configs/env/ksc_vars.env")
 context = ssl._create_unverified_context()
 
-KSC_HOST = os.getenv('KSC_HOST', '127.0.0.1')
+KSC_HOST = os.getenv("KSC_HOST", "127.0.0.1")
 SERVER = f"https://{KSC_HOST}:13299"
-ADMIN_USER = os.getenv('KSC_ADMIN_USER', 'KLAdmins')
-ADMIN_PASS = os.getenv('KSC_ADMIN_PASS')
+ADMIN_USER = os.getenv("KSC_ADMIN_USER", "KLAdmins")
+ADMIN_PASS = os.getenv("KSC_ADMIN_PASS")
+
 
 def test_login():
     if not ADMIN_PASS:
@@ -32,10 +33,7 @@ def test_login():
     }
 
     req = urllib.request.Request(
-        f"{SERVER}/api/v1.0/login",
-        data=b"{}",
-        headers=headers,
-        method="POST"
+        f"{SERVER}/api/v1.0/login", data=b"{}", headers=headers, method="POST"
     )
 
     try:
@@ -43,12 +41,13 @@ def test_login():
             print(f"SUCCESS: Login bem-sucedido com usuário {ADMIN_USER}")
             return True
     except urllib.error.HTTPError as e:
-        body = e.read().decode('utf-8', errors='replace')
+        body = e.read().decode("utf-8", errors="replace")
         print(f"FAILED: HTTP {e.code} - {body}")
         return False
     except Exception as e:
         print(f"ERR: {e}")
         return False
+
 
 if __name__ == "__main__":
     test_login()

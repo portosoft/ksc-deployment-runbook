@@ -20,6 +20,7 @@ Conceitos-chave:
 import os
 from dotenv import load_dotenv
 
+
 def main():
     # Tenta carregar o arquivo
     env_path = "configs/env/ksc_vars.env"
@@ -43,6 +44,7 @@ def main():
                 print(f"{var}: {val} (Tamanho: {len(val)})")
         else:
             print(f"{var}: NÃO CARREGADO")
+
 
 if __name__ == "__main__":
     main()

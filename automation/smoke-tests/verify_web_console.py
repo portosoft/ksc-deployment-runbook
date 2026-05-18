@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 # Desativar avisos de certificado auto-assinado para o teste inicial
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
 def smoke_test(url):
     print(f"--- Iniciando Smoke Test em {url} ---")
     try:
@@ -22,10 +23,11 @@ def smoke_test(url):
         print(f"❌ ERRO: Não foi possível conectar ao Web Console: {e}")
         return False
 
+
 if __name__ == "__main__":
     load_dotenv("configs/env/ksc_vars.env")
-    host = os.getenv('KSC_HOST')
-    port = os.getenv('KSC_WEB_PORT', '443')
+    host = os.getenv("KSC_HOST")
+    port = os.getenv("KSC_WEB_PORT", "443")
 
     if not host:
         print("Erro: KSC_HOST não definido no .env")

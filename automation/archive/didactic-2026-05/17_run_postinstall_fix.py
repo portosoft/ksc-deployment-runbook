@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     # Carregar variáveis de ambiente sanitizadas
     load_dotenv("configs/env/ksc_vars.env")
@@ -45,16 +46,16 @@ def main():
 
         # Sequência de respostas para o assistente Kaspersky
         answers = [
-            "1",        # Tipo de Banco (1 = Postgres)
-            "127.0.0.1",# Endereço do Banco
-            "5432",     # Porta do Banco
-            db_name,    # Nome do Banco KSC
-            iam_db,     # Nome do Banco IAM
-            db_user,    # Usuário do Banco
-            db_pass,    # Senha do Banco
-            fqdn,       # Endereço FQDN do Servidor
-            "ksc",      # Usuário do Serviço
-            "kladmins"  # Grupo do Serviço
+            "1",  # Tipo de Banco (1 = Postgres)
+            "127.0.0.1",  # Endereço do Banco
+            "5432",  # Porta do Banco
+            db_name,  # Nome do Banco KSC
+            iam_db,  # Nome do Banco IAM
+            db_user,  # Usuário do Banco
+            db_pass,  # Senha do Banco
+            fqdn,  # Endereço FQDN do Servidor
+            "ksc",  # Usuário do Serviço
+            "kladmins",  # Grupo do Serviço
         ]
 
         input_data = "\n".join(answers) + "\n"
@@ -82,6 +83,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na automação segura: {e}")
+
 
 if __name__ == "__main__":
     main()

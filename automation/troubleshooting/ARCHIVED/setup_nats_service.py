@@ -2,15 +2,16 @@ import paramiko
 import os
 import sys
 
+
 def setup_nats_service(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 
-        target_dir = '/var/opt/kaspersky/ksc-web-console'
-        nats_bin = f'{target_dir}/vendor/nats-server'
-        unit_file = '/etc/systemd/system/ksc-nats.service'
+        target_dir = "/var/opt/kaspersky/ksc-web-console"
+        nats_bin = f"{target_dir}/vendor/nats-server"
+        unit_file = "/etc/systemd/system/ksc-nats.service"
 
         print(f"--- Creating {unit_file} ---")
 
@@ -30,26 +31,29 @@ RestartSec=5
 WantedBy=multi-user.target
 """
         sftp = client.open_sftp()
-        with sftp.file('/tmp/ksc-nats.service', 'w') as f:
+        with sftp.file("/tmp/ksc-nats.service", "w") as f:
             f.write(unit_content)
         sftp.close()
 
-        cmd = f'echo "{password}" | sudo -S mv /tmp/ksc-nats.service {unit_file} && ' \
-              f'echo "{password}" | sudo -S systemctl daemon-reload && ' \
-              f'echo "{password}" | sudo -S systemctl enable ksc-nats.service && ' \
-              f'echo "{password}" | sudo -S systemctl restart ksc-nats.service'
+        cmd = (
+            f'echo "{password}" | sudo -S mv /tmp/ksc-nats.service {unit_file} && '
+            f'echo "{password}" | sudo -S systemctl daemon-reload && '
+            f'echo "{password}" | sudo -S systemctl enable ksc-nats.service && '
+            f'echo "{password}" | sudo -S systemctl restart ksc-nats.service'
+        )
 
         stdin, stdout, stderr = client.exec_command(cmd)
         print(f"STDOUT: {stdout.read().decode()}")
         print(f"STDERR: {stderr.read().decode()}")
 
         # Verify port
-        client.exec_command(f'sudo -S ss -tulpn | grep 8222')
+        client.exec_command(f"sudo -S ss -tulpn | grep 8222")
         # We'll check output in next step
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

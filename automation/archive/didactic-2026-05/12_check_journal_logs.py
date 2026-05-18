@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,7 +36,9 @@ def main():
 
         print("Consultando o Journal do Systemd para serviços KSC/KL...")
         # Filtra logs dos últimos 10 minutos para serviços específicos
-        cmd = "sudo -S journalctl -u \"kl*\" -u \"KSC*\" --since \"10 minutes ago\" --no-pager"
+        cmd = (
+            'sudo -S journalctl -u "kl*" -u "KSC*" --since "10 minutes ago" --no-pager'
+        )
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -51,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na consulta do Journal: {e}")
+
 
 if __name__ == "__main__":
     main()

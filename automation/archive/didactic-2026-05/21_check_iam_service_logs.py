@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,10 +35,10 @@ def main():
         client.connect(host, username=user, password=password)
 
         service = "kliam_srv"
-        print(f"Consultando logs do microserviço \"{service}\"...")
+        print(f'Consultando logs do microserviço "{service}"...')
 
         # Consulta logs do serviço na última hora
-        cmd = f"sudo -S journalctl -u \"{service}\" --since \"1 hour ago\" --no-pager | tail -n 50"
+        cmd = f'sudo -S journalctl -u "{service}" --since "1 hour ago" --no-pager | tail -n 50'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -50,11 +51,12 @@ def main():
             print(f"--- Logs de {service} ---")
             print(clean_text)
         else:
-            print(f"Nenhum log encontrado para o serviço \"{service}\" na última hora.")
+            print(f'Nenhum log encontrado para o serviço "{service}" na última hora.')
 
         client.close()
     except Exception as e:
         print(f"Erro na auditoria do microserviço: {e}")
+
 
 if __name__ == "__main__":
     main()

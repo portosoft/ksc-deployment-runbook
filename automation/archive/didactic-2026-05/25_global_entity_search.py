@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,11 +35,13 @@ def main():
     try:
         client.connect(host, username=user, password=password)
 
-        print("Buscando tabelas críticas ('users', 'identities', 'authentication_factors') em todos os esquemas...")
+        print(
+            "Buscando tabelas críticas ('users', 'identities', 'authentication_factors') em todos os esquemas..."
+        )
         # Consulta global por nome de tabela
         targets = "('users', 'identities', 'authentication_factors')"
         q = f"SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = 'ksciam' AND table_name IN {targets};"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -50,11 +53,14 @@ def main():
             print("Esquema | Tabela")
             print(results)
         else:
-            print("ERRO CRÍTICO: Tabelas de identidade NÃO encontradas em nenhum esquema!")
+            print(
+                "ERRO CRÍTICO: Tabelas de identidade NÃO encontradas em nenhum esquema!"
+            )
 
         client.close()
     except Exception as e:
         print(f"Erro na busca global: {e}")
+
 
 if __name__ == "__main__":
     main()

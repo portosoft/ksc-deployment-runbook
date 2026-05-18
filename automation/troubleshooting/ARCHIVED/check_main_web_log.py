@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def check_main_web_log(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,13 +13,14 @@ def check_main_web_log(host, user, password):
         print("--- Reading main KSC Web Console log ---")
         cmd = "sudo -S tail -n 100 /var/opt/kaspersky/ksc-web-console/logs/KSC-Web-Console-server.***REMOVED***.*.log"
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def check_postgres_db(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -11,11 +12,12 @@ def check_postgres_db(host, user, password):
         # PostgreSQL list databases
         print("--- PostgreSQL Databases ---")
         stdin, stdout, stderr = client.exec_command('sudo -u postgres psql -c "\\l"')
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

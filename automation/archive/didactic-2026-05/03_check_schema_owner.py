@@ -20,6 +20,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,7 +36,7 @@ def main():
 
         # Consulta para verificar o OWNER do esquema
         q = "SELECT nspname, rolname FROM pg_namespace n JOIN pg_roles r ON n.nspowner = r.oid WHERE nspname = 'iam';"
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -t -c \"{q}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -t -c "{q}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -47,6 +48,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na auditoria: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ import os
 import sys
 import json
 
+
 def apply_web_console_port_fix(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -11,10 +12,12 @@ def apply_web_console_port_fix(host, user, password):
 
         # 1. Read existing config.json
         print("--- Reading current config.json ---")
-        stdin, stdout, stderr = client.exec_command("sudo -S cat /var/opt/kaspersky/ksc-web-console/server/config.json")
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S cat /var/opt/kaspersky/ksc-web-console/server/config.json"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
-        config_content = stdout.read().decode('utf-8')
+        config_content = stdout.read().decode("utf-8")
 
         # Strip sudo prompt if present
         if "[sudo]" in config_content:
@@ -32,20 +35,25 @@ def apply_web_console_port_fix(host, user, password):
         # 3. Write new config.json
         print("--- Writing new config.json ---")
         client.exec_command(f"echo '{new_config_json}' > /tmp/config_fixed.json")
-        stdin, stdout, stderr = client.exec_command("sudo -S cp /tmp/config_fixed.json /var/opt/kaspersky/ksc-web-console/server/config.json")
-        stdin.write(password + '\n')
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S cp /tmp/config_fixed.json /var/opt/kaspersky/ksc-web-console/server/config.json"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
 
         # 4. Restart Services
         print("--- Restarting Web Console Services ---")
-        client.exec_command("sudo -S systemctl restart KSCWebConsole.service KSCSvcWebConsole.service")
-        stdin.write(password + '\n')
+        client.exec_command(
+            "sudo -S systemctl restart KSCWebConsole.service KSCSvcWebConsole.service"
+        )
+        stdin.write(password + "\n")
         stdin.flush()
 
         print("Done!")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

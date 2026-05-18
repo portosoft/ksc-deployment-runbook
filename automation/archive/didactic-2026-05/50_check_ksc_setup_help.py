@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -49,11 +50,14 @@ def main():
             print("--- Opções de ksc_setup.pl ---")
             print(results)
         else:
-            print("Não foi possível obter a ajuda do script (possivelmente não aceita --help).")
+            print(
+                "Não foi possível obter a ajuda do script (possivelmente não aceita --help)."
+            )
 
         client.close()
     except Exception as e:
         print(f"Erro na investigação do setup: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def search_service_mode(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,13 +13,14 @@ def search_service_mode(host, user, password):
         print("--- Searching for SERVICE_MODE in server/ ---")
         cmd = "sudo -S grep -ri 'SERVICE_MODE' /var/opt/kaspersky/ksc-web-console/server/ | head -n 20"
         stdin, stdout, stderr = client.exec_command(cmd)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

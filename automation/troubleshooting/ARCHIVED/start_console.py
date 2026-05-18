@@ -2,6 +2,7 @@ import subprocess
 import os
 import sys
 
+
 def start_console():
     # Environment variables
     env = os.environ.copy()
@@ -25,16 +26,13 @@ def start_console():
     try:
         # Run and stream output
         process = subprocess.Popen(
-            cmd,
-            env=env,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            universal_newlines=True
+            cmd, env=env, stdout=sys.stdout, stderr=sys.stderr, universal_newlines=True
         )
         process.wait()
     except Exception as e:
         print(f"Error starting console: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     start_console()

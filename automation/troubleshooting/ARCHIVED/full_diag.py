@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def get_diagnostics(host, user, password, since):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -9,27 +10,30 @@ def get_diagnostics(host, user, password, since):
         client.connect(host, username=user, password=password, timeout=30)
 
         print(f"--- NATS Logs since {since} ---")
-        cmd_nats = f'sudo -S journalctl -u ksc-nats.service --since "{since}" --no-pager'
+        cmd_nats = (
+            f'sudo -S journalctl -u ksc-nats.service --since "{since}" --no-pager'
+        )
         stdin, stdout, stderr = client.exec_command(cmd_nats)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         print(f"--- Web Console Logs since {since} ---")
         cmd_web = f'sudo -S journalctl -u ksc-web-console.service --since "{since}" --no-pager'
         stdin, stdout, stderr = client.exec_command(cmd_web)
-        stdin.write(password + '\n')
+        stdin.write(password + "\n")
         stdin.flush()
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         print("--- Active Connections (Port 8222) ---")
         cmd_ss = "sudo ss -tpn | grep 8222"
         stdin, stdout, stderr = client.exec_command(cmd_ss)
-        print(stdout.read().decode('utf-8'))
+        print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

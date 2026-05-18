@@ -2,13 +2,14 @@ import paramiko
 import os
 import sys
 
+
 def setup_nats_conf(host, user, password):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 
-        target_dir = '/var/opt/kaspersky/ksc-web-console'
+        target_dir = "/var/opt/kaspersky/ksc-web-console"
         print(f"--- Creating {target_dir}/nats.conf ---")
 
         conf_content = f"""port: 8222
@@ -20,18 +21,20 @@ tls {{
 }}
 """
         sftp = client.open_sftp()
-        with sftp.file('/tmp/nats.conf', 'w') as f:
+        with sftp.file("/tmp/nats.conf", "w") as f:
             f.write(conf_content)
         sftp.close()
 
         # Move and update service
-        cmd = f'echo "{password}" | sudo -S mv /tmp/nats.conf {target_dir}/nats.conf && ' \
-              f'echo "{password}" | sudo -S chown root:root {target_dir}/nats.conf'
+        cmd = (
+            f'echo "{password}" | sudo -S mv /tmp/nats.conf {target_dir}/nats.conf && '
+            f'echo "{password}" | sudo -S chown root:root {target_dir}/nats.conf'
+        )
         client.exec_command(cmd)
 
         # Update Service unit to use -c
-        unit_file = '/etc/systemd/system/ksc-nats.service'
-        nats_bin = f'{target_dir}/vendor/nats-server'
+        unit_file = "/etc/systemd/system/ksc-nats.service"
+        nats_bin = f"{target_dir}/vendor/nats-server"
         new_unit = f"""[Unit]
 Description=NATS Server for KSC Web Console
 After=network.target
@@ -47,16 +50,18 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 """
-        with open('/tmp/ksc-nats.service', 'w') as f:
+        with open("/tmp/ksc-nats.service", "w") as f:
             f.write(new_unit)
 
         sftp = client.open_sftp()
-        sftp.put('/tmp/ksc-nats.service', '/tmp/ksc-nats.service.remote')
+        sftp.put("/tmp/ksc-nats.service", "/tmp/ksc-nats.service.remote")
         sftp.close()
 
-        cmd = f'echo "{password}" | sudo -S mv /tmp/ksc-nats.service.remote {unit_file} && ' \
-              f'echo "{password}" | sudo -S systemctl daemon-reload && ' \
-              f'echo "{password}" | sudo -S systemctl restart ksc-nats.service'
+        cmd = (
+            f'echo "{password}" | sudo -S mv /tmp/ksc-nats.service.remote {unit_file} && '
+            f'echo "{password}" | sudo -S systemctl daemon-reload && '
+            f'echo "{password}" | sudo -S systemctl restart ksc-nats.service'
+        )
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdout.read()
@@ -65,6 +70,7 @@ WantedBy=multi-user.target
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

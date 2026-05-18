@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -36,10 +37,10 @@ def main():
         client.connect(host, username=user, password=password)
 
         # SQL para criar o esquema e dar permissões
-        sql = f"CREATE SCHEMA IF NOT EXISTS iam AUTHORIZATION \"{db_user}\"; GRANT ALL ON SCHEMA iam TO \"{db_user}\";"
+        sql = f'CREATE SCHEMA IF NOT EXISTS iam AUTHORIZATION "{db_user}"; GRANT ALL ON SCHEMA iam TO "{db_user}";'
 
         print(f"Provisionando esquema 'iam' no banco \"{db_name}\"...")
-        cmd = f"sudo -S -u postgres psql -d \"{db_name}\" -c \"{sql}\""
+        cmd = f'sudo -S -u postgres psql -d "{db_name}" -c "{sql}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -49,6 +50,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na execução SQL: {e}")
+
 
 if __name__ == "__main__":
     main()

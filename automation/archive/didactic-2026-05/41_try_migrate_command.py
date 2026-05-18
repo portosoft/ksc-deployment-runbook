@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -46,12 +47,15 @@ def main():
         error = stderr.read().decode().strip()
 
         print("--- Saída do Comando ---")
-        if output: print(output)
-        if error: print(f"ERRO/AVISO: {error}")
+        if output:
+            print(output)
+        if error:
+            print(f"ERRO/AVISO: {error}")
 
         client.close()
     except Exception as e:
         print(f"Erro na tentativa de migração: {e}")
+
 
 if __name__ == "__main__":
     main()

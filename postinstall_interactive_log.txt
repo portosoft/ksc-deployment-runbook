@@ -1,0 +1,1293 @@
+LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl
+[?2004l﻿CONTRATO DE LICENÇA DE USUÁRIO FINAL do Kaspersky Security Center 16.2 Linux E P
+OLÍTICA DE PRIVACIDADE de Produtos e Serviços
+
+CONTRATO DE LICENÇA DE USUÁRIO FINAL DO Kaspersky Security Center 16.2 Linux (DO
+RAVANTE NESTA DENOMINADO O "CONTRATO DE LICENÇA")
+
+AVISO LEGAL IMPORTANTE PARA TODOS OS USUÁRIOS: LEIAM COM CUIDADO O SEGUINTE CONT
+RATO LEGAL ANTES DE COMEÇAR A USAR O SOFTWARE.
+
+CLICANDO NO BOTÃO DE ACEITE E INDICANDO O SEU ACEITE NA JANELA QUE CONTÉM O CONT
+RATO DE LICENÇA, OU INSERINDO O(S) SÍMBOLO(S) CORRESPONDENTE(S), VOCÊ CONFIRMA U
+M ACORDO LEGALMENTE VINCULATIVO DE QUE VOCÊ, COMO A ORGANIZAÇÃO NA QUAL O SOFTWA
+RE É BAIXADO OU OBTIDO, AUTORIZOU A PESSOA ACEITANDO ESTE CONTRATO DE LICENÇA A
+CELEBRAR ESTE CONTRATO DE LICENÇA POR VOCÊ E EM SEU NOME. ALÉM DISSO, VOCÊ CONCO
+RDA EM VINCULAR-SE AOS TERMOS E CONDIÇÕES DESTE CONTRATO DE LICENÇA. ESTA AÇÃO S
+IMBOLIZA A SUA ASSINATURA E A SUA CONCORDÂNCIA EM VINCULAR-SE PELOS TERMOS DO PR
+ESENTE CONTRATO, TORNANDO-SE PARTE DELE E CONCORDANDO SER ESTE CONTRATO DE LICEN
+ÇA EXEQUÍVEL COMO QUALQUER OUTRO CONTRATO NEGOCIADO E CELEBRADO POR VOCÊ. CASO V
+OCÊ NÃO CONCORDE COM TODOS OS TERMOS E CONDIÇÕES DO PRESENTE CONTRATO DE LICENÇA
+, CANCELE A INSTALAÇÃO DO SOFTWARE E NÃO O INSTALE.
+
+SE O SOFTWARE VIER ACOMPANHADO DE CONTRATO DE LICENÇA OU DOCUMENTO SIMILAR, OS T
+ERMOS DE USO DO SOFTWARE NELE DEFINIDOS PREVALECERÃO SOBRE O PRESENTE CONTRATO D
+[7m--Mais--(1%)[mE LICENÇA DE USUÁRIO FINAL.
+
+APÓS CLICAR NO BOTÃO DE ACEITE NA JANELA DE CONTRATO DE LICENÇA OU AO DIGITAR O(
+S) SÍMBOLO(S) CORRESPONDENTE(S), VOCÊ TERÁ O DIREITO DE USAR O SOFTWARE EM CONFO
+RMIDADE COM OS TERMOS E CONDIÇÕES DESTE CONTRATO DE LICENÇA.
+
+Se você é uma pessoa física, deve ter capacidade legal para contratar no estado,
+ província ou país de residência e assim poder celebrar este Contrato. Se adquir
+ir o Software em nome de uma organização, você deve estar devidamente autorizado
+ a representar a organização e concluir este Contrato em nome dessa organização.
+
+
+1. Definições
+1.1. Software significa o software, abrangendo quaisquer atualizações e materiai
+s relacionados.
+1.2. Versão Padrão do Software significa a versão gratuita do software fornecida
+ a usuários de produtos de software corporativos do Titular dos direitos.
+1.3. Versão Estendida do Software significa a versão do Software cuja funcionali
+dade é disponibilizada somente após ativação ou instalação do arquivo de chave.
+1.4. Titular dos direitos (proprietário de todos os direitos do Software, sejam
+exclusivos ou não) significa o AO Kaspersky Lab, uma empresa constituída de acor
+do com as leis da Federação Russa.
+1.5. Objeto da proteção significa sistema(s) operacional(ais) e máquinas virtuai
+[7m--Mais--(3%)[ms de sistema e hardware(s) incluindo estação de trabalho, o dispositivo móvel e
+o servidor para o qual o Software foi designado e/ou onde o Software pode ser in
+stalado e/ou usado assim como caixas de e-mails e outros objetos projetados ou c
+ontrolados pelo Software.
+1.6. Usuário Final (Você) significa a organização para a qual o Software é baixa
+do ou instalado e fica certificado por meio deste que tal organização autorizou
+a pessoa que aceitou este contrato a fazê-lo em nome dela. Para os fins deste Co
+ntrato, o termo “organização” inclui, entre outras possibilidades, qualquer soci
+edade, empresa de responsabilidade limitada, sociedade anônima, associação, comp
+anhia de capital aberto, truste, joint venture, organização sindical, organizaçã
+o não constituída do ponto de vista legal ou autoridade governamental. Caso o so
+ftware tenha sido baixado ou instalado em nome de um indivíduo, o Usuário Final
+(“Você”) significa ainda tal indivíduo.
+1.7. Parceiro(s) significa organizações ou indivíduo(s) que distribui(em) o Soft
+ware com base em um processo de contratação e licença com o Titular dos direitos
+.
+1.8. Atualização(ões) são todas as atualizações (upgrades), revisões, patches, a
+primoramentos, cópias, adições ou pacotes de manutenção etc.
+1.9. Manual do Usuário significa o manual do usuário, guia do administrador, gui
+a de implementação, livro de referência e materiais explicativos ou de outros ti
+pos relacionados.
+1.10. Código de Ativação é um conjunto exclusivo de caracteres que pode ser usad
+o para ativar o Software.
+[7m--Mais--(5%)[m1.11. Arquivo de Chave significa um arquivo com a extensão ".key" que pode ser u
+sado para ativar o Software.
+1.12. Certificado de licença significa o documento que é dado ao Usuário acompan
+hado por uma chave de licença e um código de ativação, bem como informações adic
+ionais sobre a licença.
+
+2. Licenciamento
+2.1. Uma licença não exclusiva lhe é concedida para armazenar, carregar, instala
+r, executar e exibir (para “usar”) o Software para administração dos produtos co
+rporativos Kaspersky Lab descritos no Manual do Usuário, abrangendo instalação r
+emota, gestão de licença, configuração e monitoramento de proteção antivírus. Vo
+cê não tem o direito de vender, alugar, sublicenciar, arrendar ou emprestar, ou
+transferir o Software.
+Se você usar a versão de avaliação da versão Estendida do Software, poderá usá-l
+a apenas para fins de avaliação e somente pelo período de avaliação aplicável ún
+ico, a contar da data de ativação da versão de teste inicial. Após o término do
+período de avaliação aplicável, você vai receber os direitos de usar a versão Es
+tendida do Software apenas em conformidade com as condições descritas no Manual
+do Usuário.
+Software de ambiente múltiplo; software de idioma múltiplo; software em mídia du
+al; múltiplas cópias; pacotes. Caso você use diferentes versões do Software ou e
+dições do Software em diferentes idiomas, caso receba o software em mídias múlti
+plas, caso receba múltiplas cópias do Software ou caso receba o Software em um p
+[7m--Mais--(7%)[macote com outro software, o número total permitido dos Objetos da proteção nos q
+uais todas as versões do Software são usadas corresponderá ao número de Objetos
+da proteção especificado nas licenças obtidas por você, ressalvado que a menos q
+ue os termos de licença determinem de outra forma, cada licença adquirida conced
+e-lhe o direito de instalar e usar o Software em tal número de computadores conf
+orme especificado nas Cláusula 2.2.
+2.2. O Número de objeto(s) de proteção ao qual Você tem direito de usar a versão
+ Estendida do Software está limitado ao Número de objeto(s) de proteção que foi
+especificado no Certificado de licença. O Número de objeto(s) de proteção ao qua
+l Você tem direito de usar a versão Padrão do Software é ilimitado.
+2.3. Você tem o direito de fazer uma cópia do Aplicativo apenas para fins de cóp
+ia de segurança, e apenas para substituir a cópia legalmente de sua propriedade,
+ caso essa cópia seja extraviada, destruída ou se tornar inutilizável. Tal cópia
+ de segurança não pode ser utilizada para outros fins, devendo ser destruída qua
+ndo você perder o direito ao uso do Aplicativo ou quando a Sua licença expirar o
+u for rescindida, por qualquer outro motivo, de acordo com a legislação em vigor
+ no país da sua residência principal ou no país onde Você está usando o Aplicati
+vo.
+2.4. Após a instalação da versão Padrão do Software, usuários dos produtos de so
+ftware corporativos comerciais do Titular dos direitos têm o direito de receber
+os seguintes serviços do Titular dos direitos ou de Parceiros dele:
+- Atualizações da versão Padrão do Software através da internet quando e à medid
+a que o Titular dos direitos as divulgar no seu site ou através de outros serviç
+[7m--Mais--(9%)[mos on-line. Quaisquer Atualizações que você venha a receber tornam-se parte do S
+oftware, aplicando-se às mesmas os termos e condições do presente Contrato;
+- Suporte Técnico na Internet e Suporte Técnico por linha telefônica direta;
+- Acesso a informações e recursos adicionais do Titular dos direitos.
+2.5. Após a ativação ou instalação do arquivo de chave para a versão Estendida d
+o Software, Você terá o direito de receber os seguintes serviços do Titular dos
+direitos ou de seus Parceiros durante o prazo especificado no Certificado de lic
+ença:
+- Atualizações da versão Estendida do Software através da internet quando e à me
+dida que o Titular dos direitos as divulgar no seu site ou através de outros ser
+viços on-line. Quaisquer Atualizações que você venha a receber tornam-se parte d
+o Software, aplicando-se às mesmas os termos e condições do presente Contrato;
+- Suporte Técnico na Internet e Suporte Técnico por linha telefônica direta;
+- Acesso a informações e recursos adicionais do Titular dos direitos.
+
+3. Ativação e prazo
+3.1. Caso Você modifique o seu computador ou faça alterações ao software de outr
+o fornecedor instalado nele, o Titular dos direitos poderá exigir que Você repit
+a a ativação da versão Estendida do Software ou a instalação do arquivo de chave
+ de licença. O Titular dos direitos se reserva o direito de usar qualquer meio e
+ procedimentos de verificação para verificar a validade da licença e/ou a legali
+dade de uma cópia da versão Estendida do Software instalada e/ou usada no seu co
+mputador.
+[7m--Mais--(11%)[m3.2. A duração do período de avaliação para a versão Estendida do Software é lim
+itada ao período de avaliação aplicável único (30 dias) a partir do momento de a
+tivação do Software, ou antes do início do período de utilização efetivo da vers
+ão estendida do software de acordo com este Contrato. Se o Titular dos direitos
+alterar a duração do período de avaliação, você será notificado.
+3.3. Sua Licença para Uso da versão Estendida do Software está limitada ao prazo
+ especificado no Certificado de licença, o prazo remanescente poderá ser visuali
+zado pelos meios descritos no Manual do usuário.
+3.4. Após a expiração do período de uso efetivo conforme especificado na Cláusul
+a 3.3, a funcionalidade da versão Estendida do Software será limitada à funciona
+lidade da versão Padrão do Software.
+3.5. Sem prejuízo de qualquer outro remédio legal ou em equidade que o Titular d
+os direitos possa ter, em caso de violação por Você de qualquer um dos termos e
+condições deste Contrato, o Titular dos direitos terá a qualquer momento, sem av
+iso a Você, o direito de rescindir esta Licença sem reembolso do valor da compra
+ ou qualquer parte dele.
+3.6. Você concorda que, ao usar o Software e ao usar qualquer relatório ou infor
+mação obtida como resultado da utilização deste Software, você cumprirá com toda
+s as leis e regulamentos internacionais, nacionais, estaduais, regionais e locai
+s, incluindo, entre outras, as leis de privacidade, do direito autoral, do contr
+ole de exportação e a lei sobre obscenidade.
+3.7. Exceto conforme especificamente determinado neste Contrato, você não poderá
+ transferir ou atribuir nenhum dos direitos cedidos a você mediante este Contrat
+[7m--Mais--(13%)[mo ou qualquer das suas obrigações de acordo com ele.
+3.8. O período de uso da versão Padrão do Software não é limitado pelo Titular d
+os direitos.
+
+4. Suporte Técnico
+4.1. O Suporte Técnico descrito nas Cláusulas 2.4 e 2.5 deste Contrato é forneci
+do a Você de acordo com as regras localizadas em https://support.kaspersky.com/s
+upport/rules.
+Serviço de Suporte Técnico: https://support.kaspersky.com/.
+
+5. Condições em relação a Processamento de Dados
+5.1. Neste Parágrafo para obter mais definições são apresentados:
+Sujeito dos Dados - significa uma pessoa física que é um representante do Usuári
+o Final e/ou usa o Software, direta ou indiretamente, abrangendo um funcionário,
+ colaborador terceirizado, funcionário ou cliente do Usuário Final com relação a
+os quais os dados são transmitidos e processados no contexto de atividades do Us
+uário Final, abrangendo dados que poderiam ser determinados como dados pessoais
+nos termos das leis de alguns países. Sujeito dos Dados também pode incluir qual
+quer indivíduo que comunica e transmite seus dados ao Usuário Final.
+5.2. Quando o Código de Ativação for utilizado para ativar o Software, para veri
+ficar o uso legítimo do Software, o Usuário Final concorda em fornecer periodica
+mente ao Titular dos direitos as seguintes informações: conjuntos de IDs do Soft
+ware que podem ser ativados no dispositivo do usuário, versão completa do Softwa
+[7m--Mais--(15%)[mre, localização do Software, ID de instalação do Software (PCID), Código de ativ
+ação do Software.
+O Titular dos direitos também pode usar tais informações para coletar informaçõe
+s estatísticas sobre a distribuição e o uso do Software do Titular dos direitos.
+
+Usando o Código de Ativação, o Usuário Final fornece o seu consentimento para tr
+ansmitir automaticamente os dados especificados nesta Cláusula. No caso de o Usu
+ário Final não concordar em fornecer essas informações para o Titular dos direit
+os, o Arquivo de Chave deve ser usado para ativar o Software.
+5.3. Se Você usar os servidores de atualização do Titular dos direitos para faze
+r o download das Atualizações, o Usuário Final, a fim de aumentar a eficiência d
+o procedimento de atualização, concordará em fornecer periodicamente ao Titular
+dos direitos as seguintes informações: ID do Software derivada da licença, versã
+o completa do Software, ID da licença do Software, ID de instalação do Software
+(PCID), ID de início da atualização do Software.
+O Titular dos direitos também pode usar tais informações para receber informaçõe
+s estatísticas sobre a distribuição e o uso do Software do Titular dos direitos.
+
+Ao baixar as Atualizações do servidor de atualização do Titular dos direitos, o
+Usuário final fornece seu consentimento para transmitir automaticamente os dados
+ especificados neste Parágrafo. Caso o Usuário Final não concorde em fornecer es
+sas informações ao Titular dos Direitos, o Usuário Final deverá obter as Atualiz
+ações de uma pasta local compartilhada, conforme descrito no Manual do Usuário.
+[7m--Mais--(17%)[m5.4. Se o Software for usado para receber notificações do Titular dos direitos s
+obre as vulnerabilidades nos aplicativos da Kaspersky usados na rede administrad
+a, bem como as atualizações disponíveis para tais aplicativos, a fim de melhorar
+ a segurança e a operabilidade dos produtos do Titular dos direitos para o Usuár
+io Final, o Usuário Final concorda em fornecer periodicamente ao Titular dos dir
+eitos as seguintes informações: Versão do SO, número da compilação do SO, número
+ da atualização do SO, edição do SO, informações estendidas sobre a edição do SO
+; ID do SO; tamanho de bits do SO; versão completa do Software instalado; ID do
+Software; localização do Software.
+Ao utilizar o Software para receber notificações do Titular dos direitos, o Usuá
+rio Final fornece o seu consentimento para transmitir automaticamente os dados e
+specificados nesta Cláusula. Se o Usuário Final se recusar a fornecer essas info
+rmações ao Titular dos direitos, o recebimento das notificações do Titular dos d
+ireitos deverá ser desativado conforme descrito no Manual do Usuário.
+5.5. O Titular dos direitos assume o processamento de todos os dados recebidos d
+o Usuário Final de acordo com o Contrato de Licença, em particular as disposiçõe
+s do Parágrafo 5, “Condições em relação a Processamento de Dados”, bem como de a
+cordo com a funcionalidade do Software que o Usuário Final pode usar, salvo quan
+do especificado em contrário em um contrato separado por escrito entre o Usuário
+ Final e o Titular dos direitos ou seus Parceiros.
+5.6. O Usuário Final é o único responsável por se familiarizar com o Manual do U
+suário, principalmente em relação a processamento de dados, com a Política de Pr
+ivacidade do Titular dos direitos, que descreve a manipulação de dados (https://
+[7m--Mais--(19%)[mwww.kaspersky.com/Products-and-Services-Privacy-Policy) e determinar se eles cum
+prem com os requisitos do Usuário Final.
+5.7. O Usuário Final deve estar em conformidade com as leis que se aplicam ao us
+o do Software, inclusive as leis sobre informações confidenciais, dados pessoais
+ e proteção de dados. O Usuário Final é responsável por implementar e manter a c
+onfidencialidade e as medidas de segurança em relação a dados ao usar componente
+s de Software que processam dados sem a participação do Titular dos direitos. O
+Usuário Final deve determinar as medidas técnicas e organizacionais apropriadas
+para a proteção e confidencialidade dos dados durante o uso de tais componentes
+do Software, de acordo com os objetivos do Usuário Final (por exemplo, geração d
+e relatórios).
+5.8. Tendo em vista a clara determinação das respectivas responsabilidades a res
+peito dos dados pessoais de terceiros, em particular pessoas físicas, cujos dado
+s pessoais são processados quando o Usuário Final usa o Software, o Titular dos
+Direitos e o Usuário Final concordam com o seguinte:
+O Usuário Final assume todas as etapas necessárias para permitir que o Sujeito d
+os Dados exercite seus direitos e para fornecer ao Sujeito dos Dados as informaç
+ões necessárias de acordo com a legislação aplicável, como os Artigos 13 e 14 da
+ Norma (UE) 2016/679 (Regulamento Geral sobre a Proteção de Dados, “GDPR”), se o
+ Sujeito dos Dados se encontrar na União Europeia, ou as leis aplicáveis sobre i
+nformações confidenciais, dados pessoais, proteção de dados ou afins.
+5.9. Durante o uso do Software, especialmente nas situações em que o Usuário Fin
+al configura o Software para usar o Kaspersky Security Network, o Usuário Final
+[7m--Mais--(22%)[mé totalmente responsável por garantir que o processamento de dados pessoais dos
+sujeitos dos dados seja lícito, particularmente, dentro do significado do Artigo
+ 6 (1), alíneas a (a) a (f), da Norma (EU) 2016/679 ("GDPR", sigla do inglês par
+a "Regulamento Geral sobre a Proteção de Dados") (se o Sujeito dos Dados estiver
+ na União Europeia) ou as leis aplicáveis, informações confidenciais e dados pes
+soais, proteção de dados, ou semelhantes.
+5.10. Em referência às bases legais para processamento de dados, no caso em que
+o Usuário Final quiser basear a legalidade do processamento no consentimento de
+seus Sujeitos dos Dados, o Usuário Final deve garantir que o consentimento que a
+tende a todos os requisitos das leis aplicáveis, especialmente quando o Sujeito
+dos Dados estiver na União Europeia e o Artigo 6 (1), alínea (a), do GDPR for ap
+licável, tenha sido dado por cada Sujeitos dos Dados do Usuário Final antes de u
+sar o Software. O Usuário Final garante que o consentimento de cada Sujeito dos
+Dados do Usuário Final foi obtido antes do processamento de dados pessoais.
+5.11. Fica acordado entre o Titular dos direitos e o Usuário Final que, no caso
+do item 5.10 deste Contrato de Licença, o Usuário Final é responsável por compro
+var a existência de efetivo consentimento com o processamento de dados pessoais,
+ especialmente de acordo com o Artigo 7 (1) da GDPR, sempre que o Sujeito dos Da
+dos estiver na União Europeia. O Usuário Final garante que é capaz de e comprova
+rá a existência de consentimento de cada Sujeito dos Dados a qualquer momento me
+diante solicitação do Titular dos direitos dentro de 5 (cinco) dias a partir da
+data de solicitação do Titular dos direitos.
+5.12. Além disso, no caso do item 5.10 deste Contrato de Licença, o Usuário Fina
+[7m--Mais--(24%)[ml é obrigado e tem total responsabilidade em oferecer a cada Sujeito dos Dados,
+individualmente, todas as informações exigidas pela legislação aplicável para ob
+ter seu consentimento, especialmente nos termos do Artigo 13 da GDPR (se o Sujei
+to dos Dados estiver na União Europeia), antes de usar o Software. Em particular
+, o Usuário Final é obrigado a fornecer a cada Sujeito dos Dados na União Europe
+ia, ou quando a legislação aplicável exigir, a Política de Privacidade do Titula
+r dos direitos (https://www.kaspersky.com/Products-and-Services-Privacy-Policy)
+antes de usar o Software.
+5.13. O Usuário Final deve ser totalmente responsável em relação ao Titular dos
+direitos por qualquer dano resultante de uma infração deste Contrato de Licença,
+ em particular, a falha do Usuário Final em obter o efetivo consentimento do Suj
+eito dos Dados, quando aplicável, e/ou uma falha em obter efetivo consentimento
+suficiente e/ou da falta de provas e/ou prova de efetivo consentimento tardia do
+ Sujeito dos Dados e/ou de qualquer outra infração de uma obrigação nos termos d
+o presente contrato.
+5.14. O Usuário Final indenizará o Titular dos direitos em relação a terceiros c
+ontra reclamações oriundas da falha do Usuário Final em cumprir com as obrigaçõe
+s nos termos do Parágrafo 5, "Condições em relação a Processamento de Dados", qu
+e terceiros, especialmente as autoridades que supervisionam a proteção de dados,
+ asseverarem contra o Titular dos direitos.
+
+6. Limitações
+6.1. Você não emulará, não copiará, não alugará, não emprestará, não arrendará,
+[7m--Mais--(26%)[mnão venderá, não modificará, não descompilará o Software nem submeterá o Softwar
+e a engenharia reversa, não desmontará nem criará produtos derivados com base no
+ Software ou em qualquer parte do Software, estabelecendo-se como a única exceçã
+o qualquer direito irrevogável concedido a Você nos termos da legislação aplicáv
+el, e Você não reduzirá de nenhum outro modo qualquer parte do Software a forma
+legível para seres humanos nem transferirá o Software licenciado ou qualquer sub
+conjunto do Software licenciado e não permitirá que nenhum terceiro o faça, salv
+o na medida em que a restrição acima seja expressamente proibida pela legislação
+ aplicável. Nem o código binário do Aplicativo nem o código-fonte pode ser usado
+ ou submetido a engenharia reversa para recriar o algoritmo do programa, que é e
+xclusivo do Titular. Quaisquer direitos não expressamente concedidos neste Contr
+ato são reservados ao Titular dos direitos e/ou seus fornecedores, conforme apli
+cável. Qualquer uso não autorizado do Aplicativo resultará na rescisão imediata
+e automática do presente Contrato e da Licença aqui concedida, podendo resultar
+em processo penal e/ou cível contra Você.
+6.2. Você não transferirá os direitos de uso do Software para nenhum terceiro.
+6.3. Você não proporcionará o código de ativação e/ou o arquivo de chave de lice
+nça da versão Estendida do Software a terceiros. O código de ativação e/ou a cha
+ve de licença são consideradas dados confidenciais.
+6.4. Você não alugará, não arrendará nem emprestará o Software para nenhum terce
+iro.
+6.5. Você não usará o Software na criação de dados ou softwares usados para a de
+tecção, o bloqueio ou o tratamento das ameaças descritas no Manual do usuário.
+[7m--Mais--(28%)[m6.6. O seu arquivo de chave ou código de ativação para a versão Estendida do Sof
+tware poderá ser bloqueado caso você viole os termos e condições deste Contrato.
+
+6.7. Caso Você infrinja os termos e condições deste Contrato, o Titular dos dire
+itos terá o direito de rescindir esta Licença, com efeito imediato, e/ou bloquea
+r o seu arquivo de chave sem, por isso, obrigar-se a reembolsar o valor da compr
+a ou qualquer parte desse valor. Esse direito de rescisão e/ou de bloqueio de se
+u arquivo de chave é válido, em particular, nos seguintes casos:
+- Se Você usar o Software para fins ilegais.
+- Se Você transmitir ou armazenar materiais que infrinjam direitos de propriedad
+e intelectual ou quaisquer outros direitos de terceiros ou que sejam ilegais, nã
+o autorizados, difamatórios, ofensivos ou invadam a privacidade de terceiros.
+- Se Você transmitir ou armazenar dados de propriedade de terceiros sem antes ob
+ter o consentimento do proprietário dos dados para sua transmissão conforme defi
+nido em lei.
+- Se Você transmitir materiais abrangendo vírus de computador ou quaisquer outro
+s códigos, arquivos ou programas prejudiciais.
+- Se Você agir de qualquer modo que interfira na operação do servidor ou de rede
+s associadas ao Software ou a interrompa.
+- Se Você tentar obter acesso não autorizado aos sistemas de computação ou redes
+ associadas ao Software.
+- Se Você tiver descumprido qualquer lei local, estadual, nacional, internaciona
+l e supranacional vigente ou as especificações mencionadas na documentação ou em
+[7m--Mais--(30%)[m documentos de transferência relacionados da revenda autorizada da qual Você com
+prou o Software.
+6.8. Se Você estiver usando a versão de avaliação do Software, Você não terá dir
+eito a receber o Suporte Técnico especificado no Parágrafo 4 deste Contrato e Vo
+cê não terá direito a transferir a licença ou os direitos de uso do Software par
+a nenhum terceiro.
+6.9. A violação dos direitos de propriedade intelectual para o Software resultar
+á em responsabilidade civil, administrativa ou criminal de acordo com a lei.
+
+7. Garantia limitada e exclusão
+7.1. O Titular dos direitos garante que o Software desempenhará substancialmente
+, de acordo com as especificações e descrições estabelecidas no Manual do Usuári
+o, desde que, entretanto, a referida garantia limitada não se aplique ao seguint
+e: (w) deficiências de seu computador e violação relacionada para as quais o Tit
+ular dos direitos renuncia expressamente a qualquer responsabilidade da garantia
+; (x) avarias; defeitos ou falhas resultantes de uso indevido; abuso; acidente;
+negligência; instalação, operação ou manutenção imprópria; furto; vandalismo; at
+os fortuitos; atos de terrorismo; falhas ou picos de energia;  acidente; alteraç
+ão; modificações ou reparos não permitidos por qualquer terceiro que não seja o
+Titular dos direitos; ou quaisquer outros terceiros ou Suas ações ou causas além
+ do controle razoável pelo Titular dos direitos; (y) qualquer defeito, não divul
+gado por Você ao Titular dos direitos o mais rapidamente possível, após o defeit
+o aparecer pela primeira vez; e (z) incompatibilidade causada por componentes de
+[7m--Mais--(32%)[m hardware e/ou software instalados em Seu computador.
+7.2. Você reconhece, aceita e concorda que nenhum software está livre de erros e
+ recomendamos que Você faça backup do computador com a frequência e o grau de co
+nfiabilidade apropriados para Você.
+7.3. O Titular dos direitos não oferece qualquer garantia de que o Software irá
+funcionar corretamente em caso de violação dos termos e condições descritos no M
+anual do Usuário ou no presente Contrato.
+7.4. O Titular dos direitos não garante que o Software irá funcionar corretament
+e se Você não baixar regularmente as Atualizações especificadas na Cláusulas 2.4
+ e 2.5 do presente Contrato.
+7.5. O Titular dos direitos não garante proteção contra as ameaças descritas no
+Manual do usuário depois da expiração do período especificado nas cláusulas 3.2
+ou 3.3 deste Contrato ou após a Licença de uso do Software ser rescindida, seja
+por que motivo for.
+7.6. Você reconhece que o Software será fornecido com as configurações-padrão Ka
+spersky aplicadas por padrão e que é de sua exclusiva responsabilidade configura
+r o Software para satisfazer suas próprias necessidades.
+7.7. Você reconhece e concorda que, se a funcionalidade de acesso remoto e contr
+ole for usada, isso significará que todas as questões relativas à legalização de
+sse acesso serão resolvidas de acordo com as leis locais antes do início de tal
+acesso.
+7.8. O SOFTWARE É FORNECIDO “NAS CONDIÇÕES EM QUE SE ENCONTRA” E O TITULAR DOS D
+IREITOS NÃO FAZ QUALQUER AFIRMAÇÃO NEM OFERECE QUALQUER GARANTIA COM RELAÇÃO AO
+[7m--Mais--(34%)[mUSO OU DESEMPENHO DO MESMO. EXCETO POR QUALQUER GARANTIA, CONDIÇÃO, AFIRMAÇÃO OU
+ TERMO CUJA MEDIDA NÃO POSSA SER EXCLUÍDA OU LIMITADA DE ACORDO COM A LEGISLAÇÃO
+ APLICÁVEL, O TITULAR DOS DIREITOS E SEUS PARCEIROS NÃO DÃO QUALQUER GARANTIA, C
+ONDIÇÃO OU FAZEM QUALQUER AFIRMAÇÃO OU TERMO (SEJA DE MANEIRA EXPLÍCITA OU IMPLÍ
+CITA, SEJA POR ESTATUTO, LEI CONSUETUDINÁRIA, COSTUME, USO OU DE QUALQUER OUTRA
+MANEIRA) QUANTO A QUALQUER ASSUNTO, ABRANGENDO, ENTRE OUTROS, NÃO INFRINGIMENTO
+DE DIREITOS DE TERCEIROS, COMERCIABILIDADE, ATENDIMENTO DE PADRÕES DE QUALIDADE,
+ OBJETIVO OU APLICABILIDADE PARA UM FIM ESPECÍFICO. VOCÊ ASSUME TODAS AS FALHAS
+E TODO O RISCO QUANTO AO DESEMPENHO E A RESPONSABILIDADE POR ESCOLHER O SOFTWARE
+ PARA ATINGIR OS RESULTADOS PRETENDIDOS, BEM COMO PELA INSTALAÇÃO, PELO USO E PE
+LOS RESULTADOS OBTIDOS COM O SOFTWARE. SEM PREJUÍZO DAS DISPOSIÇÕES ANTERIORES,
+O TITULAR DOS DIREITOS NÃO FAZ NENHUMA DECLARAÇÃO E NÃO DÁ NENHUMA GARANTIA QUE
+O SOFTWARE ESTARÁ LIVRE DE ERROS, INTERRUPÇÕES OU OUTRAS FALHAS, NEM QUE O SOFTW
+ARE ATENDERÁ QUALQUER OU TODOS OS SEUS REQUISITOS, QUER OU NÃO DIVULGADOS AO TIT
+ULAR DOS DIREITOS.
+7.9. EXCEÇÃO: Em determinados países e/ou jurisdições, a exclusão de garantias e
+xpressas ou implícitas não é permitida, e a isenção de responsabilidade acima me
+ncionada não se aplica a esses países. NESSE CASO, AS GARANTIAS EXPRESSAS OU IMP
+LÍCITAS ESTÃO LIMITADAS, QUANTO À DURAÇÃO, AO PERÍODO DE GARANTIA NO RESPECTIVO
+PAÍS (OU AO PERÍODO MÍNIMO EXIGIDO PELA LEGISLAÇÃO APLICÁVEL).
+
+8. Exclusão e limitação da responsabilidade
+8.1. NA MEDIDA DO PERMITIDO PELA LEGISLAÇÃO APLICÁVEL, EM NENHUM CASO O TITULAR
+[7m--Mais--(36%)[mDOS DIREITOS OU SEUS PARCEIROS SERÃO RESPONSÁVEIS POR QUAISQUER DANOS ESPECIAIS,
+ INCIDENTAIS, PUNITIVOS, INDIRETOS, CONSEQUENCIAIS OU QUAISQUER DANOS (ABRANGEND
+O, ENTRE OUTROS, DANOS POR LUCRO CESSANTE OU INFORMAÇÕES CONFIDENCIAIS OU OUTRAS
+ INFORMAÇÕES, POR INTERRUPÇÃO DOS NEGÓCIOS, POR PERDA DE PRIVACIDADE, POR CORRUP
+ÇÃO, DANO E PERDA DE DADOS OU PROGRAMAS, POR NÃO CUMPRIMENTO DE QUALQUER DEVER A
+BRANGENDO QUALQUER OBRIGAÇÃO LEGAL, DEVER DE BOA-FÉ OU DEVER DE CUIDADOS RAZOÁVE
+IS, POR NEGLIGÊNCIA, POR PREJUÍZOS ECONÔMICOS, E QUAISQUER OUTRAS PERDAS PECUNIÁ
+RIAS OU OUTRA PERDA) DECORRENTES DE OU DE ALGUMA MANEIRA RELACIONADOS AO USO OU
+À IMPOSSIBILIDADE DE USAR O SOFTWARE, A PROVISÃO OU FALTA DE PRESTAÇÃO DE SUPORT
+E OU OUTROS SERVIÇOS, INFORMAÇÕES, SOFTWAREE CONTEÚDO RELACIONADO POR MEIO DO SO
+FTWAREOU DE OUTROS DECORRENTES DO USO DO SOFTWAREOU DE QUALQUER OUTRO RESULTANTE
+ OU RELACIONADO COM QUALQUER DISPOSIÇÃO DO PRESENTE CONTRATO DE LICENÇA, OU DECO
+RRENTE DE QUALQUER VIOLAÇÃO DE CONTRATO OU QUALQUER OFENSA (ABRANGENDO NEGLIGÊNC
+IA, DETURPAÇÃO, QUALQUER RESPONSABILIDADE OU OBRIGAÇÃO RIGOROSA), OU QUALQUER VI
+OLAÇÃO DA GARANTIA DE OBRIGAÇÃO LEGAL OU QUALQUER VIOLAÇÃO DA GARANTIA DO TITULA
+R DOS DIREITOS E/OU QUALQUER UM DE SEUS PARCEIROS, MESMO SE O TITULAR DOS DIREIT
+OS E/OU QUALQUER PARCEIRO TENHA SIDO ALERTANDO DA POSSIBILIDADE DOS REFERIDOS DA
+NOS.
+
+8.2. NA HIPÓTESE DE QUALQUER AVISO DE ISENÇÃO, EXCLUSÃO OU LIMITAÇÃO NESTE CONTR
+ATO DE LICENÇA NÃO PUDER SER EXCLUÍDA OU LIMITADA DE ACORDO COM A LEI APLICÁVEL,
+ ENTÃO APENAS TAL AVISO DE ISENÇÃO, EXCLUSÃO OU LIMITAÇÃO NÃO SE APLICARÁ A VOCÊ
+ E VOCÊ CONTINUARÁ A SER VINCULADO POR TODOS OS DEMAIS AVISOS DE ISENÇÕES, EXCLU
+[7m--Mais--(39%)[mSÕES E LIMITAÇÕES.
+
+8.3. PARA CONSUMIDORES NA ALEMANHA: Se Você é um cliente na Alemanha, as limitaç
+ões especificadas no parágrafo acima, “Isenção e limitação de responsabilidade”
+não se aplicam a Você. Em lugar dele, será aplicada a seguinte disposição a dano
+s ou compensação por despesas fúteis, por qualquer razão legal, abrangendo atos
+ilegais:
+O Titular dos direitos poderá ser responsabilizado em caso de reclamação de dolo
+ ou negligência grave, de acordo com a Lei de responsabilidade sobre produtos, a
+lém de lesão que represente ameaça à vida, dano ao corpo e à saúde de acordo com
+ as disposições legais alemãs. O Titular dos direitos não poderá ser responsabil
+izado por negligência leve, exceto no que diz respeito a infrações de deveres co
+ntratuais essenciais. Nesses casos, a responsabilidade do Titular dos direitos é
+ limitada a danos típicos e previsíveis. Em todos os demais casos, o Titular dos
+ direitos não poderá ser responsabilizado por negligência leve.
+8.4. NADA NESTE CONTRATO AFETA OS SEUS DIREITOS DE ACORDO COM UMA LEI DE PROTEÇÃ
+O DO CONSUMIDOR OU QUALQUER OUTRA LEI DO PAÍS QUE NÃO POSSA SER REVOGADA POR EST
+E CONTRATO
+
+9. Software de código aberto e outras Licenças de terceiros
+9.1. O Software pode incluir alguns programas de software licenciados (ou sublic
+enciados) para o usuário conforme a Licença pública geral do GNU (GPL) ou outras
+ licenças de software livre similares que, entre outros direitos, permitem ao us
+[7m--Mais--(40%)[muário copiar, modificar e redistribuir certos programas, ou partes deles, e obte
+r acesso ao código fonte (“Software de Código Aberto”). Caso essas licenças exij
+am que, para qualquer Software que é distribuído a alguém em formato binário exe
+cutável, o código-fonte também seja disponibilizado a esses usuários, então ele
+deve ser disponibilizado por meio do envio de uma solicitação para source@kasper
+sky.com ou o código fonte fornecido juntamente com o Software. Se quaisquer lice
+nças de Software de Código Aberto exigirem que o Titular dos direitos conceda di
+reitos para usar, copiar ou modificar um programa de Software de Código Aberto,
+que sejam mais abrangentes que os direitos concedidos no presente Contrato, os r
+eferidos direitos devem ter primazia sobre os direitos e restrições no presente
+instrumento.
+
+10. Titularidade da propriedade intelectual
+10.1. Você concorda que o Software e a autoria, sistemas, ideias, métodos de ope
+ração, documentação e outras informações contidas no Software são propriedade in
+telectual e/ou segredos comerciais valiosos do Titular dos direitos ou dos seus
+parceiros e que o Titular dos direitos e seus parceiros, conforme aplicável, est
+ão protegidos pela legislação civil e criminal e pela legislação referente a dir
+eitos autorais, segredos comerciais, marcas registradas e patentes da Federação
+Russa, da União Europeia e dos Estados Unidos, bem como de outros países e trata
+dos internacionais. Este Contrato não concede a Você nenhum direito à propriedad
+e intelectual, abrangendo a quaisquer Marcas Registradas ou Marcas de Serviço do
+ Titular dos direitos e/ou dos parceiros dele (“Marcas Registradas”). Você poder
+[7m--Mais--(43%)[má usar as marcas comerciais somente para fins de identificação de saídas impress
+as produzidas pelo Software, de acordo com a praxe de marcas comerciais, abrange
+ndo a identificação do nome do titular da marca comercial. Essa utilização de qu
+alquer marca comercial não lhe concede qualquer direito de propriedade sobre a r
+eferida marca. O Titular dos direitos e/ou seus parceiros possuem e detêm todos
+os direitos, títulos e interesses relativos ao Software, incluindo, entre outros
+, quaisquer correções de erros, melhorias, atualizações ou outras modificações a
+o Software, sejam realizadas pelo Titular dos direitos ou por qualquer terceiro,
+ e todos os direitos autorais, patentes, direitos a segredos comerciais, marcas
+comerciais e outros direitos de propriedade intelectual contidos neste instrumen
+to. Sua posse, instalação ou uso do Software não transfere a você qualquer titul
+ação referente à propriedade intelectual do Software e você não adquirirá qualqu
+er direito ao Software exceto como expressamente definido neste Contrato. Todas
+as cópias do Software feitas sob este instrumento devem conter as mesmas advertê
+ncias sobre a propriedade que aparecem no Software. Exceto como definido neste i
+nstrumento, este Contrato não concede a você qualquer direito de propriedade int
+electual com relação ao Software e você reconhece que a licença, como definida n
+este instrumento, concedida sob este Contrato, concede a você somente um direito
+ de uso limitado sob os termos e condições deste Contrato. O Titular dos direito
+s reserva todos os direitos não expressamente concedidos a você no presente Cont
+rato.
+10.2. Você concorda em não modificar nem alterar o Software de qualquer maneira.
+ Você não pode remover ou alterar qualquer advertência de direitos autorais ou o
+[7m--Mais--(45%)[mutras advertências sobre a propriedade em quaisquer cópias do Software.
+
+11. Remuneração de terceiros
+O Titular dos direitos não é responsável pelos valores cobrados pelo seu provedo
+r de dados (p. ex.: Provedor de acesso à Internet) ou de serviços móveis para us
+o dos serviços desses provedores. O uso específico do Software requer acesso a s
+ervidores e comunicação com servidores do Titular dos direitos pela rede do seu
+provedor de serviços. Além disso, os provedores de serviços são responsáveis pel
+os custos relativos ao dispositivo utilizado por Você. Você precisa garantir que
+ seu dispositivo atenda aos requisitos do sistema para o uso do Software, abrang
+endo o recebimento de atualizações. O Titular dos direitos tem direito de modifi
+car os requisitos a qualquer tempo.
+
+12. Lei aplicável; arbitragem
+12.1. Este Contrato será regido e interpretado de acordo com as leis da Federaçã
+o Russa, sem referência a conflitos de leis e princípios. Este Contrato não será
+ regido pela Convenção das Nações Unidas sobre Contratos para a Venda Internacio
+nal de Mercadorias, cuja aplicação está expressamente excluída.
+Se você for um indivíduo, isso não prejudica os seus direitos de acordo com as l
+eis de defesa do consumidor do país em que você reside.
+Qualquer litígio decorrente da interpretação ou aplicação dos termos e condições
+ deste Contrato ou qualquer violação destes deve, se não for resolvido por negoc
+iação direita, ser resolvido no Tribunal de Arbitragem Comercial Internacional d
+[7m--Mais--(47%)[ma Câmara de Comércio e Indústria da Federação Russa em Moscou, Federação Russa.
+Qualquer adjudicação proferida pelo árbitro será final e vinculativa para as par
+tes, podendo ainda qualquer julgamento sobre tal decisão arbitral ser executado
+em qualquer tribunal de jurisdição competente. Nada na presente Seção 12 impedir
+á uma Parte de buscar ou obter reparação justa em tribunal competente, quer ante
+s, durante ou depois dos processos de arbitragem.
+
+13. Prazo para a proposição de ações
+13.1. Nenhuma ação, independente da forma, decorrente das transações dispostas p
+or este Contrato, poderá ser proposta por qualquer das partes mais de um (1) ano
+ após a causa de ação ter ocorrido ou da sua ocorrência ter sido descoberta, exc
+eto pelo fato de ações por infringimento de direitos de propriedade intelectual
+poderem ser propostas no prazo estatutário máximo aplicável.
+EXCEÇÃO PARA CLIENTES NA ALEMANHA: Se Você é um cliente pessoa física na Alemanh
+a, as disposições do item 13 não se aplicam a Você.
+
+14. Totalidade do contrato; divisibilidade; nenhuma renúncia
+14.1. Este Contrato é o contrato integral entre você e o Titular dos direitos, s
+ubstituindo quaisquer outros contratos, propostas, comunicações ou publicidade a
+nterior, sendo verbais ou escritos, com relação ao Aplicativo ou ao assunto do p
+resente Contrato. Você reconhece que leu este Contrato, compreende o mesmo e con
+corda em vincular-se por seus termos e condições.
+14.2. Você reconhece que leu este Contrato, o entendeu e concorda estar vinculad
+[7m--Mais--(49%)[mo por seus termos. Caso qualquer provisão deste Contrato seja por qualquer razão
+ julgada inválida, nula ou inexecutável por uma corte com jurisdição competente,
+ seja no todo ou em parte, tal provisão será interpretada de maneira mais estrei
+ta, de maneira a se tornar legal e executável e o Contrato como um todo não perd
+erá a eficácia em decorrência disso e o restante do Contrato continuará em vigên
+cia total na medida máxima permitida pela lei, preservando, na medida máxima pos
+sível, o seu objetivo.
+14.3. Nenhuma renúncia a qualquer provisão ou condição deste Contrato será válid
+a exceto se por escrito e assinada por você e por um representante autorizado do
+ Titular dos direitos, ressalvado que nenhuma renúncia a ação por violação de qu
+alquer provisão deste Contrato constituirá renúncia a ação por qualquer violação
+ anterior, concomitante ou subsequente. A omissão por parte do Titular dos direi
+tos em insistir no cumprimento rigoroso de qualquer disposição do presente Contr
+ato ou de qualquer direito, ou em fazer valer tal disposição ou direito, não ser
+á interpretada como renúncia a tal disposição ou direito.
+
+15. Informações para contato do Titular dos direitos
+
+Caso você tenha quaisquer perguntas relativas a este Contrato, ou caso deseje en
+trar em contato com o Titular dos direitos, por qualquer motivo, favor entrar em
+ contato com o nosso Departamento de Atendimento ao Cliente:
+
+AO Kaspersky Lab, 39A/3 Leningradskoe Shosse,
+[7m--Mais--(51%)[mMoscow, 125212
+Russian Federation
+E-mail: info@kaspersky.com
+Site: https://www.kaspersky.com/
+
+© 2019 AO Kaspersky Lab
+
+KASPERSKY - POLÍTICA DE PRIVACIDADE DE PRODUTOS E SERVIÇOS
+Introdução
+A AO Kaspersky Lab, localizada em bldg. 3, 39A, Leningradskoe Shosse, Moscow, 12
+5212, Russian Federation, e todas as empresas que pertencem ao grupo "Kaspersky"
+ respeitam a sua privacidade. Nosso representante na UE para proteção de dados é
+: Kaspersky Labs GmbH, Schloßlände 26, 85049, Ingolstadt, Germany, +49 (0) 841 9
+8 18 90, de acordo com o Artigo 27 (1) da Regulamentação (EU) 2016/679 (General
+Data Protection Regulation, "GDPR"). Nosso Encarregado de Proteção de Dados na U
+E, de acordo com o Artigo 37 (1) do GDPR, assim como para outros países, pode se
+r contatado através do e-mail dpo@kaspersky.com.
+Esta Política de Privacidade de Produtos e Serviços (doravante nesta denominada
+a "Política de Privacidade") descreve como usamos as informações que você fornec
+e quando usa os nossos produtos e serviços, e as escolhas que você pode fazer qu
+anto a nossa forma de uso das informações. Também descrevemos as medidas que tom
+amos para proteger as informações e como você pode entrar em contato conosco sob
+re nossas práticas de privacidade.
+[7m--Mais--(52%)[mEm conexão com produtos ou serviços específicos oferecidos pela Kaspersky, são f
+ornecidos a você os contratos, termos de uso e declarações que complementam esta
+ política relacionada a manipulação de dados.
+Esta política pode ser alterada devido a mudanças na legislação, os requisitos d
+as autoridades ou para refletir alterações nas nossas práticas em relação ao pro
+cessamento de dados pessoais. A política revisada será publicada em nosso site e
+ entrará em vigor imediatamente após a publicação. Você pode consultar a polític
+a em vigor atualmente a qualquer momento em nosso site: https://www.kaspersky.co
+m/products-and-services-privacy-policy.
+Esta versão da política está em vigor desde segunda-feira, 28 de fevereiro de 20
+22.
+As Fontes de Informações
+A Kaspersky pode obter informações sobre você de várias fontes, a saber:
+• produtos e serviços;
+• mediante a sua assinatura de um dos produtos ou serviços da Kaspersky;
+• em resposta ao suporte técnico ou outra comunicação a fim de garantir o desemp
+enho necessário de produtos e serviços; 
+• em nossos sites;
+• em resposta a marketing ou outras comunicações;
+• por meio da participação em uma oferta, programa ou promoção.
+Se você nos fornecer quaisquer informações ou materiais relacionados a outrem, v
+ocê certificar-se-á de que tal compartilhamento conosco e o nosso uso subsequent
+e, conforme descrito a você de tempos em tempos, está de acordo com as leis apli
+[7m--Mais--(54%)[mcáveis; portanto, por exemplo, você deve informar à pessoa em questão sobre o pr
+ocessamento de seus dados pessoais e obter o seu consentimento, conforme necessá
+rio nos termos da legislação aplicável.
+Você também pode optar por consentir com que terceiros divulguem informações sob
+re você que tais terceiros tenham recebido.
+Informações Fornecidas pelos Usuários e como Usamos Informações
+O processamento de dados pessoais pela Kaspersky é sempre realizado de forma jus
+ta e legal.
+Você sempre saberá que tipo de informações que você fornece à Kaspersky antes de
+ começar a usar os produtos e serviços. Os dados que você fornece dependem dos s
+erviços, produtos e recursos que você usar. Para obter mais informações sobre os
+ dados que você fornece, consulte o Contrato de Licença de Usuário Final, a Decl
+aração da Kaspersky Security Network e outras documentações de produtos e serviç
+os que você usa, principalmente:
+PARA USUÁRIOS DOMÉSTICOS (B2C):
+• SEÇÃO "B" DO CONTRATO DE LICENÇA DE USUÁRIO FINAL, QUE DESCREVE OS DADOS QUE P
+RECISAM SER PROCESSADOS PARA CUMPRIR COM TODAS AS OBRIGAÇÕES DO CONTRATO;
+• DECLARAÇÃO DA KASPERSKY SECURITY NETWORK, QUE DESCREVE OS DADOS CUJO PROCESSAM
+ENTO PODE AUMENTAR A VELOCIDADE DE REAÇÃO DOS PRODUTOS E SERVIÇOS EM CASO DE AME
+AÇAS À SEGURANÇA DAS INFORMAÇÕES;
+• DECLARAÇÃO DE MARKETING, QUE DESCREVE OS DADOS CUJO PROCESSAMENTO PODE MELHORA
+R O DESEMPENHO DOS PRODUTOS E PERMITIRÁ UMA AVALIAÇÃO DA SATISFAÇÃO DOS USUÁRIOS
+ EM RELAÇÃO AO USO DOS PRODUTOS;
+[7m--Mais--(56%)[m• DECLARAÇÕES À PARTE RELACIONADAS A RECURSOS ESPECÍFICOS DO PRODUTO, QUE DESCRE
+VEM OS DADOS PROCESSADOS DURANTE O USO, POR EXEMPLO, ANTISPAM. DECLARAÇÃO, DECLA
+RAÇÃO DE COMPRA, DECLARAÇÃO DO PORTAL DA WEB E DECLARAÇÃO DO SUPORTE TÉCNICO. VO
+CÊ PODE SE FAMILIARIZAR COM ESSAS DECLARAÇÕES QUANDO ATIVAR OS RECURSOS DO PRODU
+TO.
+PARA USUÁRIOS CORPORATIVOS (B2B):
+• SEÇÃO "CONDIÇÕES RELATIVAS AO PROCESSAMENTO DE DADOS" DO CONTRATO DE LICENÇA D
+E USUÁRIO FINAL, QUE DESCREVE OS DADOS QUE PRECISAM SER PROCESSADOS PARA CUMPRIR
+ COM AS OBRIGAÇÕES DO CONTRATO;
+• DECLARAÇÃO DA KASPERSKY SECURITY NETWORK, QUE DESCREVE OS DADOS CUJO PROCESSAM
+ENTO PODE AUMENTAR A VELOCIDADE DE REAÇÃO DOS PRODUTOS E SERVIÇOS EM CASO DE AME
+AÇAS À SEGURANÇA DAS INFORMAÇÕES. PARA ALGUNS PRODUTOS, O ADMINISTRADOR DE TI OU
+ QUALQUER FUNCIONÁRIO RESPONSÁVEL POR CONFIGURAR O PRODUTO PODE ESCOLHER O VOLUM
+E DE DADOS A SER PROCESSADO;
+• DECLARAÇÕES À PARTE RELACIONADAS A RECURSOS ESPECÍFICOS DO PRODUTO, QUE DESCRE
+VEM OS DADOS PROCESSADOS DURANTE O USO, POR EXEMPLO, DECLARAÇÃO DE MARKETING, DE
+CLARAÇÃO ANTISPAM, DECLARAÇÃO COMPLEMENTAR, DECLARAÇÃO SOBRE O PROCESSAMENTO DE
+DADOS PARA O SERVIÇO KASPERSKY MANAGED PROTECTION, PROTEÇÃO DA WEB E DECLARAÇÃO
+DE SUPORTE TÉCNICO. VOCÊ PODE SE FAMILIARIZAR COM ESSAS DECLARAÇÕES QUANDO ATIVA
+R OS RECURSOS DO PRODUTO.
+Os dados obtidos para processamento dependem do produto ou serviço, e é recomend
+ável que os usuários leiam atentamente as instruções relacionadas e os contratos
+ aceitos durante a instalação ou o uso de software ou serviço.
+[7m--Mais--(58%)[mAlguns dados são não-pessoais de acordo com leis de determinados países. Indepen
+dentemente do tipo de dados de dados e território onde foi recebida ou processad
+a, usamos os mais altos padrões de proteção de dados e aplicamos diversas medida
+s jurídicas, organizacionais e técnicas para proteger os dados dos usuários, gar
+antir a segurança e confidencialidade, bem como garantir que os direitos de gara
+ntia dos usuários nos termos da legislação aplicável.
+Os dados dependem dos produtos e serviços que você usa, e podem incluir o seguin
+te:
+• Informações sobre a licença/assinatura
+Processadas para reconhecer usuários legítimos. Esses dados são necessários para
+ manter a comunicação entre o produto e os serviços da Kaspersky, como para envi
+ar e receber bancos de dados do produto, atualizações, etc.
+• Informações sobre o produto
+Dados sobre a operação do produto e sua interação com o usuário também são anali
+sados. Por exemplo: quanto tempo leva a sondagem de ameaças? Quais recursos são
+usados com mais frequência do que outros? As respostas para essas e outras pergu
+ntas ajudam os desenvolvedores a aprimorar os produtos, tornando-as mais rápidos
+ e fáceis de usar.
+• Dados de dispositivos
+Dados como o tipo de dispositivo, sistema operacional, etc., podem ser necessári
+os para que o usuário não precise comprar uma nova licença para o produto de seg
+urança depois de reinstalar o sistema operacional. Essas informações também nos
+ajudam a analisar ameaças virtuais, pois mostram quantos dispositivos foram afet
+[7m--Mais--(60%)[mados por alguma das ameaças específicas.
+• Ameaças detectadas
+Se uma ameaça (já conhecida ou não) for encontrada em um dispositivo, as informa
+ções sobre a ameaça são enviadas à Kaspersky. Isso nos permite analisar ameaças,
+ suas fontes, princípios de infecção, etc., resultando em uma melhor qualidade d
+e proteção para todos os usuários.
+• Informações sobre aplicativos instalados
+Essas informações ajudam a criar listas de aplicativos inofensivos e impedem que
+ os produtos de segurança identifiquem por engano tais aplicativos como mal-inte
+ncionados. Esses dados também são usados para atualizar e ampliar categorias de
+programas para recursos como Controle para Pais e Controle de Inicialização de A
+plicativos. Além disso, essas informações nos ajudam a oferecer soluções de segu
+rança de usuários que melhor atende às suas necessidades.
+• URLs visitados
+URLs podem ser enviados para serem verificados se são maliciosos ou não. Essas i
+nformações também ajudam a criar listas de sites inofensivos e impedem que os pr
+odutos de segurança identifiquem por engano tais sites como mal-intencionados. E
+sses dados também são usados para atualizar e estender as categorias de sites pa
+ra categorias como o Kaspersky Safe Kids e proporcionar melhor proteção para tra
+nsações financeiras em produtos como o Kaspersky Fraud Prevention. Além disso, e
+ssas informações nos ajudam a oferecer soluções de segurança de usuários que mel
+hor atende às suas necessidades. As informações sobre logins e senhas, se contid
+as na solicitação inicial do navegador do usuário, são removidas dos endereços U
+[7m--Mais--(62%)[mRL visitados até o nome do host ou endereço IP. Em todo caso, não é objetivo da
+Kaspersky processar logins e senhas, e a Kaspersky adota todas as medidas razoáv
+eis e suficientes para evitar o processamento desses dados.
+• Eventos de Sistema Operacional
+Um novo malware geralmente pode ser identificado apenas por seu comportamento su
+speito. Por isso, o produto analisa dados em processos em execução no dispositiv
+o. Isso possibilita identificar precocemente processos que indicam atividade mal
+iciosa para evitar danos consequenciais, tais como a destruição de dados do usuá
+rio.
+• Arquivos suspeitos e arquivos que podem ser explorados por invasores
+Se um (ainda) formato de arquivo desconhecido, exibindo um comportamento suspeit
+o, é detectado em um dispositivo, ele pode ser automaticamente enviado para uma
+análise mais completa com tecnologias baseadas em aprendizagem de máquina e, em
+raros casos, por um analista de malware. A categoria "suspeito" inclui principal
+mente arquivos executáveis (.exe). Para fins de redução da probabilidade de fals
+os positivos, podem ser enviados arquivos inofensivos não executáveis e executáv
+eis ou partes deles.
+• Dados de conexão Wi-Fi
+Essas informações são analisadas para avisar usuários sobre pontos de acesso Wi-
+Fi inseguros (isto é, com proteção fraca), ajudando a evitar que os dados sejam
+interceptados inadvertidamente.
+• Dados de contato do usuário
+Endereços de e-mail são usados para autorização de portais da web da Kaspersky (
+[7m--Mais--(64%)[mMy Kaspersky, Kaspersky CompanyAccount, Kaspersky Endpoint Security Cloud, etc.)
+, o que permite que os usuários gerenciem sua proteção remotamente. Endereços de
+ e-mail são usados para enviar mensagens de segurança (por exemplo, com alertas
+importantes) a usuários de produtos da Kaspersky. Os usuários também podem optar
+ por especificar os nomes (ou apelidos) pelos quais gostariam de ser tratados no
+ portal My Kaspersky e em e-mails. As informações de contato fornecidas pelos us
+uários se dão por seu exclusivo critério.
+• Arquivos de rastreamento e de despejo
+Verificando a caixa especial nas configurações do produto, os usuários também po
+dem compartilhar relatórios de erro com servidores da Kaspersky. Essas informaçõ
+es ajudam (1) durante a análise de erros que ocorreram no produto, e para modifi
+cá-la de acordo, de modo que ele funcionará com mais eficiência dali em diante;
+(2) na investigação de infecção de um computador de usuário para poder reduzir a
+meaças ao sistema do usuário.
+• E-mails
+Durante seu uso da funcionalidade anti-spam, a Kaspersky verifica os e-mails e u
+sa as informações sobre eles para proteger você contra spam e fraude. Quando voc
+ê indica para a Kaspersky que um e-mail é um spam ou foi incorretamente identifi
+cado pelo software como spam, você nos ajuda a analisar a situação, permitindo u
+ma maior qualidade na proteção para os usuários.
+• Dados sobre dispositivos roubados
+O recurso antirroubo fornece acesso remoto e funções de controle projetadas para
+ proteger dados em seu telefone celular em caso de roubo, além de permitir que v
+[7m--Mais--(66%)[mocê receba informações sobre o local do dispositivo roubado. O recurso antirroub
+o precisa armazenar dados sobre o seu telefone e os usuários aprovados para que
+essas funções funcionem.
+• Recurso de proteção de dados para crianças
+Se um pai ou responsável deseja usar o recurso de proteção para crianças como o
+Kaspersky Safe Kids, ele ou ela pode receber informações sobre o dispositivo da
+criança e informações sobre a localização da criança. Além disso, o pai ou respo
+nsável pode configurar os parâmetros para bloquear ou permitir sites específicos
+ e/ou permitir ou impedir a execução de determinados aplicativos no dispositivo
+da criança. A Kaspersky não coleta dados de crianças além da estrutura de tal re
+curso.
+• Identificador exclusivo do dispositivo móvel
+O identificador deste dispositivo foi gerado no dispositivo do usuário no Androi
+d 8 e superior, usando o ID de publicidade do dispositivo. Não processamos o ID
+de anúncio no texto sem criptografia; processamos apenas seu hash sum. Caso o us
+uário redefina o valor do ID de anúncio, o novo valor do único identificador do
+dispositivo móvel será associado ao valor antigo, que será necessário para o uso
+ correto do dispositivo e de seus serviços.
+A KASPERSKY SÓ PROCESSARÁ DADOS PESSOAIS EM PARTICULAR, PARA FINS PRÉ-DETERMINAD
+O QUE SÃO LEGÍTIMOS COM RELAÇÃO À LEGISLAÇÃO APLICÁVEL, E QUE SÃO RELEVANTES PAR
+A NEGÓCIOS DA KASPERSKY.
+• Para garantir o desempenho de um contrato com usuários e para garantir o desem
+penho exigido de produtos e serviços para clientes.
+[7m--Mais--(68%)[m• Para proteger o usuário contra ameaças conhecidas para segurança das informaçõ
+es.
+• Para verificar se a licença é legal.
+• Para atualizar os bancos de dados de antivírus.
+• Para aumentar a eficácia da proteção de dispositivos, redes e sistemas de info
+rmação, em particular, para fornecer uma resposta mais rápida a novas informaçõe
+s e ameaças de segurança de rede, para aumentar a eficácia do desempenho do comp
+onente de proteção do software, para diminuir a probabilidade de falsos positivo
+s.
+• Para detectar ameaças de segurança virtual avançadas e desconhecidas anteriorm
+ente e reduzir os tempos de resposta a elas. Mais detalhes estão disponíveis aba
+ixo na seção "Inteligência de ameaças para Proteção do ciberespaço".
+• Para melhorar a experiência do usuário e os nossos produtos e serviços, inclui
+ndo recursos, funcionalidades e interfaces.
+• Para fornecer suporte técnico de produtos e serviços a clientes e para melhora
+r a qualidade de produtos e serviços.
+• Para adquirir uma visão geral agregada dos produtos para usuários domésticos,
+conduzindo pesquisas e análises estatísticas. Mais detalhes estão disponíveis ab
+aixo na seção "Pesquisa estatística de produtos".
+• Para fornecer aos usuários informações e ofertas personalizadas da Kaspersky,
+abrangendo em relação aos recursos do produto, mantendo níveis de segurança, sup
+orte e outros materiais relacionados à ajuda, bem como produtos e serviços da Ka
+spersky e de terceiros, ofertas de marketing, descontos e materiais promocionais
+[7m--Mais--(70%)[m, com base nos interesses e preferências do usuário.
+Inteligência de ameaças para Proteção do ciberespaço
+Novas gerações de malware aparecem o tempo todo. Muitas usam técnicas novas e so
+fisticadas para controlar as soluções de segurança existentes. Neste ambiente em
+ constante mudança, a proteção é tão eficaz quanto a capacidade de analisar minu
+ciosamente o cenário de ameaças e transformar os dados em inteligência acionável
+ para nossos usuários. Para isso, as soluções de segurança precisam usar uma abo
+rdagem de nuvem que combina a maior parte possível de manipulação de dados de am
+eaças com as tecnologias de processamento de dados mais inteligentes.
+Nossa infraestrutura foi projetada para receber e processar dados complexos de a
+meaças virtuais globais, transformando-os em inteligência de ameaças acionável q
+ue alimenta nossos produtos. Uma fonte principal de dados relacionados a ameaças
+ vem de nossos usuários. Ao compartilhar seus dados e permitir que eles sejam ar
+mazenados e analisados por inteligência artificial e por nossos especialistas, e
+les nos ajudam a garantir que os usuários de todo o mundo estejam protegidos con
+tra as mais recentes ameaças virtuais. Em particular, a KSN nos ajuda a responde
+r rapidamente a ameaças virtuais emergentes, ao mesmo tempo em que oferece a mai
+s alta eficiência possível de proteção e ajuda a reduzir o número de falsos posi
+tivos.
+A quantidade de dados que você permite que nossa infraestrutura receba depende d
+o produto usado, de suas definições de configuração e preferências.
+Essa abordagem oferece vários benefícios para usuários e para o espaço cibernéti
+co em geral, incluindo:
+[7m--Mais--(72%)[m• Detecção de malware avançado e previamente desconhecido;
+• Detecção reduzida de erros (falsos positivos);
+• Redução significativa em tempos de resposta para novas ameaças.
+
+Pesquisa estatística de produtos
+
+Para entender melhor como podemos melhorar a experiência dos usuários atuais, de
+senvolver nossos produtos e serviços, determinar mercados em potencial e buscar
+oportunidades de negócios, realizamos pesquisas e conduzimos análises estatístic
+as para adquirir uma visão geral agregada dos produtos para usuários domésticos.
+ Naturalmente, fazemos isso sempre por uma razão legítima e com base jurídica. A
+lém disso, garantimos a implementação de medidas técnicas e organizacionais para
+ garantir um alto nível de proteção de dados. Por exemplo, quando realizamos aná
+lises estatísticas sobre dados, eles passam primeiro por um processo de desident
+ificação para esse fim. Isso é consistente com nossos princípios de privacidade
+(veja abaixo para obter mais detalhes na seção "Princípios de Privacidade").
+
+Bases Legais para Processamento de Dados
+A base legal que usamos depende da finalidade do processamento de dados pessoais
+, que podem ser:
+• Contrato – de acordo com o ponto (b) do Artigo 6 (1) do GDPR, em casos em que
+temos que processar determinados dados necessários para realizar um contrato, po
+r exemplo, quando um usuário aceita o EULA para usar o software;
+[7m--Mais--(74%)[m• Consentimento – de acordo com o ponto (a) do Artigo 6 (1) do GDPR, em casos em
+ que o usuário opta por enviar dados relacionados à Declaração da KSN, Declaraçã
+o de Marketing, Declaração Antispam, Declaração Complementar, Declaração sobre P
+rocessamento de Dados para Kaspersky Managed Protection, Declaração sobre Proces
+samento de Dados para Controle da Web (anteriormente chamada de Declaração sobre
+ o Processamento de Dados para Controle para Pais), Declaração sobre Processamen
+to de Dados para Filtro de Chamadas, Declaração Proteja um Amigo ou Declaração d
+e Suporte Técnico;
+• Obrigação Legal – de acordo com o ponto (c) do Artigo 6 (1) do GDPR, em casos
+em que temos que processar dados para atender aos requisitos legais, como para f
+ins de taxas;
+• Interesse legítimo – de acordo com o ponto (f) do Artigo 6 (1) do GDPR, em cas
+os em que temos interesses legítimos como uma empresa de segurança virtual, exce
+to quando tais interesses são substituídos pelos interesses ou direitos fundamen
+tais e liberdades do usuário. Esses casos abrangem cenários de processamento em
+que os dados passam por desidentificação para aumentar a proteção dos dados em p
+reparação para a execução de análises estatísticas sobre eles, e onde os dados p
+essoais são armazenados em nossa infraestrutura e analisados quanto a ameaças vi
+rtuais recentes e potenciais usando inteligência artificial e/ou contando com a
+experiência de nossos especialistas. O Recital 49 do GDPR reconhece que é intere
+sse legítimo de uma empresa processar dados pessoais na medida necessária e prop
+orcional, a fim de garantir a segurança da rede e das informações. De acordo com
+ determinadas leis locais, você pode ter direito a exercer direitos em relação a
+[7m--Mais--(76%)[mos seus dados pessoais, como os descritos na seção Seus Direitos e Opções. Se de
+sejar exercer esse direito, entre em contato conosco em https://support.kaspersk
+y.com/general/privacy.
+LIMITAÇÃO OU RESTRIÇÃO NO PROCESSAMENTO DE DADOS
+SE VOCÊ OPTAR POR NÃO FORNECER DADOS QUE SÃO NECESSÁRIOS PARA O FUNCIONAMENTO DE
+ UM PRODUTO OU RECURSO, VOCÊ PODE NÃO SER CAPAZ DE USAR ESSE PRODUTO OU RECURSO.
+ ESSES DADOS OBRIGATÓRIOS SÃO LISTADOS NO CONTRATO DE LICENÇA DE USUÁRIO FINAL.
+A DECLARAÇÃO DA KASPERSKY SECURITY NETWORK OU DECLARAÇÃO DE MARKETING CONTÉM UMA
+ LISTA DE DADOS QUE OS USUÁRIOS PODEM OPTAR POR NOS FORNECER A QUALQUER MOMENTO,
+ MARCANDO A CAIXA CORRESPONDENTE NAS CONFIGURAÇÕES DO PRODUTO (TAMBÉM É POSSÍVEL
+ REVERTER ESSA DECISÃO A QUALQUER MOMENTO).
+O que não processaremos
+Por meio de seus produtos e serviços, a Kaspersky nunca processa dados pessoais
+"sensíveis", como religião, preferência sexual, opiniões políticas, ou a integri
+dade ou outras categorias especiais de dados pessoais. Não desejamos receber qua
+isquer desses dados e não os solicitaremos a você.
+Os produtos da Kaspersky devem ser instalados e usados por um adulto. As criança
+s podem usar um dispositivo em que o produto da Kaspersky tenha sido instalado a
+penas com a permissão dos pais ou responsáveis. Exceto pelo "Recurso de proteção
+ de dados para crianças", não temos a intenção para processar dados pessoais de
+crianças, tampouco desejamos receber tais informações pessoais de crianças.
+Provisão de Informações
+Nós só podemos divulgar as Informações conforme a seguir:
+[7m--Mais--(78%)[m• Dentro do Grupo de Empresas Kaspersky. Dados podem ser compartilhados.
+• Provedores de serviços. Também podemos compartilhar suas informações com forne
+cedores que prestam serviços para nós, incluindo empresas que fornecem processam
+ento de dados, análise da web, publicidade, distribuição de e-mail, processament
+o de pagamentos, preenchimento de pedidos, e outros serviços.
+• Aplicação da lei ou agência governamental. A Kaspersky tem princípios e proced
+imentos internos rígidos em relação a solicitações de autoridades e agências gov
+ernamentais em todo o mundo. Todas as solicitações que recebemos passam por veri
+ficação legal para garantir nossa conformidade com as leis e procedimentos aplic
+áveis. Informações mais detalhadas sobre os princípios da Kaspersky podem ser en
+contradas em https://www.kaspersky.com/transparency-center.
+Alguns de nossos produtos, como o Kaspersky Secure Connection, por exemplo, usam
+ serviços de terceiros cujas práticas de privacidade diferem daquelas da Kaspers
+ky. Se você fornecer dados pessoais para qualquer um desses serviços, seus dados
+ serão regidos pelas políticas de privacidade de tais terceiros. Você é responsá
+vel por tomar conhecimento das regras de processamento de dados e procedimentos
+descritos nas políticas de privacidade relevantes.
+Onde processamos as informações
+Os dados pessoais fornecidos por usuários à Kaspersky podem ser processados nos
+seguintes países, incluindo países fora da União Europeia (UE) ou da Área Econôm
+ica Europeia (EEA):
+Dentro da UE ou EEA:
+• Alemanha
+[7m--Mais--(80%)[m• Países Baixos
+• França
+• Reino Unido
+• Suécia
+• Itália
+• Espanha
+• Romênia
+Fora da UE ou EEA:
+• Suíça
+• Canadá
+• Cingapura
+• Rússia
+• Japão
+• Estados Unidos da América
+• México
+• China
+• Azerbaijão
+• Brasil
+• Argentina
+• Israel
+• EAU
+• Coreia do Sul
+• Austrália
+[7m--Mais--(81%)[m• Bielorrússia
+A lista de países onde os dados fornecidos pelo usuário podem ser processados po
+de mudar. Você pode conferir a lista atual de países na versão da Política de Pr
+ivacidade no site https://www.kaspersky.com/products-and-services-privacy-policy
+.
+De acordo com nossa prática de negócios gerais, os dados recebidos de usuários n
+a União Europeia são processados em servidores localizados na União Europeia e n
+a Rússia.
+Os dados pessoais podem ser processados em destinos fora da UE ou da EEA, alguns
+ dos quais não foram determinados pela Comissão Europeia para ter um nível adequ
+ado de proteção de dados. Eles também podem ser processados por pessoas fora da
+UE ou EEA que trabalham para nós ou para um de nossos provedores de serviços. Na
+ ausência de decisões de adequação ou proteções adequadas reconhecidas pela Comi
+ssão Europeia, poderá haver riscos para o usuário se os dados pessoais forem tra
+nsmitidos fora da UE ou do EEE.
+Sempre que os dados são processados, usamos o mais alto nível de padrões para pr
+oteção de dados e aplicamos uma variedade de medidas legais para proteger os dad
+os do usuário, garantir a segurança e confidencialidade e garantir que os direit
+os dos usuários. Para saber mais sobre as decisões da Comissão Europeia sobre a
+adequação da proteção de dados pessoais nos países em que a Kaspersky processa d
+ados, acesse: ec.europa.eu/info/law/law-topic/data-protection/international-dime
+nsion-data-protection/adequacy-decisions_en.
+Seus Direitos e Opções
+[7m--Mais--(83%)[mVocê tem determinados direitos sobre seus dados pessoais. Também oferecemos a vo
+cê algumas opções sobre quais dados pessoais você nos fornece, como usamos as es
+sas informações e da forma como nos comunicamos com você.
+Na maioria dos casos, você pode optar por não fornecer dados pessoais para nós q
+uando usa produtos, serviços e sites da Kaspersky. Você também pode impedir o en
+vio de informações diretamente para nós. No entanto, se você não fornecer dados
+pessoais quando solicitado, você pode não ser capaz de se beneficiar com a linha
+ completa de produtos e serviços da Kaspersky e nós talvez não consigamos fornec
+er a você informações sobre produtos, serviços e promoções.
+Você pode a qualquer momento optar por não receber comunicados de marketing por
+e-mail, se você tiver assinado anteriormente para recebê-los, clicando no link d
+e cancelamento da assinatura nos e-mails de marketing que você recebe de nós.
+Se o seu empregador fornecer seus dados pessoais à Kaspersky, você poderá ter ce
+rtas opções com relação ao uso ou a divulgação das informações por parte da Kasp
+ersky. Entre em contato com o seu empregador para saber mais a respeito e usufru
+a de suas opções.
+Na medida proporcionada pela legislação aplicável, você pode cancelar qualquer c
+onsentimento que tenha nos dado, ou se opor a qualquer momento e com base jurídi
+ca, ao processamento de seus dados pessoais. Nós aplicaremos as suas preferência
+s desse momento em diante. Em algumas circunstâncias, a retirada de seu consenti
+mento para o uso ou divulgação dos seus dados pessoais pela Kaspersky significa
+que você não pode aproveitar determinados produtos ou serviços da Kaspersky.
+Sujeito à lei aplicável, você pode ter os seguintes direitos:
+[7m--Mais--(85%)[m• Obter confirmação de que temos seus dados pessoais;
+• Solicitar acesso e receber informações sobre seus dados pessoais;
+• Receber cópias de seus dados pessoais que você nos forneceu, também em um form
+ato legível por máquina e enviá-los para outro controlador de dados, onde for te
+cnicamente possível;
+• Atualizar e corrigir imprecisões em seus dados pessoais;
+• Não concordar com o processamento de seus dados pessoais;
+• Ter informações bloqueadas, anônimas ou excluídas, conforme apropriado; bem co
+mo
+• Apresentar uma reclamação a uma autoridade de supervisão.
+Em algumas circunstâncias, o direito de acesso a dados pessoais pode ser limitad
+o por requisitos da legislação local ou de medidas tecnológicas, abrangendo onde
+ os dados foram anonimizados e, portanto, não se refere a uma pessoa natural ide
+ntificada ou identificável. Você pode exercer esses direitos diretamente, a qual
+quer momento. Basta entrar em contato conosco em https://support.kaspersky.com/g
+eneral/privacy.
+Caso você se oponha ao processamento de dados ou deseje cancelar seu consentimen
+to em casos em que você utiliza nossos produtos gratuitos, deverá interromper o
+uso e/ou desinstalar o produto. Caso deseje exercer seu direito de remover os da
+dos já enviados, entre em contato conosco diretamente para solicitar a exclusão
+através do site https://support.kaspersky.com/general/privacy.
+Se as suas expectativas com relação ao processamento de seus dados pessoais não
+forem atendidas, ou se você quiser fazer uma reclamação sobre as nossas práticas
+[7m--Mais--(87%)[m de privacidade, comunique-nos, pois isso nos dará a oportunidade de corrigir o
+problema. Você pode entrar em contato conosco usando os detalhes de contato forn
+ecidos na seção "Como entrar em contato conosco" abaixo. Para nos ajudar a respo
+nder à sua solicitação, forneça detalhes completos do problema. Tentamos verific
+ar e responder todas as reclamações dentro de um período razoável.
+Princípios de Privacidade
+O processamento de dados pessoais na Kaspersky se baseia nos seguintes princípio
+s:
+Escolha e consentimento
+• Apresentar aos usuários a opção de enviar ou não seus dados pessoais, exceto n
+as situações em que os usuários não podem dar o seu consentimento livremente ou
+nas quais a legislação aplicável permite especificamente o processamento de dado
+s pessoais sem o consentimento do indivíduo. A escolha do usuário deve ser forne
+cida livremente, ser específica e fundamentada;
+• Informar aos usuários, antes de obter consentimento, sobre seus direitos de ac
+ordo com o princípio de acesso e participação individual;
+• Fornecer aos usuários, antes da obtenção do consentimento, as informações indi
+cadas pela liberdade, transparência e princípio de aviso; e
+• Explicar aos usuários as implicações da concessão ou retenção de consentimento
+.
+Especificação e legitimidade da finalidade
+• Certificar-se de que a finalidade ou finalidades estão em conformidade com a l
+egislação aplicável e se fundamenta em uma base jurídica;
+[7m--Mais--(89%)[m• Comunicar a finalidade ou finalidades aos usuários antes de as informações ser
+em usadas pela primeira vez para uma nova finalidade;
+• Usar uma linguagem para esta especificação que seja clara e adaptada às circun
+stâncias adequadamente.
+Limitação do processamento de dados
+• Coletar dados pessoais para o que estiver dentro dos limites da legislação apl
+icável e estritamente necessário para a(s) finalidade(s) especificada(s).
+• Excluir e descartar ou anonimizar dados pessoais sempre que a finalidade para
+o processamento de dados pessoais expirar, já que não há exigências legais para
+manter os dados pessoais, ou sempre que for prático fazê-lo.
+Limitação do uso, da retenção e divulgação
+• Limitar o uso, a retenção e divulgação de dados pessoais para que o que é nece
+ssário para atender específicos, expressos e legítimos;
+• Limitar o uso de dados pessoais para as finalidades especificadas pela Kaspers
+ky antes de receber os dados, a menos que uma finalidade diferente seja exigida
+pela lei aplicável expressamente;
+• Reter dados pessoais somente durante o tempo necessário para atender às finali
+dades declaradas, por exemplo, reter dados pessoais necessários para a licença p
+elo período do contrato de licença relevante entre você e a Kaspersky, normalmen
+te um ano, se aplicável, e qualquer período de renovação, dependendo dos termos
+de licença do produto, e depois destruir de forma segura ou tornar tais dados an
+ônimos;
+• Reter dados pessoais pelo tempo necessário para cumprir obrigações legais, est
+[7m--Mais--(91%)[mar em conformidade com as leis, resolver disputas, incluindo em casos de litígio
+, processos ou investigações;
+• Reter dados pessoais pelo tempo necessário para atender aos interesses legítim
+os; e
+• Bloquear (ou seja, arquivar, proteger e isentar os dados pessoais de processam
+ento posterior) quaisquer dados pessoais quando e por quanto tempo as finalidade
+s declaradas continuarem expiradas, mas nas situações em que a retenção é exigid
+a para estar em conformidade com a legislação aplicável.
+Precisão e qualidade
+• Garantir que os dados pessoais processados sejam precisos, completos, atualiza
+dos (a menos que haja uma necessidade legítima de manter dados desatualizados),
+adequados e relevantes para a finalidade de uso;
+• Garantir a confiabilidade de dados pessoais fornecidos a partir de uma fonte q
+ue não se trate dos usuários antes de serem processados;
+• Verificar, via meio apropriado, a validade e a exatidão das reclamações feitas
+ pelo usuário antes de fazer qualquer alteração aos dados pessoais (para garanti
+r que as alterações sejam adequadamente autorizadas), sempre que apropriado;
+• Estabelecer procedimentos de processamento de dados pessoais para ajudar a gar
+antir a precisão e a qualidade; e
+• Estabelecer mecanismos de controle para verificar periodicamente a precisão e
+a qualidade do processamento de dados pessoais.
+Liberdade, transparência e aviso
+• Fornecer aos usuários informações facilmente acessíveis sobre as políticas da
+[7m--Mais--(93%)[mKaspersky;[K
+• Estabelecer procedimentos e práticas com relação ao processamento de dados pes
+soais;
+• Incluir nos avisos o fato de que os dados pessoais estão sendo processados, a
+finalidade para a qual isso é feito, os tipos de interessados associados à priva
+cidade para quem a dados pessoais podem ser divulgados, e a identidade da entida
+de que determina o supramencionado e sobre como entrar em contato com ela;
+• Divulgar as opções e meios oferecidos pela Kaspersky para os usuários que dese
+jam limitar o processamento, o acesso, a retificação e a remoção das suas inform
+ações;
+• Avisar aos usuários quando houver grandes alterações em procedimentos de manus
+eio de dados pessoais.
+Participação e acesso individuais
+• Dar aos usuários a capacidade de entrar em contato conosco (usando os detalhes
+ de contato em "Como entrar em contato conosco") e verificar seus dados pessoais
+, desde que a sua identidade seja primeiro autenticada com um nível adequado de
+segurança e o acesso não seja proibido pela legislação aplicável;
+• Permitir que os usuários (usando os detalhes de contato fornecidos em "Como en
+trar em contato conosco" ou usando a interface de nossos produtos e serviços) co
+nfrontem a exatidão e a integridade dos dados pessoais e façam com que eles seja
+m complementados, retificados ou removidos conforme apropriado e possível no con
+texto específico;
+• Fornecer qualquer alteração, correção ou remoção para processadores de dados p
+[7m--Mais--(94%)[messoais e de terceiros para os quais os dados pessoais foram divulgados, nas sit
+uações em que eles forem conhecidos; e
+• Estabelecer procedimentos para habilitar usuários a exercerem tais direitos em
+ uma plataforma simples, de forma rápida e eficiente e que não provoque qualquer
+ atraso ou incorra qualquer custo.
+Segurança das Informações: Como protegemos sua privacidade
+A segurança das informações é um pilar imprescindível dos negócios da Kaspersky.
+ Todos os dados e todas as informações fornecidas por você são confidenciais por
+ padrão. A Kaspersky, portanto, aplica sempre medidas de segurança de dados técn
+icos e organizacionais para a proteção dos dados pessoais que são adequados e ap
+ropriados, levando em conta os riscos concretos resultantes do processamento de
+dados pessoais, bem como procedimentos e padrões de segurança atualizados. Para,
+ entre outros motivos, identificar e cumprir com o nível apropriado de proteção,
+ a Kaspersky classifica os dados pessoais dos sistemas de processamento e implem
+enta conjuntos em cascata conjuntos de medidas de proteção.
+A Kaspersky também mantém proteções físicas, eletrônicas e de procedimentos para
+ proteger as informações contra perda, uso indevido ou modificação e acesso ou d
+ivulgação não autorizados. Alguns dos outros principais recursos do nosso progra
+ma de segurança de informações são:
+• O Departamento de Segurança de Informações, que projeta, implementa e supervis
+iona o programa de segurança para as nossas informações;
+• Uma determinação de riscos de segurança de dados pessoais no curso de processa
+mento em um sistema de processamento da Kaspersky;
+[7m--Mais--(97%)[m• A aplicação de ferramentas de segurança da informação adequadas;
+• A avaliação de desempenho de medidas de segurança de dados pessoais em sistema
+s de processamento antes da preparação;
+• Implementação de controles para identificar, autenticar e autorizar o acesso a
+ vários serviços ou sites;
+• Descoberta de fatos relacionados ao acesso não autorizado de dados pessoais e
+adoção de medidas correspondentes;
+• Recuperação de dados pessoais que foram modificados ou desconstruídos;
+• Estabelecimento de regras de acesso a dados pessoais processados em sistemas d
+e processamento da Kaspersky e também gravação e contabilidade de todas as ações
+ realizadas com dados pessoais nesses sistemas;
+• Criptografia entre os nossos clientes e servidores (e entre nossos diversos da
+ta centers);
+• Nós restringimos o acesso de nossos funcionários e prestadores de serviços que
+ precisam saber as informações para processá-las para nós e que estão sujeitos a
+ rígidas obrigações de confidencialidade por exigência contratual, a informações
+ pessoais. Eles podem sofrer medidas administrativas ou rescisão do contrato se
+não cumprirem com tais obrigações;
+• Monitoramento de infraestrutura de nossos sistemas para detectar pontos fracos
+ e possíveis intrusões;
+• Monitoramento de medidas tomadas para garantir a segurança de seus dados pesso
+ais;
+• Fornecimento ao pessoal da Kaspersky treinamento relevante e atualização const
+[7m--Mais--(98%)[mante das nossas práticas de segurança à luz de novos riscos e avanços tecnológic
+os.
+Como Entrar em Contato Conosco
+Se você tiver dúvidas ou comentários sobre esta Política de Privacidade, sobre a
+s práticas de privacidade da Kaspersky ou se você deseja que atualizemos ou remo
+vamos informações ou preferências que você forneceu, acesse https://www.kaspersk
+y.com/global-privacy-policy, ou entre em contato com o representante da UE da Ka
+spersky por telefone Kaspersky Labs GmbH, Ingolstadt, Germany, +49 (0) 841 98 18
+ 90, de acordo com o ponto (a) do Artigo 13 (1) e Artigo 27 (1) do GDPR, ou você
+ pode entrar em contato com nosso Encarregado de Proteção de Dados na UE, de aco
+rdo com o ponto (b) do Artigo 13 (1) e Artigo 37 (1) do GDPR, assim como para ou
+tros países, através do e-mail dpo@kaspersky.com.
+© 2022 AO Kaspersky Lab
+
+Enter 'Y' to confirm that you understand and accept the terms of the End
+User License Agreement (EULA). You must accept the terms and conditions of
+the EULA to install the application. Enter 'N' providing you do not accept
+the terms of the EULA or 'R' to view it again [N]:
+Y
+
+Enter 'Y' to confirm that you accept the terms of the Privacy Policy. You
+must accept the terms and conditions of the Privacy Policy to install the
+application. Entering 'Y' means that you are aware that your data will be
+handled and transmitted (including to third countries) as described in the
+Privacy Policy. Enter 'N' providing you do not accept the Privacy Policy
+[N]:
+Y
+
+Choose the Administration Server installation mode:
+1) Standard
+2) Primary cluster node
+3) Secondary cluster node
+Enter the range number (1, 2, or 3) [1]:
+1
+
+Traces off
+Enter Administration Server DNS-name or static IP-address:
+kscserver.tail8b9ae.ts.net
+
+Enter Administration Server SSL port number [13000]:
+
+
+Define the approximate number of devices that you intend to manage:
+1) 1 to 100 networked devices
+2) 101 to 1 000 networked devices
+3) More than 1 000 networked devices
+Enter the range number (1, 2, or 3) [1]:
+
+
+Enter the security group name for services:
+kladmins
+
+Enter the account name to start the Administration Server service. The
+account must be a member of the entered security group:
+ksc
+
+Enter the account name to start other services. The account must be a
+member of the entered security group:
+ksc
+
+Choose the DBMS type to connect to the Administration Server:
+1) MySQL
+2) Postgres
+Enter the range number (1 or 2):
+2
+
+Enter the DBMS address to use by the Administration Server:
+127.0.0.1
+
+Enter the DBMS port to use by the Administration Server:
+5432
+
+Enter the database name to use by the Administration Server:
+ksc
+
+Enter the DBMS login to use by the Administration Server:
+kluser
+
+Enter the DBMS password to use by the Administration Server:
+
+
+Enter IAM Server DNS-name:
+kscserver.tail8b9ae.ts.net
+
+Enter the account name to start KLIAM service. The account must be a member
+of the entered security group:
+ksc
+
+Choose the DBMS type to connect to IAM service:
+1) MySQL
+2) Postgres
+Enter the range number (1 or 2):
+2
+
+Enter the DBMS address to use by the IAM service:
+127.0.0.1
+
+Enter the DBMS port to use by the IAM service:
+5432
+
+Enter the database name to use by the IAM service. The name of the database
+used by IAM service must be different from database used by the
+Administration Server.:
+ksciam
+
+Enter the DBMS login to use by the IAM service:
+kluser
+
+Enter the DBMS password to use by the IAM service:
+
+
+Add service klnagent_srv...
+Add service kladminserver_srv...
+Add service klactprx_srv...
+Add service klwebsrv_srv...
+Add service kliam_srv...
+Add service klcssnmp_srv...
+Starting kladminserver_srv...
+Starting klnagent_srv...
+Starting klactprx_srv...
+Starting klwebsrv_srv...
+Starting kliam_srv...
+Starting klcssnmp_srv...
+Wait till the server initialize...
+It is necessary to create an Administration Server account. This user will
+act as an Administration Server administrator. The user password cannot
+have less than 8 and more than 256 characters.
+Enter the user name:
+kscadmin
+
+Password:
+Repeat password:
+
+User 'kscadmin' has been created
+
+{
+"UserID":2,
+"TrusteeID":844424930131970
+}
+Kaspersky Security Center is installed.
+Binaries were installed in /opt/kaspersky/ksc64/sbin
+[?2004h[root@kscserver ~]#

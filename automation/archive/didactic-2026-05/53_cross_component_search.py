@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,7 +35,7 @@ def main():
         client.connect(host, username=user, password=password)
 
         print("Buscando 'iam' no módulo appdata.pm...")
-        cmd_pm = "sudo -S grep -i \"iam\" /opt/kaspersky/ksc64/lib/bin/setup/appdata.pm"
+        cmd_pm = 'sudo -S grep -i "iam" /opt/kaspersky/ksc64/lib/bin/setup/appdata.pm'
         stdin_p, stdout_p, stderr_p = client.exec_command(cmd_pm)
         stdin_p.write(password + "\n")
         stdin_p.flush()
@@ -42,7 +43,9 @@ def main():
         print(stdout_p.read().decode())
 
         print("\nBuscando 'iam' no binário klsrvconfig...")
-        cmd_bin = "sudo -S strings /opt/kaspersky/ksc64/sbin/klsrvconfig | grep -i \"iam\""
+        cmd_bin = (
+            'sudo -S strings /opt/kaspersky/ksc64/sbin/klsrvconfig | grep -i "iam"'
+        )
         stdin_b, stdout_b, stderr_b = client.exec_command(cmd_bin)
         stdin_b.write(password + "\n")
         stdin_b.flush()
@@ -52,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na busca transversal: {e}")
+
 
 if __name__ == "__main__":
     main()

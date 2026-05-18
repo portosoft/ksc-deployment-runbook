@@ -44,4 +44,3 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 - 65 didactic scripts archived to \utomation/archive/didactic-2026-05/\
-

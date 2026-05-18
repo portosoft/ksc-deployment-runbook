@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         target_func = "klserver_register"
 
         print(f"Localizando a função '{target_func}' em {path}...")
-        cmd_find = f"sudo -S grep -n \"sub {target_func}\" \"{path}\""
+        cmd_find = f'sudo -S grep -n "sub {target_func}" "{path}"'
 
         stdin, stdout, stderr = client.exec_command(cmd_find)
         stdin.write(password + "\n")
@@ -49,7 +50,7 @@ def main():
             print(f"Função encontrada na linha {line_num}. Lendo bloco...")
 
             # Lemos 100 linhas a partir da definição da função
-            cmd_read = f"sudo -S sed -n \"{line_num},+100p\" \"{path}\""
+            cmd_read = f'sudo -S sed -n "{line_num},+100p" "{path}"'
             stdin_r, stdout_r, stderr_r = client.exec_command(cmd_read)
             stdin_r.write(password + "\n")
             stdin_r.flush()
@@ -61,6 +62,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro no rastreamento de função: {e}")
+
 
 if __name__ == "__main__":
     main()

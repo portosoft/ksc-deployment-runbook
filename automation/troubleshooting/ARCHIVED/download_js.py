@@ -2,6 +2,7 @@ import paramiko
 import os
 import sys
 
+
 def download_file(host, user, password, remote_path, local_path):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -14,6 +15,7 @@ def download_file(host, user, password, remote_path, local_path):
         print(f"File downloaded to {local_path}")
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     host = os.getenv("KSC_HOST")

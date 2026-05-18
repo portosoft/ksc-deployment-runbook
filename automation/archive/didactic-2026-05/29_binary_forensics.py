@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         print(f"Realizando forense no binário {binary_path}...")
 
         # Busca por comandos CREATE TABLE dentro do binário
-        cmd = f"sudo -S strings \"{binary_path}\" | grep -i \"CREATE TABLE\" | head -n 20"
+        cmd = f'sudo -S strings "{binary_path}" | grep -i "CREATE TABLE" | head -n 20'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na análise forense: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -21,6 +21,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         print(f"Buscando identidades/usuários no binário {binary_path}...")
 
         # Busca por termos chave usando Regex
-        cmd = f"sudo -S strings \"{binary_path}\" | grep -iE \"users|identities|authentication_factors\" | head -n 20"
+        cmd = f'sudo -S strings "{binary_path}" | grep -iE "users|identities|authentication_factors" | head -n 20'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -48,11 +49,14 @@ def main():
             print("--- Menções Encontradas ---")
             print(results)
         else:
-            print(f"Nenhuma menção a usuários ou identidades encontrada em {binary_path}.")
+            print(
+                f"Nenhuma menção a usuários ou identidades encontrada em {binary_path}."
+            )
 
         client.close()
     except Exception as e:
         print(f"Erro na análise direcionada: {e}")
+
 
 if __name__ == "__main__":
     main()

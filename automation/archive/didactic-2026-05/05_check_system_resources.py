@@ -20,6 +20,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,7 +35,7 @@ def main():
 
         print("Auditando espaço em disco nas partições do sistema...")
         # Comando para verificar as partições mais importantes para o KSC
-        cmd = "df -h | grep -E \"Filesystem|/var|/opt|/home|/\""
+        cmd = 'df -h | grep -E "Filesystem|/var|/opt|/home|/"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
 
@@ -44,6 +45,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro ao auditar recursos: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -22,6 +22,7 @@ import os
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,7 +38,7 @@ def main():
         path = "/opt/kaspersky/ksc64/lib/bin/setup/appdata.pm"
         print(f"Lendo conteúdo de {path}...")
         # Lemos uma parte maior do arquivo para encontrar as funções
-        cmd = f"sudo -S head -n 300 \"{path}\""
+        cmd = f'sudo -S head -n 300 "{path}"'
 
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
@@ -53,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Erro na análise do módulo: {e}")
+
 
 if __name__ == "__main__":
     main()
