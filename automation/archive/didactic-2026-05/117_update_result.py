@@ -1,6 +1,7 @@
 import paramiko
 
 import os
+
 host = os.getenv("KSC_HOST", "<IP>")
 user = os.getenv("KSC_USER", "<USER>")
 password = os.getenv("KSC_PASS", "<SENHA>")
@@ -10,7 +11,7 @@ client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 try:
     client.connect(hostname=host, username=user, password=password, timeout=10)
-    
+
     script = """#!/bin/bash
 cat > /tmp/RESULTADO.txt << 'EOF'
 ### RESULTADO DA INTERVENCAO KSC 16.x ###
@@ -30,8 +31,10 @@ ESTADO FINAL: Administration Server (klserver) reinstalado e operando. Servico I
 EOF
 sudo mv /tmp/RESULTADO.txt /root/ksc_recovery_evidence/RESULTADO.txt
 """
-    
-    stdin, stdout, stderr = client.exec_command(f"echo '{password}' | sudo -S bash -c \"{script.replace('$', '\\$').replace('\"', '\\\"')}\"")
+
+    stdin, stdout, stderr = client.exec_command(
+        f"echo '{password}' | sudo -S bash -c \"{script.replace('$', '\\$').replace('\"', '\\\"')}\""
+    )
     stdout.read()
 except Exception as e:
     pass

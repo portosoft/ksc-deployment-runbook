@@ -24,7 +24,7 @@ GROUP BY table_schema
 ORDER BY table_schema;
 """
 
-cmd = f"sudo -S -u postgres psql -d ksciam -c \"{sql}\""
+cmd = f'sudo -S -u postgres psql -d ksciam -c "{sql}"'
 stdin, stdout, stderr = client.exec_command(cmd)
 stdin.write(password + "\n")
 stdin.flush()

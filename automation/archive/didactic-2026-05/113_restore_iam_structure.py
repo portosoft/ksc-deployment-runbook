@@ -15,6 +15,7 @@ print("=" * 60)
 print("RESTAURANDO ESTRUTURA DE DIRETÓRIOS IAM")
 print("=" * 60)
 
+
 def run_sudo(cmd):
     print(f"Executando: {cmd}")
     stdin, stdout, stderr = client.exec_command(cmd)
@@ -22,6 +23,7 @@ def run_sudo(cmd):
     stdin.flush()
     print(stdout.read().decode().strip())
     print(stderr.read().decode().strip())
+
 
 # 1. Criar diretório
 run_sudo("sudo -S mkdir -p /var/opt/kaspersky/klnagent_srv/iam/")
@@ -32,7 +34,9 @@ run_sudo("sudo -S chmod 750 /var/opt/kaspersky/klnagent_srv/iam/")
 
 # 3. Validar criação
 print("\nValidando estrutura:")
-stdin, stdout, stderr = client.exec_command("ls -ld /var/opt/kaspersky/klnagent_srv/iam/")
+stdin, stdout, stderr = client.exec_command(
+    "ls -ld /var/opt/kaspersky/klnagent_srv/iam/"
+)
 print(stdout.read().decode().strip())
 
 client.close()

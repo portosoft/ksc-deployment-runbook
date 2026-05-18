@@ -23,7 +23,10 @@ stdin.flush()
 logs = stdout.read().decode()
 # Filtragem manual no Python para evitar erros de shell
 for line in logs.split("\n"):
-    if any(term in line.lower() for term in ["iam", "ksciam", "identity", "migration", "schema", "error"]):
+    if any(
+        term in line.lower()
+        for term in ["iam", "ksciam", "identity", "migration", "schema", "error"]
+    ):
         print(line)
 
 client.close()

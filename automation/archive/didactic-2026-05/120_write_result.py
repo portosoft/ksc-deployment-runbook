@@ -1,6 +1,7 @@
 import paramiko
 
 import os
+
 host = os.getenv("KSC_HOST", "<IP>")
 user = os.getenv("KSC_USER", "<USER>")
 password = os.getenv("KSC_PASS", "<SENHA>")
@@ -10,7 +11,7 @@ client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 try:
     client.connect(hostname=host, username=user, password=password, timeout=10)
-    
+
     result_text = """### RESULTADO DA INTERVENCAO KSC 16.x ###
 1. Tentativa de Recuperacao (Passo 1):
    - iam_config.yaml limpo foi injetado com permissoes corretas.
@@ -26,10 +27,12 @@ try:
 ESTADO FINAL: Servidor encontra-se com as evidencias presasvetadas. O pacote RPM 'ksc64' esta em estado 'broken/half-installed'.
 Acao requerida pelo operador: Executar 'rpm -e --noscripts ksc64' para limpar o ghost RPM e re-executar a instalacao.
 """
-    
-    stdin, stdout, stderr = client.exec_command(f"echo '{password}' | sudo -S sh -c \"cat > /root/ksc_recovery_evidence/RESULTADO.txt << 'EOF'\n{result_text}\nEOF\"")
-    print(stdout.read().decode('utf-8'))
-    print(stderr.read().decode('utf-8'))
+
+    stdin, stdout, stderr = client.exec_command(
+        f"echo '{password}' | sudo -S sh -c \"cat > /root/ksc_recovery_evidence/RESULTADO.txt << 'EOF'\n{result_text}\nEOF\""
+    )
+    print(stdout.read().decode("utf-8"))
+    print(stderr.read().decode("utf-8"))
 
 except Exception as e:
     print(e)

@@ -22,7 +22,9 @@ stdin.flush()
 
 logs = stdout.read().decode()
 for line in logs.split("\n"):
-    if any(term in line.lower() for term in ["kluser", "ksciam", "error", "fatal", "fail"]):
+    if any(
+        term in line.lower() for term in ["kluser", "ksciam", "error", "fatal", "fail"]
+    ):
         print(line)
 
 client.close()

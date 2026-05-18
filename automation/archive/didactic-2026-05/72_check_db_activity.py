@@ -17,7 +17,7 @@ print("=" * 60)
 
 sql = "SELECT datname, usename, application_name, state FROM pg_stat_activity WHERE datname = 'ksciam';"
 
-cmd = f"sudo -S -u postgres psql -c \"{sql}\""
+cmd = f'sudo -S -u postgres psql -c "{sql}"'
 stdin, stdout, stderr = client.exec_command(cmd)
 stdin.write(password + "\n")
 stdin.flush()

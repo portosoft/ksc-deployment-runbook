@@ -17,12 +17,16 @@ print("=" * 60)
 
 # 1. Verificar diretório pai
 print("\n[1] Permissões do diretório:")
-stdin, stdout, stderr = client.exec_command("ls -ld /var/opt/kaspersky/klnagent_srv/iam/")
+stdin, stdout, stderr = client.exec_command(
+    "ls -ld /var/opt/kaspersky/klnagent_srv/iam/"
+)
 print(stdout.read().decode().strip())
 
 # 2. Listar conteúdo
 print("\n[2] Conteúdo do diretório:")
-stdin, stdout, stderr = client.exec_command("ls -la /var/opt/kaspersky/klnagent_srv/iam/")
+stdin, stdout, stderr = client.exec_command(
+    "ls -la /var/opt/kaspersky/klnagent_srv/iam/"
+)
 print(stdout.read().decode().strip())
 
 client.close()

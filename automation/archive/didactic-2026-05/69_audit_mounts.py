@@ -27,7 +27,9 @@ print(stdout.read().decode().strip())
 
 # 3. Listar diretório pai em detalhes
 print("\n[3] Listagem de klnagent_srv:")
-stdin, stdout, stderr = client.exec_command("sudo -S ls -la /var/opt/kaspersky/klnagent_srv/")
+stdin, stdout, stderr = client.exec_command(
+    "sudo -S ls -la /var/opt/kaspersky/klnagent_srv/"
+)
 stdin.write(password + "\n")
 stdin.flush()
 print(stdout.read().decode().strip())

@@ -1,6 +1,7 @@
 import paramiko
 
 import os
+
 host = os.getenv("KSC_HOST", "<IP>")
 user = os.getenv("KSC_USER", "<USER>")
 password = os.getenv("KSC_PASS", "<SENHA>")
@@ -11,7 +12,7 @@ client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 try:
     client.connect(hostname=host, username=user, password=password, timeout=10)
     print("Conectado. Matando processo na 13299 e reiniciando IAM...")
-    
+
     script = """#!/bin/bash
 set -x
 
@@ -44,18 +45,20 @@ ESTADO FINAL: KSC 16.x reinstalado. Modo IAM funcional. Servicos online.
 EOF
 sudo mv /tmp/RESULTADO.txt /root/ksc_recovery_evidence/RESULTADO.txt
 """
-    
-    stdin, stdout, stderr = client.exec_command(f"echo '{password}' | sudo -S bash -c \"{script.replace('$', '\\$').replace('\"', '\\\"')}\"")
-    
+
+    stdin, stdout, stderr = client.exec_command(
+        f"echo '{password}' | sudo -S bash -c \"{script.replace('$', '\\$').replace('\"', '\\\"')}\""
+    )
+
     while True:
         line = stdout.readline()
         if not line:
             break
-        print(line.encode('ascii', errors='replace').decode('ascii'), end="")
-        
-    err = stderr.read().decode('utf-8', errors='replace')
+        print(line.encode("ascii", errors="replace").decode("ascii"), end="")
+
+    err = stderr.read().decode("utf-8", errors="replace")
     if err:
-        print("STDERR:", err.encode('ascii', errors='replace').decode('ascii'))
+        print("STDERR:", err.encode("ascii", errors="replace").decode("ascii"))
 
 except Exception as e:
     print(e)

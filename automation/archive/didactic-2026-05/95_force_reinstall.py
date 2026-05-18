@@ -1,6 +1,7 @@
 import paramiko
 
 import os
+
 host = os.getenv("KSC_HOST", "<IP>")
 user = os.getenv("KSC_USER", "<USER>")
 password = os.getenv("KSC_PASS", "<SENHA>")
@@ -11,7 +12,7 @@ client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 try:
     client.connect(hostname=host, username=user, password=password, timeout=10)
     print("Reinstalando via yum reinstall...")
-    
+
     script = """#!/bin/bash
 set -x
 sudo yum reinstall -y /home/suporte/ksc64-16.2.0-1023.x86_64.rpm
@@ -42,24 +43,26 @@ else
     echo "ERRO: postinstall.pl nao encontrado apos reinstall!"
 fi
 """
-    
+
     sftp = client.open_sftp()
     sftp.putfo(paramiko.SFTPAttributes(), "/tmp/force_reinstall.sh")
     with sftp.file("/tmp/force_reinstall.sh", "w") as f:
         f.write(script)
     sftp.close()
-    
-    stdin, stdout, stderr = client.exec_command(f"echo '{password}' | sudo -S bash /tmp/force_reinstall.sh")
-    
+
+    stdin, stdout, stderr = client.exec_command(
+        f"echo '{password}' | sudo -S bash /tmp/force_reinstall.sh"
+    )
+
     while True:
         line = stdout.readline()
         if not line:
             break
-        print(line.encode('ascii', errors='replace').decode('ascii'), end="")
-        
-    err = stderr.read().decode('utf-8', errors='replace')
+        print(line.encode("ascii", errors="replace").decode("ascii"), end="")
+
+    err = stderr.read().decode("utf-8", errors="replace")
     if err:
-        print("STDERR:", err.encode('ascii', errors='replace').decode('ascii'))
+        print("STDERR:", err.encode("ascii", errors="replace").decode("ascii"))
 
 except Exception as e:
     print(e)

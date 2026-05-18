@@ -106,7 +106,7 @@ if "totpreg" in www_auth:
         extra_headers={"X-KSC-Session": session}
     )
     print(f"GenerateSecret HTTP: {s2}")
-    
+
     try:
         data = json.loads(b2)
         secret_key = data.get("pSecret", {}).get("KLTOTP_SECRET_KEY", "")
@@ -117,7 +117,7 @@ if "totpreg" in www_auth:
         print("MFA_PENDING_REGISTRATION")
     except Exception as e:
         print(f"Failed to parse: {e}")
-        
+
 elif "totp" in www_auth and "totpreg" not in www_auth:
     print("\nCENARIO B: TOTP ja configurado")
     print(f"SESSION: {session}")

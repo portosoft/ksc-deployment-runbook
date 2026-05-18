@@ -9,7 +9,7 @@ Este documento registra todas as tentativas, erros enfrentados e as contramedida
 
 ## 1. Tentativa de Recuperação Mínima (Injeção de YAML)
 
-**O que foi tentado:** 
+**O que foi tentado:**
 Como o arquivo `iam_config.yaml` havia sumido, tentamos injetar um modelo limpo gerado anteriormente, ajustando permissões (`chown ksc:kladmins` e `chmod 640`).
 **Erro Enfrentado:**
 ```text
@@ -42,7 +42,7 @@ Limpeza do ambiente usando `yum remove -y ksc64 ksc64-web-console klnagent64`.
 Error in PREUN scriptlet in rpm package ksc64
 Erro: Transação falhou
 ```
-**Causa/Solução:** Os diretórios base e serviços estavam num estado tão quebrado que os scripts internos de pré-desinstalação do RPM travaram o gerenciador de pacotes, deixando o KSC como um pacote fantasma (*half-installed*). 
+**Causa/Solução:** Os diretórios base e serviços estavam num estado tão quebrado que os scripts internos de pré-desinstalação do RPM travaram o gerenciador de pacotes, deixando o KSC como um pacote fantasma (*half-installed*).
 A solução foi forçar a remoção ignorando a trava de segurança via `rpm -e --noscripts ksc64 klnagent64 ksc-web-console`.
 
 ---

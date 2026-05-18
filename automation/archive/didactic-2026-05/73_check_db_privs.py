@@ -17,13 +17,13 @@ print("=" * 60)
 
 # Verifica privilégios de criação e listagem de esquemas
 sql = """
-SELECT 
+SELECT
     has_database_privilege('kluser', 'ksciam', 'CREATE') as can_create,
     has_database_privilege('kluser', 'ksciam', 'CONNECT') as can_connect;
 SELECT schema_name FROM information_schema.schemata;
 """
 
-cmd = f"sudo -S -u postgres psql -d ksciam -c \"{sql}\""
+cmd = f'sudo -S -u postgres psql -d ksciam -c "{sql}"'
 stdin, stdout, stderr = client.exec_command(cmd)
 stdin.write(password + "\n")
 stdin.flush()
