@@ -52,7 +52,7 @@ KLSRV_UNATT_KLADMINS_USER={admin_user}
 KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
 """
         sftp = client.open_sftp()
-        with sftp.file('/tmp/reconfig_ans.txt', 'w') as f:
+        with sftp.file("/tmp/reconfig_ans.txt", "w") as f:
             f.write(ans_content)
         sftp.close()
 
@@ -73,7 +73,9 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         client.exec_command("rm -f /tmp/reconfig_ans.txt")
 
         print("--- Reiniciando serviços principais ---")
-        stdin, stdout, stderr = client.exec_command("sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service")
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service"
+        )
         stdin.write(password + "\n")
         stdin.flush()
 

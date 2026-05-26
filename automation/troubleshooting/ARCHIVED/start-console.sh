@@ -5,5 +5,5 @@ export NATS_PORT=4222
 export NSQ_HOST=127.0.0.1
 export NSQ_PORT=4222
 
-cd /var/opt/kaspersky/ksc-web-console
+cd /var/opt/kaspersky/ksc-web-console || exit
 ./node pm.js pm.config.js

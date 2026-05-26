@@ -1,5 +1,6 @@
 import re
 
+
 def main():
     path = "scratch/all_extracted_sql.txt"
     if not os.path.exists(path):
@@ -10,11 +11,13 @@ def main():
         content = f.read()
 
     # Split by the separator "================================================================================"
-    blocks = content.split("================================================================================")
+    blocks = content.split(
+        "================================================================================"
+    )
     print(f"Total blocks in file: {len(blocks)}")
 
     keywords = ["view", "users", "challenges", "deleting_outbox", "workspace_id"]
-    
+
     for kw in keywords:
         print(f"\n--- Search results for: {kw} ---")
         found = 0
@@ -29,6 +32,8 @@ def main():
                 print("-" * 40)
         print(f"Found {found} blocks containing '{kw}'.")
 
+
 if __name__ == "__main__":
     import os
+
     main()

@@ -4,6 +4,7 @@ import struct
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -100,7 +101,7 @@ resolved_files = []
 for c_idx, name_ptr, name_len, data_ptr, data_len in candidates:
     name_offset = name_ptr - base_address
     data_offset = data_ptr - base_address
-    
+
     if 0 <= name_offset < len(data) and name_offset + name_len <= len(data):
         filename = data[name_offset:name_offset+name_len].decode('ascii', errors='ignore')
         if filename.startswith('migrations/postgres/'):
@@ -136,6 +137,7 @@ print("Saved all migrations to /tmp/extracted_migrations/")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@
 
 echo "=== PARTE 5: ROLLBACK ==="
 # 5.1 Backup obrigatorio do banco ksc
-sudo -u postgres pg_dump ksc > /tmp/ksc_backup_$(date +%Y%m%d_%H%M).sql
+sudo -u postgres pg_dump ksc | sudo tee /tmp/ksc_backup_"$(date +%Y%m%d_%H%M)".sql > /dev/null
 ls -lh /tmp/ksc_backup_*.sql || true
 
 # 5.2 Parar todos os servicos KSC

@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -38,13 +39,16 @@ for m in sorted(matches):
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/search_users_simple.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/search_users_simple.py"
+        )
         print(stdout.read().decode("utf-8"))
 
         client.exec_command("rm -f /tmp/search_users_simple.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()
