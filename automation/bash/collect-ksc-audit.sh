@@ -15,7 +15,7 @@ echo -e "\n[2] Verificando Diretórios Críticos..."
 ls -ld /opt/kaspersky /var/opt/kaspersky /etc/opt/kaspersky 2>/dev/null || echo "Diretórios base não encontrados."
 
 echo -e "\n[3] Verificando Processos Ativos..."
-ps aux | grep -Ei 'kladminserver|klwebsrv|kliam|postgres' | grep -v grep
+pgrep -a -f 'kladminserver|klwebsrv|kliam|postgres'
 
 echo -e "\n[4] Verificando Portas (ss)..."
 ss -tlnp | grep -E '13000|13001|8443|5432|4222'

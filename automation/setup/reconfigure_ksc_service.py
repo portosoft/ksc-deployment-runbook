@@ -51,7 +51,10 @@ KLSRV_UNATT_KLSRVUSER=ksc
 KLSRV_UNATT_KLADMINS_USER={admin_user}
 KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
 """
-        client.exec_command(f"echo '{ans_content}' > /tmp/reconfig_ans.txt")
+        sftp = client.open_sftp()
+        with sftp.file("/tmp/reconfig_ans.txt", "w") as f:
+            f.write(ans_content)
+        sftp.close()
 
         print("--- Executando postinstall.pl (Modo Automático) ---")
         cmd = "sudo -S -E bash -c 'KLAUTOANSWERS=/tmp/reconfig_ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'"
@@ -70,9 +73,11 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         client.exec_command("rm -f /tmp/reconfig_ans.txt")
 
         print("--- Reiniciando serviços principais ---")
-        client.exec_command(
-            f"echo {password} | sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service"
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service"
         )
+        stdin.write(password + "\n")
+        stdin.flush()
 
         client.close()
         print("--- Reconfiguração concluída ---")
