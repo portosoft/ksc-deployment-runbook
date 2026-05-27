@@ -3,6 +3,7 @@ import os
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -50,29 +51,29 @@ print(f"Found {len(files)} UP migrations.")
 for fpath in files:
     v_str = os.path.basename(fpath).split('_')[0]
     version = int(v_str)
-    
+
     with open(fpath, 'r', encoding='utf-8') as f:
         content = f.read()
-        
+
     # Find all table creations: CREATE TABLE schema.name or CREATE TABLE IF NOT EXISTS schema.name
     # We also check for ALTER TABLE schema.name ADD COLUMN name
     tables_created = re.findall(r'CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_.]+)', content, re.IGNORECASE)
     columns_added = re.findall(r'ALTER\s+TABLE\s+([a-zA-Z0-9_.]+)\s+ADD\s+(?:COLUMN\s+)?([a-zA-Z0-9_]+)', content, re.IGNORECASE)
-    
+
     all_created_exist = True
     for t in tables_created:
         if '.' not in t:
             t = 'public.' + t
         if t not in schema:
             all_created_exist = False
-            
+
     all_added_exist = True
     for t, c in columns_added:
         if '.' not in t:
             t = 'public.' + t
         if t not in schema or c not in schema[t]:
             all_added_exist = False
-            
+
     print(f"Migration {version:11d} ({os.path.basename(fpath)[:35]}): tables_created={tables_created} | exist={all_created_exist} | columns_added={columns_added} | exist={all_added_exist}")
 """
         sftp = client.open_sftp()
@@ -88,6 +89,7 @@ for fpath in files:
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

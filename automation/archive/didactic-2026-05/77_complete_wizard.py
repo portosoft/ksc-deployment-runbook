@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-import urllib.request, urllib.error, base64, ssl, json, os, sys
+import urllib.request
+import urllib.error
+import base64
+import ssl
+import json
+import os
+import sys
 from dotenv import load_dotenv
 
 

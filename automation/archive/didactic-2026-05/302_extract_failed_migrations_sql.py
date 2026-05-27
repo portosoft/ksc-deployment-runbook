@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -52,7 +53,7 @@ for kw in keywords:
                 if dist < closest_dist:
                     closest_dist = dist
                     closest_mig = name
-        
+
         print(f"Occurrence at {pos} (closest migration: {closest_mig}, dist={closest_dist}):")
         # Print a chunk of context around the occurrence
         chunk = data[max(0, pos-200):min(len(data), pos+600)]
@@ -66,13 +67,16 @@ for kw in keywords:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/extract_failed_migrations_sql.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/extract_failed_migrations_sql.py"
+        )
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/extract_failed_migrations_sql.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

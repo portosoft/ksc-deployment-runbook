@@ -1,14 +1,14 @@
 # Relatório Técnico: Resolução de Conflitos e Execução de Migrações do KSC IAM
 
-**Data:** Maio de 2026  
-**Status:** Concluído com Sucesso  
-**Alvo:** Kaspersky Security Center (KSC) 16.2 - Identity and Access Management (`kliam_srv`)  
+**Data:** Maio de 2026
+**Status:** Concluído com Sucesso
+**Alvo:** Kaspersky Security Center (KSC) 16.2 - Identity and Access Management (`kliam_srv`)
 
 ---
 
 ## 1. Introdução e Diagnóstico
 
-Durante a inicialização e o provisionamento do Kaspersky Security Center 16.2 no Rocky Linux 9, o serviço de identidade e acesso (`kliam_srv`) deparou-se com um deadlock crítico de migrações no banco de dados PostgreSQL (`ksciam`). 
+Durante a inicialização e o provisionamento do Kaspersky Security Center 16.2 no Rocky Linux 9, o serviço de identidade e acesso (`kliam_srv`) deparou-se com um deadlock crítico de migrações no banco de dados PostgreSQL (`ksciam`).
 
 O banco apresentava um estado híbrido e corrompido:
 *   A tabela de controle `public.schema_migrations` estava marcada artificialmente com a versão final `1770629073` e sem sinalizador de sujeira (`dirty = false`).
@@ -50,7 +50,7 @@ Desenvolvemos o script de remediação transacional `remediate_and_migrate.py`. 
 
 ## 4. Esclarecimento Sobre `iam.users`
 
-Durante a fase de diagnósticos, constatou-se que consultas diretas para `iam.users` resultavam em erro de relação inexistente. 
+Durante a fase de diagnósticos, constatou-se que consultas diretas para `iam.users` resultavam em erro de relação inexistente.
 
 Após a conclusão com êxito da execução de todas as 223 migrações e auditoria minuciosa da modelagem física das tabelas, **comprovou-se que não existe tabela ou view denominada `iam.users` no ecossistema KSC**. O mapeamento correto da base relacional demonstrou que:
 *   A entidade que armazena os dados das identidades de usuários no esquema `iam` é a tabela **`iam.accounts`** (e tabelas acessórias como `iam.external_accounts`).

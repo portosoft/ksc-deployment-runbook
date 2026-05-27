@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -16,8 +17,8 @@ def main():
         print("Connected.")
 
         sftp = client.open_sftp()
-        files = sftp.listdir('/tmp/extracted_migrations/')
-        
+        files = sftp.listdir("/tmp/extracted_migrations/")
+
         targets = ["1756292315", "1756292317", "1756292320", "1756292321"]
         matching = [f for f in files if any(t in f for t in targets)]
         print("Matching files in /tmp/extracted_migrations/:")
@@ -28,6 +29,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -36,7 +37,7 @@ for target in [
         print(f"Target '{target}' not found.")
         continue
     print(f"=== Target '{target}' at index {idx} ===")
-    
+
     # Go embed typically groups files. Let's find the SQL statements in the binary.
     # We can also walk forward from the index to see if there is any SQL code.
     # Let's search the binary for BEGIN; or ALTER or CREATE within 1MB of the target filename.
@@ -52,13 +53,16 @@ for target in [
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/extract_specific_sql.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/extract_specific_sql.py"
+        )
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/extract_specific_sql.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

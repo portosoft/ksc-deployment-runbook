@@ -31,7 +31,7 @@ host: 0.0.0.0
 
         # Remove TLS lines
         lines = pm_content.split("\n")
-        new_lines = [l for l in lines if "NATS_TLS_" not in l]
+        new_lines = [line for line in lines if "NATS_TLS_" not in line]
         new_pm = "\n".join(new_lines)
 
         sftp = client.open_sftp()

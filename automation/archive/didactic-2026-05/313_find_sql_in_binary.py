@@ -3,6 +3,7 @@ import os
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -41,16 +42,16 @@ for pat in patterns:
         while block_start > 0 and data[block_start] != 0 and (32 <= data[block_start] < 127 or data[block_start] in (10, 13)):
             block_start -= 1
         block_start += 1
-        
+
         # Find the block end (walk forward to a null or non-printable char)
         block_end = start
         while block_end < len(data) and data[block_end] != 0 and (32 <= data[block_end] < 127 or data[block_end] in (10, 13)):
             block_end += 1
-            
+
         if block_start in seen_offsets:
             continue
         seen_offsets.add(block_start)
-        
+
         chunk = data[block_start:block_end]
         # Only print if it looks like a real SQL chunk (contains SELECT, CREATE, or ALTER and is long enough)
         if len(chunk) > 30:
@@ -65,13 +66,16 @@ for pat in patterns:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/find_sql_in_binary.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/find_sql_in_binary.py"
+        )
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/find_sql_in_binary.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

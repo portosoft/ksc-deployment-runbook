@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -17,7 +18,7 @@ def main():
 
         q = """
         SELECT table_schema, COUNT(*), string_agg(table_name, ', ' order by table_name) as tables
-        FROM information_schema.tables 
+        FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
           AND table_schema NOT IN ('pg_catalog', 'information_schema')
         GROUP BY table_schema
@@ -27,14 +28,14 @@ def main():
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
         stdin.flush()
-        
+
         print("--- Table Counts by Schema in ksc ---")
         print(stdout.read().decode("utf-8"))
 
         # Also search for "users" table or view in ksc database
         q_search = """
-        SELECT table_schema, table_name, table_type 
-        FROM information_schema.tables 
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
         WHERE table_name ILIKE '%user%'
         ORDER BY table_schema, table_name;
         """
@@ -48,6 +49,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()
