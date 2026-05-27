@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -25,7 +26,9 @@ def main():
             return out, err
 
         print("=== 1. Checking information_schema ===")
-        out, err = run_query("SELECT table_schema, table_name, table_type FROM information_schema.tables WHERE table_name = 'users';")
+        out, err = run_query(
+            "SELECT table_schema, table_name, table_type FROM information_schema.tables WHERE table_name = 'users';"
+        )
         print("STDOUT:\n", out)
         print("STDERR:\n", err)
 
@@ -37,6 +40,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -67,7 +67,7 @@ mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     "Error: ENOENT: no
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133 
+mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
@@ -83,14 +83,14 @@ Unit postgresql-16.service could not be found.
 === PASSO 1.2 ===
 Comando: sudo ss -tlnp | grep -E '13000|13299|8080|5432|9500|4222'
 --- STDOUT ---
-LISTEN 0      2048                       0.0.0.0:13299      0.0.0.0:*    users:(("klserver",pid=1105436,fd=71)) 
-LISTEN 0      2048                       0.0.0.0:13000      0.0.0.0:*    users:(("klserver",pid=1105436,fd=75)) 
-LISTEN 0      400                      127.0.0.1:5432       0.0.0.0:*    users:(("postgres",pid=80214,fd=7))    
+LISTEN 0      2048                       0.0.0.0:13299      0.0.0.0:*    users:(("klserver",pid=1105436,fd=71))
+LISTEN 0      2048                       0.0.0.0:13000      0.0.0.0:*    users:(("klserver",pid=1105436,fd=75))
+LISTEN 0      400                      127.0.0.1:5432       0.0.0.0:*    users:(("postgres",pid=80214,fd=7))
 LISTEN 0      4096                             *:4222             *:*    users:(("nats-server",pid=599758,fd=6))
-LISTEN 0      2048                          [::]:13299         [::]:*    users:(("klserver",pid=1105436,fd=77)) 
-LISTEN 0      2048                          [::]:13000         [::]:*    users:(("klserver",pid=1105436,fd=79)) 
-LISTEN 0      4096                             *:9500             *:*    users:(("kliam",pid=1117408,fd=20))    
-LISTEN 0      511                              *:8080             *:*    users:(("node",pid=1105529,fd=27))     
+LISTEN 0      2048                          [::]:13299         [::]:*    users:(("klserver",pid=1105436,fd=77))
+LISTEN 0      2048                          [::]:13000         [::]:*    users:(("klserver",pid=1105436,fd=79))
+LISTEN 0      4096                             *:9500             *:*    users:(("kliam",pid=1117408,fd=20))
+LISTEN 0      511                              *:8080             *:*    users:(("node",pid=1105529,fd=27))
 ================================================================================
 
 === PASSO 1.3 ===
@@ -289,8 +289,8 @@ metadata:
 server_iam:
     iam_address: "kscserver.tail8b9ae.ts.net"
     server_display_name: "kscserver.tail8b9ae.ts.net"
-    ksc_address: "127.0.0.1"  
-    ksc_ca: "/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer" 
+    ksc_address: "127.0.0.1"
+    ksc_ca: "/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer"
 dbms_iam:
     dbms_main:
         dbms_type: "POSTGRES"
@@ -323,9 +323,9 @@ WHERE table_type = 'BASE TABLE'
   AND table_schema NOT IN ('pg_catalog', 'information_schema')
 GROUP BY table_schema
 ORDER BY table_schema;
-" 
+"
 --- STDOUT ---
- table_schema | total_tabelas 
+ table_schema | total_tabelas
 --------------+---------------
  client       |             2
  iam          |            17
@@ -353,9 +353,9 @@ Comando: sudo -u postgres psql -d ksc -c "
 SELECT \"wstrName\", \"binId\"
 FROM spl_users
 WHERE \"wstrName\" IN ('kscadmin', 'KLAdmins', 'kscadmin2');
-" 
+"
 --- STDOUT ---
- wstrName  |               binId                
+ wstrName  |               binId
 -----------+------------------------------------
  kscadmin  | \xf1419635f8a050f98849402db80bb715
  kscadmin2 | \xbb688af2b99156c0e903aad8b32dd5b3
@@ -366,7 +366,7 @@ WHERE \"wstrName\" IN ('kscadmin', 'KLAdmins', 'kscadmin2');
 === PASSO 1.10.1 ===
 Comando: sudo -u postgres psql -d ksc -c "SELECT * FROM mfa_totp_exceptions;"
 --- STDOUT ---
- nIdentity |               binId                | binSidHash | wstrName  
+ nIdentity |               binId                | binSidHash | wstrName
 -----------+------------------------------------+------------+-----------
          1 | \xf1419635f8a050f98849402db80bb715 |            | kscadmin
          2 | \xbb688af2b99156c0e903aad8b32dd5b3 |            | kscadmin2
@@ -377,7 +377,7 @@ Comando: sudo -u postgres psql -d ksc -c "SELECT * FROM mfa_totp_exceptions;"
 === PASSO 1.10.2 ===
 Comando: sudo -u postgres psql -d ksc -c "SELECT * FROM mfa_totp_settings;"
 --- STDOUT ---
- nIdentity | wstrMfaKeyIssuer | nTotpVerifyResyncPeriod | nTotpVerifyDelayPeriod | nTotpSecretKeyLength | nTotpSecretAlgorithm | nTotpSecretTimeStep | bMfaRequiredForAll 
+ nIdentity | wstrMfaKeyIssuer | nTotpVerifyResyncPeriod | nTotpVerifyDelayPeriod | nTotpSecretKeyLength | nTotpSecretAlgorithm | nTotpSecretTimeStep | bMfaRequiredForAll
 -----------+------------------+-------------------------+------------------------+----------------------+----------------------+---------------------+--------------------
          1 |                  |                       1 |                      1 |                    6 |                    0 |                  30 |                  0
 (1 linha)
@@ -516,53 +516,52 @@ Comando: sudo journalctl -u ksc-web-console -n 50 --no-pager
 --- STDOUT ---
 mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 04:39:38.106 
+mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 04:39:38.106
 mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 04:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
-mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 05:39:38.109 
+mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 05:39:38.109
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 05:39:38.110 
+mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 05:39:38.110
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 05:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
-mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 06:39:38.109 
+mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 06:39:38.109
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 06:39:38.109 
+mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 06:39:38.109
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 06:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
-mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 07:39:38.119 
+mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 07:39:38.119
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 07:39:38.120 
+mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 07:39:38.120
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 07:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
-mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133 
+mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
-mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133 
+mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: ╭─ 08:39:38.133
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
 mai 22 08:39:38 kscserver.tail8b9ae.ts.net node[1105529]:     []
 ================================================================================
-

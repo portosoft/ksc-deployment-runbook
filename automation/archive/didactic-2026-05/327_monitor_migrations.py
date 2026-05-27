@@ -3,6 +3,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -35,12 +36,12 @@ def main():
         # Monitor loop
         for i in range(1, 11):
             print(f"\n--- Checking Progress (Iteration {i}/10) ---")
-            
+
             # Check version
             q_ver = "SELECT version, dirty FROM public.schema_migrations LIMIT 1;"
             ver_out = run_query(q_ver)
             print("Migration State (version|dirty):", ver_out)
-            
+
             # Check tables count in 'iam' schema
             q_cnt = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'iam' AND table_type = 'BASE TABLE';"
             cnt_out = run_query(q_cnt)
@@ -54,7 +55,13 @@ def main():
             print("Recent service logs (last 5 lines):")
             log_out, _ = run_cmd("sudo journalctl -u kliam_srv -n 5 --no-pager")
             # clean sudo prompt if any
-            clean_log = "\n".join([line for line in log_out.split("\n") if "senha" not in line and "password" not in line])
+            clean_log = "\n".join(
+                [
+                    line
+                    for line in log_out.split("\n")
+                    if "senha" not in line and "password" not in line
+                ]
+            )
             print(clean_log)
 
             time.sleep(5)
@@ -62,6 +69,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

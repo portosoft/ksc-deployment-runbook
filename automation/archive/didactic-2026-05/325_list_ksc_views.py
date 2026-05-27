@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -16,8 +17,8 @@ def main():
         print("Connected.")
 
         q = """
-        SELECT table_schema, table_name, table_type 
-        FROM information_schema.tables 
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
         WHERE table_type = 'VIEW'
           AND table_schema NOT IN ('pg_catalog', 'information_schema')
         ORDER BY table_schema, table_name;
@@ -26,13 +27,14 @@ def main():
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
         stdin.flush()
-        
+
         print("--- Views in ksc database ---")
         print(stdout.read().decode("utf-8"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

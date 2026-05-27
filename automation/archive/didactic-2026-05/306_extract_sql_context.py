@@ -3,6 +3,7 @@ import os
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -37,12 +38,12 @@ def get_sql_block(pos):
     while start > 0 and data[start] != 0 and (32 <= data[start] < 127 or data[start] in (10, 13)):
         start -= 1
     start += 1
-    
+
     # Walk forward to find non-printable characters or nulls
     end = pos
     while end < len(data) and data[end] != 0 and (32 <= data[end] < 127 or data[end] in (10, 13)):
         end += 1
-        
+
     return data[start:end].decode('ascii', errors='ignore')
 
 for kw in keywords:
@@ -62,13 +63,16 @@ for kw in keywords:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/extract_sql_context.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/extract_sql_context.py"
+        )
         print(stdout.read().decode("utf-8"))
 
         client.exec_command("rm -f /tmp/extract_sql_context.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

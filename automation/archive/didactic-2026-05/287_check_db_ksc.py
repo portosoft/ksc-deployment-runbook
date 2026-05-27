@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -27,7 +28,7 @@ def main():
         print("=== Schemas and table counts in database 'ksc' ===")
         q = """
         SELECT table_schema, COUNT(*), string_agg(table_name, ', ' order by table_name) as tables
-        FROM information_schema.tables 
+        FROM information_schema.tables
         WHERE table_type = 'BASE TABLE'
           AND table_schema NOT IN ('pg_catalog', 'information_schema')
         GROUP BY table_schema
@@ -38,8 +39,8 @@ def main():
 
         print("=== Views in database 'ksc' ===")
         q_view = """
-        SELECT table_schema, table_name 
-        FROM information_schema.tables 
+        SELECT table_schema, table_name
+        FROM information_schema.tables
         WHERE table_type = 'VIEW'
           AND table_schema NOT IN ('pg_catalog', 'information_schema')
         ORDER BY table_schema, table_name;
@@ -50,6 +51,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()
