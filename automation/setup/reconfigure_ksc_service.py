@@ -57,7 +57,11 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         sftp.close()
 
         print("--- Executando postinstall.pl (Modo Automático) ---")
-        cmd = "sudo -S -E bash -c 'KLAUTOANSWERS=/tmp/reconfig_ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'"
+        cmd = (
+            "sudo -S -E bash -c "
+            "'KLAUTOANSWERS=/tmp/reconfig_ans.txt "
+            "/opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl'"
+        )
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
         stdin.flush()
@@ -78,6 +82,8 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         )
         stdin.write(password + "\n")
         stdin.flush()
+        # Wait for the command to finish to ensure restart is complete
+        stdout.channel.recv_exit_status()
 
         client.close()
         print("--- Reconfiguração concluída ---")
