@@ -3,7 +3,6 @@ import os
 import re
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -41,16 +40,13 @@ for idx, v in enumerate(unique_versions):
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command(
-            "python3 /tmp/list_all_migrations.py"
-        )
+        stdin, stdout, stderr = client.exec_command("python3 /tmp/list_all_migrations.py")
         print(stdout.read().decode("utf-8"))
 
         client.exec_command("rm -f /tmp/list_all_migrations.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

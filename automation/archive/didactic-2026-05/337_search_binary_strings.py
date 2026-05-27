@@ -3,7 +3,6 @@ import os
 import sys
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -43,16 +42,13 @@ for target in [b'iam.users', b'CREATE VIEW', b'create view', b'iam_users']:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command(
-            "python3 /tmp/search_binary_strings.py"
-        )
+        stdin, stdout, stderr = client.exec_command("python3 /tmp/search_binary_strings.py")
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/search_binary_strings.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

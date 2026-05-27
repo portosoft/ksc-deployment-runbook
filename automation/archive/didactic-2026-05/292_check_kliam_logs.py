@@ -2,7 +2,6 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -29,22 +28,13 @@ def main():
 
         print("=== kliam_srv journal logs ===")
         # Get logs from the last 15 minutes
-        log_out, _ = run_cmd(
-            "sudo journalctl -u kliam_srv --since '15 minutes ago' --no-pager"
-        )
-        clean_log = "\n".join(
-            [
-                line
-                for line in log_out.split("\n")
-                if "senha" not in line and "password" not in line
-            ]
-        )
+        log_out, _ = run_cmd("sudo journalctl -u kliam_srv --since '15 minutes ago' --no-pager")
+        clean_log = "\n".join([line for line in log_out.split("\n") if "senha" not in line and "password" not in line])
         print(clean_log)
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

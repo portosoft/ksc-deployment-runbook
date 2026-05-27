@@ -3,7 +3,6 @@ import os
 import re
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -63,16 +62,13 @@ for kw in keywords:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command(
-            "python3 /tmp/extract_sql_context.py"
-        )
+        stdin, stdout, stderr = client.exec_command("python3 /tmp/extract_sql_context.py")
         print(stdout.read().decode("utf-8"))
 
         client.exec_command("rm -f /tmp/extract_sql_context.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,6 @@ import os
 import re
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -67,10 +66,8 @@ with open('/tmp/all_sql_blocks.txt', 'w', encoding='utf-8') as out_f:
         sftp.close()
 
         # Run remote script
-        stdin, stdout, stderr = client.exec_command(
-            "python3 /tmp/extract_sql_to_file.py"
-        )
-        stdout.read()  # Wait for it to finish
+        stdin, stdout, stderr = client.exec_command("python3 /tmp/extract_sql_to_file.py")
+        stdout.read() # Wait for it to finish
 
         # Download the result
         sftp = client.open_sftp()
@@ -83,7 +80,6 @@ with open('/tmp/all_sql_blocks.txt', 'w', encoding='utf-8') as out_f:
         print("SQL blocks successfully extracted to scratch/all_extracted_sql.txt")
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

@@ -2,7 +2,6 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -33,19 +32,12 @@ def main():
 
         print("\n=== kladminserver_srv Recent Logs ===")
         out_logs, _ = run_cmd("sudo journalctl -u kladminserver_srv -n 30 --no-pager")
-        clean_logs = "\n".join(
-            [
-                line
-                for line in out_logs.split("\n")
-                if "senha" not in line and "password" not in line
-            ]
-        )
+        clean_logs = "\n".join([line for line in out_logs.split("\n") if "senha" not in line and "password" not in line])
         print(clean_logs.encode("ascii", errors="replace").decode("ascii"))
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,6 @@ import os
 import sys
 from dotenv import load_dotenv
 
-
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -49,20 +48,15 @@ print(printable)
         f.close()
         sftp.close()
 
-        target = (
-            sys.argv[1] if len(sys.argv) > 1 else "1750417290_database_schema.up.sql"
-        )
+        target = sys.argv[1] if len(sys.argv) > 1 else "1750417290_database_schema.up.sql"
         print(f"Extracting content for: {target}")
-        stdin, stdout, stderr = client.exec_command(
-            f"python3 /tmp/extract_sql_detail.py '{target}'"
-        )
+        stdin, stdout, stderr = client.exec_command(f"python3 /tmp/extract_sql_detail.py '{target}'")
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/extract_sql_detail.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
-
 
 if __name__ == "__main__":
     main()
