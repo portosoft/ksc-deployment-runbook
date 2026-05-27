@@ -2,6 +2,7 @@ import paramiko
 import os
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -29,7 +30,16 @@ def main():
 
         # Let's also query public.schema_migrations if it exists, and iam.schema_migrations, etc.
         # Let's list schemas and find if any other schemas have schema_migrations
-        for schema in ['public', 'iam', 'voltron', 'client', 'ksc', 'locker', 'pat', 'scope']:
+        for schema in [
+            "public",
+            "iam",
+            "voltron",
+            "client",
+            "ksc",
+            "locker",
+            "pat",
+            "scope",
+        ]:
             print(f"--- Content of {schema}.schema_migrations (if exists) ---")
             q2 = f"SELECT * FROM {schema}.schema_migrations;"
             cmd2 = f'sudo -S -u postgres psql -d ksciam -c "{q2}"'
@@ -44,6 +54,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

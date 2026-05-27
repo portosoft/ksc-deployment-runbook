@@ -4,6 +4,7 @@ import time
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -34,10 +35,10 @@ def main():
             out = out.strip()
             if not out:
                 return None, None
-            parts = out.split('|')
+            parts = out.split("|")
             if len(parts) == 2:
                 version = int(parts[0])
-                dirty = parts[1] == 't'
+                dirty = parts[1] == "t"
                 return version, dirty
             return None, None
 
@@ -46,7 +47,7 @@ def main():
             out, _ = run_cmd(f'sudo -u postgres psql -d ksciam -t -A -c "{q}"')
             try:
                 return int(out.strip())
-            except:
+            except Exception:
                 return 0
 
         # Loop to automatically resolve dirty migrations
@@ -66,10 +67,14 @@ def main():
 
             if not dirty:
                 if status == "active":
-                    print("Service is active and migration is clean! We have succeeded!")
+                    print(
+                        "Service is active and migration is clean! We have succeeded!"
+                    )
                     break
                 else:
-                    print("Service is not active but migration is clean. Waiting 10s to see if it starts or fails...")
+                    print(
+                        "Service is not active but migration is clean. Waiting 10s to see if it starts or fails..."
+                    )
                     time.sleep(10)
                     out_status, _ = run_cmd("systemctl is-active kliam_srv")
                     status = out_status.strip()
@@ -107,13 +112,18 @@ def main():
             out_logs, _ = run_cmd(cmd_logs)
 
             # Extract the error line
-            err_lines = [line for line in out_logs.split('\n') if "error" in line.lower() or "fail" in line.lower()]
+            err_lines = [
+                line
+                for line in out_logs.split("\n")
+                if "error" in line.lower() or "fail" in line.lower()
+            ]
             for line in err_lines[:5]:
                 print("  >", line.strip())
 
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

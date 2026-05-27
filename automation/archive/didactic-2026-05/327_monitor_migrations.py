@@ -3,6 +3,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -54,7 +55,13 @@ def main():
             print("Recent service logs (last 5 lines):")
             log_out, _ = run_cmd("sudo journalctl -u kliam_srv -n 5 --no-pager")
             # clean sudo prompt if any
-            clean_log = "\n".join([line for line in log_out.split("\n") if "senha" not in line and "password" not in line])
+            clean_log = "\n".join(
+                [
+                    line
+                    for line in log_out.split("\n")
+                    if "senha" not in line and "password" not in line
+                ]
+            )
             print(clean_log)
 
             time.sleep(5)
@@ -62,6 +69,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

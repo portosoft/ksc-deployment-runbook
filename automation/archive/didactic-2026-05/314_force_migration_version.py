@@ -3,6 +3,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -32,8 +33,12 @@ def main():
         time.sleep(2)
 
         print("Forcing migration version 1647868891 (clean)...")
-        run_cmd('sudo -u postgres psql -d ksciam -c "DELETE FROM public.schema_migrations;"')
-        run_cmd('sudo -u postgres psql -d ksciam -c "INSERT INTO public.schema_migrations (version, dirty) VALUES (1647868891, false);"')
+        run_cmd(
+            'sudo -u postgres psql -d ksciam -c "DELETE FROM public.schema_migrations;"'
+        )
+        run_cmd(
+            'sudo -u postgres psql -d ksciam -c "INSERT INTO public.schema_migrations (version, dirty) VALUES (1647868891, false);"'
+        )
 
         print("Starting kliam_srv...")
         start_time = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -54,6 +59,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

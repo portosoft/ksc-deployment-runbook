@@ -3,6 +3,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -32,7 +33,9 @@ def main():
         time.sleep(2)
 
         print("Clearing schema_migrations...")
-        run_cmd('sudo -u postgres psql -d ksciam -c "DELETE FROM public.schema_migrations;"')
+        run_cmd(
+            'sudo -u postgres psql -d ksciam -c "DELETE FROM public.schema_migrations;"'
+        )
 
         # Get current time for journalctl since
         print("Starting kliam_srv and capturing logs...")
@@ -56,6 +59,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

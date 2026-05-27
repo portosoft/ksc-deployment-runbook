@@ -8,8 +8,8 @@ rpm -qa | grep -iE 'ksc64|klnagent|kaspersky' | xargs -r yum remove -y
 
 echo "=== LIMPEZA DE DIRETORIOS ==="
 DATE_STR=$(date +%Y%m%d_%H%M)
-mv /var/opt/kaspersky /var/opt/kaspersky.broken-v2-$DATE_STR 2>/dev/null || true
-mv /etc/opt/kaspersky /etc/opt/kaspersky.broken-v2-$DATE_STR 2>/dev/null || true
+mv /var/opt/kaspersky /var/opt/kaspersky.broken-v2-"$DATE_STR" 2>/dev/null || true
+mv /etc/opt/kaspersky /etc/opt/kaspersky.broken-v2-"$DATE_STR" 2>/dev/null || true
 rm -rf /opt/kaspersky 2>/dev/null || true
 
 echo "=== REINSTALANDO ==="

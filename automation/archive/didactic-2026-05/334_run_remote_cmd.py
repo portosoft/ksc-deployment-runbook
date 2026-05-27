@@ -3,6 +3,7 @@ import sys
 import paramiko
 from dotenv import load_dotenv
 
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python run_remote_cmd.py <command>")
@@ -42,7 +43,11 @@ def main():
             print("=== STDOUT ===")
             print(safe_out)
         if safe_err.strip():
-            clean_err = safe_err.replace("[sudo] senha para suporte:", "").replace("[sudo] password for suporte:", "").strip()
+            clean_err = (
+                safe_err.replace("[sudo] senha para suporte:", "")
+                .replace("[sudo] password for suporte:", "")
+                .strip()
+            )
             if clean_err:
                 print("=== STDERR ===")
                 print(clean_err)
@@ -50,6 +55,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

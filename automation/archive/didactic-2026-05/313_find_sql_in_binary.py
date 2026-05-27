@@ -3,6 +3,7 @@ import os
 import re
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -65,13 +66,16 @@ for pat in patterns:
         f.close()
         sftp.close()
 
-        stdin, stdout, stderr = client.exec_command("python3 /tmp/find_sql_in_binary.py")
+        stdin, stdout, stderr = client.exec_command(
+            "python3 /tmp/find_sql_in_binary.py"
+        )
         print(stdout.read().decode("utf-8", errors="replace"))
 
         client.exec_command("rm -f /tmp/find_sql_in_binary.py")
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()

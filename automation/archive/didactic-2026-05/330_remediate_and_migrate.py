@@ -3,6 +3,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     load_dotenv("configs/env/ksc_vars.env")
     host = os.getenv("KSC_HOST")
@@ -42,30 +43,25 @@ def main():
         queries = [
             # 1. Challenges remediation
             "ALTER TABLE ksc.challenges DROP COLUMN IF EXISTS ui_locales;",
-
             # 2. Resources schedule remediation
             "ALTER TABLE iam.resources_schedule DROP COLUMN IF EXISTS req_id;",
             "ALTER TABLE iam.resources_schedule DROP CONSTRAINT IF EXISTS resources_schedule_pkey;",
             "ALTER TABLE iam.resources_schedule ADD CONSTRAINT resources_schedule_pkey PRIMARY KEY (id);",
             "CREATE UNIQUE INDEX IF NOT EXISTS iam_schedule_uq ON iam.resources_schedule (id, policy_id);",
             "DROP INDEX IF EXISTS iam.obj_ops_unique;",
-
             # 3. Directory object index remediation
             "DROP INDEX IF EXISTS ksc.ksc_directory_object_uniq_idx;",
             # Revert tenant_id column type to scalar varchar(255) so the array conversion migration runs cleanly
             "ALTER TABLE ksc.directory_object ALTER COLUMN tenant_id TYPE varchar(255) USING tenant_id[1];",
-
             # 4. Sessions columns and constraints remediation
             "ALTER TABLE ksc.sessions DROP CONSTRAINT IF EXISTS sessions_pkey;",
             "ALTER TABLE ksc.sessions DROP COLUMN IF EXISTS workspace_id;",
             "ALTER TABLE ksc.sessions ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);",
-
             # 5. Outbox table remediation
             "DROP TABLE IF EXISTS ksc.deleting_outbox;",
-
             # 6. Reset migration version in public.schema_migrations to 1751873842
             "DELETE FROM public.schema_migrations;",
-            "INSERT INTO public.schema_migrations (version, dirty) VALUES (1751873842, false);"
+            "INSERT INTO public.schema_migrations (version, dirty) VALUES (1751873842, false);",
         ]
 
         for q in queries:
@@ -83,6 +79,7 @@ def main():
         client.close()
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()
