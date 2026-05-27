@@ -77,11 +77,9 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         client.exec_command("rm -f /tmp/reconfig_ans.txt")
 
         print("--- Reiniciando serviços principais ---")
-        cmd_restart = (
-            "sudo -S systemctl restart kladminserver_srv.service "
-            "ksc-web-console.service"
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl restart kladminserver_srv.service ksc-web-console.service"
         )
-        stdin, stdout, stderr = client.exec_command(cmd_restart)
         stdin.write(password + "\n")
         stdin.flush()
         # Wait for the command to finish to ensure restart is complete
