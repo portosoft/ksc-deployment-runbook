@@ -23,26 +23,34 @@ def reset_all_dbs():
         client.connect(host, username=user, password=password)
 
         print(f"--- Parando serviços KSC em {host} ---")
-        client.exec_command(
-            f"echo {password} | sudo -S systemctl stop kladminserver_srv ksc-web-console kliam_srv"
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl stop kladminserver_srv ksc-web-console kliam_srv"
         )
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdout.read() # Wait for completion
 
         print("--- Resetando bancos ksc e ksciam (Postgres) ---")
         for db in ["ksc", "ksciam"]:
             # Terminar conexões ativas para permitir o DROP
-            cmd0 = f"echo {password} | sudo -S -u postgres psql -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{db}' AND pid <> pg_backend_pid();\""
-            client.exec_command(cmd0)
+            cmd0 = f"sudo -S -u postgres psql -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '{db}' AND pid <> pg_backend_pid();\""
+            stdin, stdout, stderr = client.exec_command(cmd0)
+            stdin.write(password + "\n")
+            stdin.flush()
+            stdout.read() # Wait for completion
 
             # Drop Database
-            cmd1 = (
-                f'echo {password} | sudo -S -u postgres psql -c "DROP DATABASE {db};"'
-            )
+            cmd1 = f'sudo -S -u postgres psql -c "DROP DATABASE {db};"'
             stdin, stdout, stderr = client.exec_command(cmd1)
+            stdin.write(password + "\n")
+            stdin.flush()
             print(f"Drop {db}: {stdout.read().decode().strip()}")
 
             # Recreate Database
-            cmd2 = f'echo {password} | sudo -S -u postgres psql -c "CREATE DATABASE {db} OWNER kluser;"'
+            cmd2 = f'sudo -S -u postgres psql -c "CREATE DATABASE {db} OWNER kluser;"'
             stdin, stdout, stderr = client.exec_command(cmd2)
+            stdin.write(password + "\n")
+            stdin.flush()
             print(f"Create {db}: {stdout.read().decode().strip()}")
 
         print("--- Bancos de dados reinicializados com sucesso ---")
