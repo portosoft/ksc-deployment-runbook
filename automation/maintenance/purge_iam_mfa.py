@@ -40,9 +40,12 @@ def purge_iam_mfa():
             print(f"Query: {q} | Status: {stdout.read().decode().strip()}")
 
         print("--- Restarting all KSC services ---")
-        client.exec_command(
-            f"echo {password} | sudo -S systemctl restart kladminserver_srv kliam_srv ksc-web-console"
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl restart kladminserver_srv kliam_srv ksc-web-console"
         )
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdout.channel.recv_exit_status()
 
         client.close()
         print("--- Done. Please try to login now. ---")
