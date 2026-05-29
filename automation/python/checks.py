@@ -324,7 +324,7 @@ def check_services_and_db(config: KscConfig) -> CheckResult:
             )
         )
 
-    for svc in ["klnagent", "klserver"]:
+    for svc in ["klnagent_srv", "kladminserver_srv"]:
         status = _systemd_is_active(svc)
         if status is True:
             result.add(CheckItem(name=svc, status="ok", message=f"Ativo."))
