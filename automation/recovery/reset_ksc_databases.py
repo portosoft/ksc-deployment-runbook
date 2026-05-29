@@ -28,7 +28,7 @@ def reset_all_dbs():
         )
         stdin.write(password + "\n")
         stdin.flush()
-        stdout.read() # Wait for completion
+        stdout.channel.recv_exit_status()
 
         print("--- Resetando bancos ksc e ksciam (Postgres) ---")
         for db in ["ksc", "ksciam"]:
@@ -37,7 +37,7 @@ def reset_all_dbs():
             stdin, stdout, stderr = client.exec_command(cmd0)
             stdin.write(password + "\n")
             stdin.flush()
-            stdout.read() # Wait for completion
+            stdout.channel.recv_exit_status()
 
             # Drop Database
             cmd1 = f'sudo -S -u postgres psql -c "DROP DATABASE {db};"'
