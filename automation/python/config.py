@@ -1,7 +1,6 @@
 import os
 from dataclasses import dataclass
 from typing import Optional
-from dotenv import load_dotenv
 
 
 @dataclass
@@ -22,6 +21,19 @@ class ConfigError(Exception):
     pass
 
 
+def _load_dotenv(path):
+    import os
+
+    try:
+        with open(path) as f:
+            for line in f:
+                if "=" in line and not line.startswith("#"):
+                    k, v = line.strip().split("=", 1)
+                    os.environ[k] = v.strip("\"'")
+    except Exception:
+        pass
+
+
 def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
     """
     Lê o .env, valida obrigatórios e retorna KscConfig.
@@ -30,7 +42,7 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
     if not os.path.exists(env_path):
         raise ConfigError(f"Arquivo de ambiente não encontrado: {env_path}")
 
-    load_dotenv(env_path)
+    _load_dotenv(env_path)
 
     try:
         # Puxamos as variáveis com prefixo KSC_ que costumam ser padrão
