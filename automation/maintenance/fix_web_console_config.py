@@ -30,24 +30,34 @@ def fix_web_console_config():
         # 2. Substitui placeholders de FQDN
         # 3. Garante porta 13299 para OpenAPI
         cmds = [
-            f"sudo sed -i 's/\\\\$web_console_port\\\\$/8080/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
-            f"sudo sed -i 's/\\\\$web_console_address\\\\$/{fqdn}/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
-            f'sudo sed -i \'s/"port": "13000"/"port": "13299"/g\' /var/opt/kaspersky/ksc-web-console/server/config.json',
+            f"sed -i 's/\\\\$web_console_port\\\\$/8080/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
+            f"sed -i 's/\\\\$web_console_address\\\\$/{fqdn}/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
+            f'sed -i \'s/"port": "13000"/"port": "13299"/g\' /var/opt/kaspersky/ksc-web-console/server/config.json',
         ]
 
         for cmd in cmds:
             stdin, stdout, stderr = client.exec_command(
-                f"echo {password} | sudo -S {cmd}"
+                f"sudo -S {cmd}"
             )
+            stdin.write(password + "\n")
+            stdin.flush()
+            stdout.channel.recv_exit_status()
             # Silently execute, error checking below
 
         print("--- Aplicando correções de permissões e reiniciando ---")
-        client.exec_command(
-            f"echo {password} | sudo -S chown -R ksc:kladmins /var/opt/kaspersky/ksc-web-console/"
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S chown -R ksc:kladmins /var/opt/kaspersky/ksc-web-console/"
         )
-        client.exec_command(
-            f"echo {password} | sudo -S systemctl restart ksc-web-console"
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdout.channel.recv_exit_status()
+
+        stdin, stdout, stderr = client.exec_command(
+            "sudo -S systemctl restart ksc-web-console"
         )
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdout.channel.recv_exit_status()
 
         print("--- Configuração do Web Console corrigida e serviço reiniciado ---")
         client.close()
