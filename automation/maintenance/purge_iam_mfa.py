@@ -37,6 +37,7 @@ def purge_iam_mfa():
             stdin, stdout, stderr = client.exec_command(cmd)
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             print(f"Query: {q} | Status: {stdout.read().decode().strip()}")
 
         print("--- Restarting all KSC services ---")
@@ -45,6 +46,7 @@ def purge_iam_mfa():
         )
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
         stdout.channel.recv_exit_status()
 
         client.close()

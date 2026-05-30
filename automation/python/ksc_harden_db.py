@@ -33,6 +33,7 @@ def apply_hardening(host, user, password, apply=False):
             stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             status = stdout.channel.recv_exit_status()
             if status != 0:
                 logger.error(f"Falha ao aplicar hardening: {cmd}")
