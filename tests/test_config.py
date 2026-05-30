@@ -10,7 +10,7 @@ def test_load_config_missing_file():
 
 
 @patch("automation.python.config.os.path.exists", return_value=True)
-@patch("automation.python.config.load_dotenv")
+@patch("automation.python.config._load_dotenv")
 @patch.dict(os.environ, {"KSC_DB_PASS": "testpass", "KSC_ADMIN_PASS": "adminpass"})
 def test_load_config_success(mock_load_dotenv, mock_exists):
     config = load_config("mock_path.env")
@@ -21,7 +21,7 @@ def test_load_config_success(mock_load_dotenv, mock_exists):
 
 
 @patch("automation.python.config.os.path.exists", return_value=True)
-@patch("automation.python.config.load_dotenv")
+@patch("automation.python.config._load_dotenv")
 @patch.dict(os.environ, {"KSC_ADMIN_PASS": "adminpass"}, clear=True)
 def test_load_config_missing_db_pass(mock_load_dotenv, mock_exists):
     with pytest.raises(ConfigError, match="KSC_DB_PASS é obrigatória"):
@@ -29,7 +29,7 @@ def test_load_config_missing_db_pass(mock_load_dotenv, mock_exists):
 
 
 @patch("automation.python.config.os.path.exists", return_value=True)
-@patch("automation.python.config.load_dotenv")
+@patch("automation.python.config._load_dotenv")
 @patch.dict(os.environ, {"KSC_DB_PASS": "testpass"}, clear=True)
 def test_load_config_missing_admin_pass(mock_load_dotenv, mock_exists):
     with pytest.raises(ConfigError, match="KSC_ADMIN_PASS é obrigatória"):
@@ -37,7 +37,7 @@ def test_load_config_missing_admin_pass(mock_load_dotenv, mock_exists):
 
 
 @patch("automation.python.config.os.path.exists", return_value=True)
-@patch("automation.python.config.load_dotenv")
+@patch("automation.python.config._load_dotenv")
 @patch.dict(
     os.environ,
     {
