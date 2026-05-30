@@ -78,6 +78,14 @@ def test_check_selinux_warning(mock_selinux, dummy_config):
     assert result.items[0].status == "warning"
 
 
+@patch("automation.python.checks._get_selinux_mode", return_value="unknown")
+def test_check_selinux_unknown(mock_selinux, dummy_config):
+    result = check_selinux(dummy_config)
+    assert not result.has_critical
+    assert result.items[0].status == "warning"
+    assert "Não foi possível determinar o modo" in result.items[0].message
+
+
 @patch("automation.python.checks._get_listening_ports", return_value=[])
 def test_check_ports_ok(mock_ports, dummy_config):
     result = check_ports(dummy_config)
