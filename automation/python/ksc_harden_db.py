@@ -24,18 +24,39 @@ def apply_hardening(host, user, password, apply=False):
         logger.info(f"Conectando a {host} para hardening...")
         client.connect(host, username=user, password=password, timeout=15)
 
-        for cmd in harden_cmds:
-            if not apply:
+        if not apply:
+            for cmd in harden_cmds:
                 logger.info(f"[CHECK] Verificando comando: {cmd}")
-                continue
+        else:
+            import shlex
 
-            logger.info(f"Aplicando: {cmd}")
-            stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
+            script_lines = []
+            for i, cmd in enumerate(harden_cmds):
+                logger.info(f"Aplicando: {cmd}")
+                script_lines.append(f"{cmd}")
+                script_lines.append(f"if [ $? -ne 0 ]; then echo '__KSC_FAIL__:{i}' >&2; fi")
+
+            batch_cmd = "\n".join(script_lines)
+            escaped_batch = shlex.quote(batch_cmd)
+
+            stdin, stdout, stderr = client.exec_command(f"sudo -S sh -c {escaped_batch}")
             stdin.write(password + "\n")
             stdin.flush()
             status = stdout.channel.recv_exit_status()
-            if status != 0:
-                logger.error(f"Falha ao aplicar hardening: {cmd}")
+
+            err_output = stderr.read().decode('utf-8', errors='ignore')
+            failed_any = False
+            for line in err_output.splitlines():
+                if line.startswith('__KSC_FAIL__:'):
+                    try:
+                        idx = int(line.split(':')[1])
+                        logger.error(f"Falha ao aplicar hardening: {harden_cmds[idx]}")
+                        failed_any = True
+                    except (IndexError, ValueError):
+                        pass
+
+            if status != 0 and not failed_any:
+                logger.error("Falha na execução em lote (sudo ou script principal falhou).")
 
         client.close()
         return True
