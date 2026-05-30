@@ -42,6 +42,7 @@ def apply_hardening(host, user, password, apply=False):
             stdin, stdout, stderr = client.exec_command(f"sudo -S sh -c {escaped_batch}")
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             status = stdout.channel.recv_exit_status()
 
             err_output = stderr.read().decode('utf-8', errors='ignore')
