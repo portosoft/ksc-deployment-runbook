@@ -65,6 +65,7 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         stdin, stdout, stderr = client.exec_command(cmd)
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
 
         # Stream output to console
         while True:
@@ -82,6 +83,7 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         )
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
         # Wait for the command to finish to ensure restart is complete
         stdout.channel.recv_exit_status()
 

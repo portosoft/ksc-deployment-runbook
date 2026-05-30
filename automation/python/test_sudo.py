@@ -22,6 +22,7 @@ def test_sudo():
         stdin, stdout, stderr = client.exec_command("sudo -S whoami")
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
 
         print("WHOAMI:", stdout.read().decode().strip())
         client.close()

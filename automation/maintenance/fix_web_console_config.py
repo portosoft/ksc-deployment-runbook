@@ -41,6 +41,7 @@ def fix_web_console_config():
             )
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             stdout.channel.recv_exit_status()
             # Silently execute, error checking below
 
@@ -50,6 +51,7 @@ def fix_web_console_config():
         )
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
         stdout.channel.recv_exit_status()
 
         stdin, stdout, stderr = client.exec_command(
@@ -57,6 +59,7 @@ def fix_web_console_config():
         )
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
         stdout.channel.recv_exit_status()
 
         print("--- Configuração do Web Console corrigida e serviço reiniciado ---")
