@@ -4,18 +4,8 @@ import sys
 import base64
 
 
-def final_syntax_fix(host, user, password):
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    try:
-        client.connect(host, username=user, password=password, timeout=30)
-
-        target_file = (
-            "/var/opt/kaspersky/ksc-web-console/server/core/env-local/web-server.js"
-        )
-
-        # Correct content based on visual inspection
-        fixed_content = """\"use strict\";
+def _get_fixed_content():
+    return """\"use strict\";
 Object.defineProperty(exports, \"__esModule\", { value: true });
 exports.WebServer = void 0;
 const parse_env_variable_1 = require(\"../../utils/parse-env-variable\");
@@ -195,30 +185,48 @@ class WebServer extends web_server_1.WebServer {
 exports.WebServer = WebServer;
 """
 
-        # Write back via base64
-        b64_content = base64.b64encode(fixed_content.encode("utf-8")).decode("utf-8")
-        print("--- Writing final fixed file ---")
-        client.exec_command(f"echo '{b64_content}' > /tmp/web-server-final.txt")
-        client.exec_command(
-            f"base64 -d /tmp/web-server-final.txt > /tmp/web-server-fixed.js"
-        )
-        stdin, stdout, stderr = client.exec_command(
-            f"sudo -S cp /tmp/web-server-fixed.js {target_file}"
-        )
-        stdin.write(password + "\n")
-        stdin.flush()
 
-        # KILL and RESTART
-        print("--- Restarting ---")
-        client.exec_command("sudo -S killall -9 node")
-        client.exec_command("sudo -S systemctl restart KSCWebConsole.service")
-        stdin.write(password + "\n")
-        stdin.flush()
+def _run_sudo_command(client, command, password):
+    stdin, stdout, stderr = client.exec_command(command)
+    stdin.write(password + "\n")
+    stdin.flush()
+    stdin.channel.shutdown_write()
+    return stdout.read().decode(), stderr.read().decode()
 
-        print("Done!")
-        client.close()
+
+def _apply_fix_and_restart(client, password, target_file, fixed_content):
+    b64_content = base64.b64encode(fixed_content.encode("utf-8")).decode("utf-8")
+    print("--- Writing final fixed file ---")
+    client.exec_command(f"echo '{b64_content}' > /tmp/web-server-final.txt")
+    client.exec_command(
+        "base64 -d /tmp/web-server-final.txt > /tmp/web-server-fixed.js"
+    )
+    _run_sudo_command(
+        client,
+        f"sudo -S cp /tmp/web-server-fixed.js {target_file}",
+        password
+    )
+
+    print("--- Restarting ---")
+    _run_sudo_command(client, "sudo -S killall -9 node", password)
+    _run_sudo_command(client, "sudo -S systemctl restart KSCWebConsole.service", password)
+    print("Done!")
+
+
+def final_syntax_fix(host, user, password):
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        client.connect(host, username=user, password=password, timeout=30)
+        target_file = (
+            "/var/opt/kaspersky/ksc-web-console/server/core/env-local/web-server.js"
+        )
+        fixed_content = _get_fixed_content()
+        _apply_fix_and_restart(client, password, target_file, fixed_content)
     except Exception as e:
         print(f"Error: {e}")
+    finally:
+        client.close()
 
 
 if __name__ == "__main__":
