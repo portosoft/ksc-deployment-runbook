@@ -4,13 +4,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
+from automation.python.utils.secure_file import make_secure_dir
+
 RunType = Literal["precheck", "deploy", "postcheck", "report"]
 
 
 def init_evidence_dir(run_type: RunType) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     path = Path("evidence") / run_type / timestamp
-    path.mkdir(parents=True, exist_ok=True)
+    make_secure_dir(path, mode=0o700)
     return path
 
 
