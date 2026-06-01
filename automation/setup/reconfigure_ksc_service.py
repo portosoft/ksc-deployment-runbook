@@ -54,6 +54,7 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
         sftp = client.open_sftp()
         with sftp.file("/tmp/reconfig_ans.txt", "w") as f:
             f.write(ans_content)
+        sftp.chmod("/tmp/reconfig_ans.txt", 0o600)
         sftp.close()
 
         print("--- Executando postinstall.pl (Modo Automático) ---")
