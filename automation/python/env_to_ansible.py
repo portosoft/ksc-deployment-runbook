@@ -19,7 +19,7 @@ def main():
         sys.exit(1)
 
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        os.makedirs(output_dir, mode=0o700)
 
     try:
         with open(env_path, "r") as env_file:
@@ -44,7 +44,9 @@ def main():
                 yaml_value = value.strip().strip('"').strip("'")
                 yaml_vars.append(f'{yaml_key}: "{yaml_value}"')
 
-        with open(output_file, "w") as out:
+        # Ensure the file is created with secure permissions (0o600) to protect secrets
+        fd = os.open(output_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w") as out:
             out.write("\n".join(yaml_vars) + "\n")
 
         print(f"Sucesso! Variáveis convertidas para: {output_file}")
