@@ -10,7 +10,8 @@ RunType = Literal["precheck", "deploy", "postcheck", "report"]
 def init_evidence_dir(run_type: RunType) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     path = Path("evidence") / run_type / timestamp
-    path.mkdir(parents=True, exist_ok=True)
+    # 🛡️ Sentinel: Ensure audit logs are created with restricted permissions (0o700)
+    path.mkdir(parents=True, exist_ok=True, mode=0o700)
     return path
 
 
