@@ -21,7 +21,7 @@ def main():
         sys.exit(1)
 
     if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+        os.makedirs(output_dir, mode=0o700)
 
     try:
         with open(env_path, "r") as env_file:
