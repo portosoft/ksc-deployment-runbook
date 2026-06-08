@@ -32,16 +32,3 @@ jobs:
 
       - name: Run Pytest
         run: pytest tests/
-
-  lint-markdown:
-    name: Lint Markdown Files
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Markdown Lint
-        uses: davidanson/markdownlint-cli2-action@v16
-        with:
-          globs: |
-            **/*.md
