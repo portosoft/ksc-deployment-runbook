@@ -36,9 +36,7 @@ def fix_web_console_config():
         ]
 
         for cmd in cmds:
-            stdin, stdout, stderr = client.exec_command(
-                f"sudo -S {cmd}"
-            )
+            stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
             stdin.write(password + "\n")
             stdin.flush()
             stdin.channel.shutdown_write()
