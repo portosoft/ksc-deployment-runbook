@@ -31,4 +31,6 @@ jobs:
         run: pre-commit run --all-files
 
       - name: Run Pytest
-        run: pytest tests/
+        env:
+          PYTHONPATH: .
+        run: python -m pytest tests/
