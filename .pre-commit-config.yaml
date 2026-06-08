@@ -20,10 +20,7 @@ repos:
 
 
 
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
+
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1

@@ -4,3 +4,4 @@ rules:
   line-length: disable
   new-lines: disable
   document-start: disable
+  empty-lines: disable
