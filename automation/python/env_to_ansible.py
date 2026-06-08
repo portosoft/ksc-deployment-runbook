@@ -44,7 +44,9 @@ def main():
                 yaml_value = value.strip().strip('"').strip("'")
                 yaml_vars.append(f'{yaml_key}: "{yaml_value}"')
 
-        with open(output_file, "w") as out:
+        # Ensure the output file is created with secure permissions (0o600)
+        fd = os.open(output_file, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w") as out:
             out.write("\n".join(yaml_vars) + "\n")
 
         print(f"Sucesso! Variáveis convertidas para: {output_file}")
