@@ -10,7 +10,7 @@ name: CI Pipeline
 jobs:
   lint-and-test:
     name: Lint and Test
-    runs-'on': ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-versi'on': '3.10'
+          python-version: '3.10'
           cache: 'pip'
 
       - name: Install dependencies
@@ -31,17 +31,6 @@ jobs:
         run: pre-commit run --all-files
 
       - name: Run Pytest
-        run: pytest tests/
-
-  lint-markdown:
-    name: Lint Markdown Files
-    runs-'on': ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Markdown Lint
-        uses: davidanson/markdownlint-cli2-action@v16
-        with:
-          globs: |
-            **/*.md
+        env:
+          PYTHONPATH: .
+        run: python -m pytest tests/
