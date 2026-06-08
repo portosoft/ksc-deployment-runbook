@@ -10,7 +10,7 @@ name: CI Pipeline
 jobs:
   lint-and-test:
     name: Lint and Test
-    runs-'on': ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
 
   lint-markdown:
     name: Lint Markdown Files
-    runs-'on': ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
