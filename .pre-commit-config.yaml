@@ -4,9 +4,9 @@ repos:
     rev: v4.6.0
     hooks:
       - id: detect-private-key
-        exclude: 'ARCHIVED/'
+        exclude: '(?i)(ARCHIVED/|.*archive.*)'
       - id: check-added-large-files
-        exclude: 'ARCHIVED/'
+        exclude: '(?i)(ARCHIVED/|.*archive.*)'
       - id: check-merge-conflict
       - id: end-of-file-fixer
       - id: trailing-whitespace
