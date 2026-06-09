@@ -5,8 +5,33 @@ from automation.python.checks import (
     check_ram_and_disk,
     check_selinux,
     check_ports,
+    CheckResult,
+    CheckItem,
 )
 from automation.python.config import KscConfig
+
+
+def test_checkresult_add_and_has_critical():
+    result = CheckResult(items=[])
+    assert len(result.items) == 0
+    assert not result.has_critical
+
+    item1 = CheckItem(name="test_ok", status="ok", message="All good")
+    result.add(item1)
+    assert len(result.items) == 1
+    assert result.items[0] == item1
+    assert not result.has_critical
+
+    item2 = CheckItem(name="test_warn", status="warning", message="Watch out")
+    result.add(item2)
+    assert len(result.items) == 2
+    assert not result.has_critical
+
+    item3 = CheckItem(name="test_crit", status="critical", message="Failure")
+    result.add(item3)
+    assert len(result.items) == 3
+    assert result.items[2] == item3
+    assert result.has_critical
 
 
 @pytest.fixture
@@ -76,6 +101,14 @@ def test_check_selinux_warning(mock_selinux, dummy_config):
     result = check_selinux(dummy_config)
     assert not result.has_critical
     assert result.items[0].status == "warning"
+
+
+@patch("automation.python.checks._get_selinux_mode", return_value="unknown")
+def test_check_selinux_unknown(mock_selinux, dummy_config):
+    result = check_selinux(dummy_config)
+    assert not result.has_critical
+    assert result.items[0].status == "warning"
+    assert "Não foi possível determinar o modo" in result.items[0].message
 
 
 @patch("automation.python.checks._get_listening_ports", return_value=[])
