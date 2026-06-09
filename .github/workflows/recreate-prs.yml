@@ -1,0 +1,50 @@
+name: Recreate PRs as github-actions
+
+on:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  recreate-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Recreate PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Fetch all open PRs authored by accounts with 'jules' in the name
+          prs=$(gh pr list --state open --json number,title,body,headRefName,author -q '.[] | select(.author.login | test("jules")) | @base64')
+
+          if [ -z "$prs" ]; then
+            echo "No matching PRs found."
+            exit 0
+          fi
+
+          for pr_b64 in $prs; do
+            _jq() {
+              echo ${pr_b64} | base64 --decode | jq -r ${1}
+            }
+
+            number=$(_jq '.number')
+            title=$(_jq '.title')
+            body=$(_jq '.body')
+            headRefName=$(_jq '.headRefName')
+
+            echo "Processing PR #$number ($title) from branch $headRefName..."
+
+            # Close the old PR
+            gh pr close $number -c "Closing to recreate this PR via github-actions[bot] to allow user review approvals."
+
+            # Create a new PR from the same branch
+            echo "$body" > pr_body.txt
+            gh pr create --title "$title" --body-file pr_body.txt --head "$headRefName" --base main
+
+            echo "Recreated PR successfully."
+            sleep 2
+          done
