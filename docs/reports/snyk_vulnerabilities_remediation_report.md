@@ -1,4 +1,4 @@
-# Relatório de Correção de Vulnerabilidades (Snyk) - PR #27
+# Relatório de Correção de Vulnerabilidades (Snyk) - PR #47
 
 ## Resumo do Problema
 O pipeline de integração contínua (GitHub Actions) falhou na etapa de verificação de segurança do Snyk para o PR #27. A análise identificou três bibliotecas Python listadas em `requirements.txt` com vulnerabilidades críticas diretas ou transitivas.
