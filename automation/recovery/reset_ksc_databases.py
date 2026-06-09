@@ -28,6 +28,7 @@ def reset_all_dbs():
         )
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
         stdout.channel.recv_exit_status()
 
         print("--- Resetando bancos ksc e ksciam (Postgres) ---")
@@ -37,6 +38,7 @@ def reset_all_dbs():
             stdin, stdout, stderr = client.exec_command(cmd0)
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             stdout.channel.recv_exit_status()
 
             # Drop Database
@@ -44,6 +46,7 @@ def reset_all_dbs():
             stdin, stdout, stderr = client.exec_command(cmd1)
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             print(f"Drop {db}: {stdout.read().decode().strip()}")
 
             # Recreate Database
@@ -51,6 +54,7 @@ def reset_all_dbs():
             stdin, stdout, stderr = client.exec_command(cmd2)
             stdin.write(password + "\n")
             stdin.flush()
+            stdin.channel.shutdown_write()
             print(f"Create {db}: {stdout.read().decode().strip()}")
 
         print("--- Bancos de dados reinicializados com sucesso ---")

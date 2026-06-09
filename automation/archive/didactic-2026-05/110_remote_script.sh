@@ -126,4 +126,4 @@ elif "totp" in www_auth and "totpreg" not in www_auth:
 PYEOF
 
 echo "=== PARTE 2: EXECUCAO ==="
-sudo KSC_ADMIN_USER=KLAdmins KSC_ADMIN_PASS='Ksc@2026' python3 /tmp/fix_2fa_flow.py
+sudo KSC_ADMIN_USER="${KSC_ADMIN_USER:-KLAdmins}" KSC_ADMIN_PASS="${KSC_ADMIN_PASS}" python3 /tmp/fix_2fa_flow.py

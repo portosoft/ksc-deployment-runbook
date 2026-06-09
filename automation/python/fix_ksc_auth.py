@@ -34,6 +34,7 @@ def fix_ksc_auth():
         stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
         stdin.write(password + "\n")
         stdin.flush()
+        stdin.channel.shutdown_write()
 
         out = stdout.read().decode("utf-8").strip()
         err = stderr.read().decode("utf-8").strip()
