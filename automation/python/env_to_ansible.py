@@ -2,6 +2,8 @@
 import os
 import sys
 
+from automation.python.utils.secure_file import write_secure_file
+
 """
 Script para converter arquivo .env em variáveis YAML para o Ansible.
 Lê '.env' na raiz e gera 'automation/ansible/group_vars/generated_from_env.yml'.
@@ -44,10 +46,7 @@ def main():
                 yaml_value = value.strip().strip('"').strip("'")
                 yaml_vars.append(f'{yaml_key}: "{yaml_value}"')
 
-        # Ensure the output file is created with secure permissions (0o600)
-        fd = os.open(output_file, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600)
-        with os.fdopen(fd, "w") as out:
-            out.write("\n".join(yaml_vars) + "\n")
+        write_secure_file(output_file, "\n".join(yaml_vars) + "\n", 0o600)
 
         print(f"Sucesso! Variáveis convertidas para: {output_file}")
 
