@@ -18,8 +18,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Fetch all open PRs authored by accounts with 'jules' in the name
-          prs=$(gh pr list --state open --json number,title,body,headRefName,author -q '.[] | select(.author.login | test("jules")) | @base64')
+          # Fetch all open PRs authored by mendsec (since they were created by the bot on behalf of the user)
+          prs=$(gh pr list --state open --json number,title,body,headRefName,author -q '.[] | select(.author.login | test("mendsec")) | @base64')
 
           if [ -z "$prs" ]; then
             echo "No matching PRs found."
