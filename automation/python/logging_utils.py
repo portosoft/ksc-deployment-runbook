@@ -32,7 +32,13 @@ def configure_logger(evidence_dir: Path) -> logging.Logger:
     logger.addHandler(ch)
 
     # Arquivo JSON lines
-    fh = logging.FileHandler(evidence_dir / "run.log", encoding="utf-8")
+    log_file = evidence_dir / "run.log"
+    if not log_file.exists():
+        import os
+        with os.fdopen(os.open(log_file, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "w"):
+            pass
+
+    fh = logging.FileHandler(log_file, encoding="utf-8")
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)
 
