@@ -9,7 +9,7 @@ password = os.getenv("KSC_PASS")
 db_pass = os.getenv("KSC_DB_PASS")
 
 client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 client.connect(host, username=user, password=password)
 
 print("=" * 60)

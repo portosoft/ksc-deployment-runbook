@@ -45,3 +45,4 @@ ksc-web-console-setup.json
 /etc/ksc-web-console-setup.json
 configs/secrets.bin
 scratch/
+alerts.json

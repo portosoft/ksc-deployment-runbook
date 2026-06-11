@@ -5,7 +5,7 @@ import sys
 
 def analyze_setup_split_logic(host, user, password):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 

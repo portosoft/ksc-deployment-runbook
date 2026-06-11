@@ -20,7 +20,7 @@ def purge_iam_mfa():
         sys.exit(1)
 
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 
     try:
         client.connect(host, username=user, password=password)

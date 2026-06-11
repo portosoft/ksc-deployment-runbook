@@ -31,7 +31,7 @@ def main():
     db_name = os.getenv("KSC_IAM_NAME")
 
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 
     try:
         client.connect(host, username=user, password=password)

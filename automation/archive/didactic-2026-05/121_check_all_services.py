@@ -6,7 +6,7 @@ username = "suporte"
 password = "[REDACTED_SSH_PASS]"
 
 client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 
 print(f"Connecting to {hostname}...")
 client.connect(hostname, username=username, password=password)

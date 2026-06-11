@@ -5,7 +5,7 @@ import sys
 
 def check_logs_and_lsof(host, user, password, pid):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 

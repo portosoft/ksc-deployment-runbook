@@ -12,7 +12,7 @@ def main():
 
     # Read original JSON format from the remote server
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 
     try:
         client.connect(host, username=user, password=password)

@@ -5,7 +5,7 @@ import sys
 
 def run_ssh(host, user, password, commands):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     client.connect(host, username=user, password=password)
     results = {}
     for cmd in commands:

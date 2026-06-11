@@ -10,7 +10,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../../configs/.env"))
 def run_ssh_commands(host, user, password, commands):
     """Executa comandos via SSH com suporte a sudo"""
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     results = []
     try:
         client.connect(host, username=user, password=password, timeout=15)

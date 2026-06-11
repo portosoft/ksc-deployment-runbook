@@ -5,7 +5,7 @@ import sys
 
 def setup_nats_conf(host, user, password):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 

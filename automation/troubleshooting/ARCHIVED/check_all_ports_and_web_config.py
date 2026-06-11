@@ -5,7 +5,7 @@ import sys
 
 def check_all_ports_and_web_config(host, user, password):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 

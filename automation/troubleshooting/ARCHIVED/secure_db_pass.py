@@ -5,7 +5,7 @@ import sys
 
 def update_db_pass(host, user, password, db_pass):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
     client.connect(host, username=user, password=password)
 
     # Using a temp SQL file to avoid shell expansion issues with special chars

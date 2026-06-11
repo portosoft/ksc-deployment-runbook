@@ -32,7 +32,7 @@ def main():
     admin_pass = os.getenv("KSC_ADMIN_PASS")
 
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
 
     try:
         client.connect(host, username=user, password=password)
