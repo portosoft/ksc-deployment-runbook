@@ -21,6 +21,7 @@ def main():
         sys.exit(1)
 
     if not os.path.exists(output_dir):
+        # 🛡️ Sentinel: Enforce strict permissions on directory that will contain secrets
         os.makedirs(output_dir, mode=0o700)
 
     try:
@@ -46,6 +47,7 @@ def main():
                 yaml_value = value.strip().strip('"').strip("'")
                 yaml_vars.append(f'{yaml_key}: "{yaml_value}"')
 
+        # 🛡️ Sentinel: Write the yaml file securely with strict permissions
         write_secure_file(output_file, "\n".join(yaml_vars) + "\n", 0o600)
 
         print(f"Sucesso! Variáveis convertidas para: {output_file}")
