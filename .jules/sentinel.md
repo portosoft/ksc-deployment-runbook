@@ -18,6 +18,11 @@
 **Learning:** Failing to send an EOF (`stdin.channel.shutdown_write()`) when passing payloads or commands to interactive processes via Paramiko can cause the remote process to hang indefinitely, waiting for more input. Over time or across many executions, this leads to resource exhaustion and potential Denial of Service (DoS) scenarios on the remote target.
 **Prevention:** Always call `stdin.channel.shutdown_write()` after writing and flushing data to a Paramiko `stdin` object for interactive processes. This sends the necessary EOF signal to unblock the remote process.
 
+## 2025-02-28 - [CRITICAL] Fix local credential exposure when generating files
+**Vulnerability:** The script `automation/python/env_to_ansible.py` read environment variables (which may contain credentials) from a `.env` file and wrote them to an output YAML file using Python's standard `open(file, "w")`. This created the file with default system permissions (often `0644`), making it globally readable by local users on the system, which could lead to unauthorized local access to the secrets.
+**Learning:** Using standard `open()` for files that contain sensitive secrets relies entirely on the system's umask, which might not be restrictive enough.
+**Prevention:** For any script that creates a file containing secrets or credentials, use `os.open` with `os.O_CREAT | os.O_WRONLY | os.O_TRUNC` and explicit strict permissions (`0o600`), and create necessary directories with secure permissions (`0o700`).
+
 ## 2026-05-31 - [HIGH] Prevent Local Credential Exposure via Insecure File Permissions
 **Vulnerability:** The script `automation/python/env_to_ansible.py` generated an Ansible YAML file containing plaintext passwords extracted from `.env` with default system permissions (typically `644`), making it world-readable to any user on the local machine. Similarly, audit and evidence directories were created with default permissions.
 **Learning:** Creating files or directories containing sensitive information using Python's default `open(..., 'w')` or `Path.mkdir(parents=True, exist_ok=True)` exposes those files to all users on the same machine due to the default `umask` settings. In an automation environment handling passwords, this represents a significant risk of credential leakage.
