@@ -18,6 +18,11 @@
 **Learning:** Failing to send an EOF (`stdin.channel.shutdown_write()`) when passing payloads or commands to interactive processes via Paramiko can cause the remote process to hang indefinitely, waiting for more input. Over time or across many executions, this leads to resource exhaustion and potential Denial of Service (DoS) scenarios on the remote target.
 **Prevention:** Always call `stdin.channel.shutdown_write()` after writing and flushing data to a Paramiko `stdin` object for interactive processes. This sends the necessary EOF signal to unblock the remote process.
 
+## 2025-02-28 - [CRITICAL] Prevent Local Credential and Audit Log Exposure
+**Vulnerability:** Several utility scripts were creating files and directories without specifying strict file permissions. Specifically, `env_to_ansible.py` generated `generated_from_env.yml` containing secrets using `open(..., "w")` and `os.makedirs()`, and `logging_utils.py` created audit evidence directories using `path.mkdir(parents=True)`. This allowed these files and directories to be created with the user's default umask (often `022`), making them world-readable.
+**Learning:** Depending on standard `open()` or basic `mkdir()` without explicit mode configurations can inadvertently expose sensitive data such as passwords, environment secrets, and detailed system audit logs to local attackers or unauthorized users on the same machine.
+**Prevention:** Always enforce strict permissions when writing files that contain sensitive information or logs. Use `os.open` with `os.O_CREAT | os.O_WRONLY | os.O_TRUNC` and explicit modes like `0o600` for files, and `0o700` for directories when creating them.
+
 ## 2025-02-28 - [CRITICAL] Fix local credential exposure when generating files
 **Vulnerability:** The script `automation/python/env_to_ansible.py` read environment variables (which may contain credentials) from a `.env` file and wrote them to an output YAML file using Python's standard `open(file, "w")`. This created the file with default system permissions (often `0644`), making it globally readable by local users on the system, which could lead to unauthorized local access to the secrets.
 **Learning:** Using standard `open()` for files that contain sensitive secrets relies entirely on the system's umask, which might not be restrictive enough.
