@@ -324,7 +324,7 @@ dbms_iam:
         dbms_port: "5432"
         dbms_db: "ksciam"
         dbms_user: "kluser"
-        dbms_userpassword: "R6whXi4joT&OUj6#"
+        dbms_userpassword: "[REDACTED_DB_PASS]"
         dbms_schema: ""
     dbms_tls:
         dbms_tl_opt_ssl_ca: ""
