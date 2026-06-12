@@ -9,7 +9,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../../configs/.env"))
 
 def run_ssh_commands(host, user, password, commands):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     results = []
     try:
         client.connect(host, username=user, password=password, timeout=15)
@@ -36,7 +37,7 @@ def run_ssh_commands(host, user, password, commands):
             results.append(res)
         client.close()
     except Exception as e:
-        print(f"Erro de Conexão: {e}")
+        print(f"Erro de Conexão: SSH connection failed.")
         return None
     return results
 
@@ -51,7 +52,7 @@ def main():
         print("Erro: Variáveis de ambiente incompletas.")
         sys.exit(1)
 
-    print(f"--- Aplicando Hardening do PostgreSQL para KSC em {host} ---")
+    print("--- Aplicando Hardening do PostgreSQL para KSC ---")
 
     # Comandos baseados nas premissas validadas pelo usuário
     harden_cmds = [
@@ -59,10 +60,6 @@ def main():
         {'cmd': "grep -q 'escape_string_warning = on' /var/lib/pgsql/data/postgresql.conf || echo 'escape_string_warning = on' >> /var/lib/pgsql/data/postgresql.conf"},
         {'cmd': "grep -q 'standard_conforming_strings = on' /var/lib/pgsql/data/postgresql.conf || echo 'standard_conforming_strings = on' >> /var/lib/pgsql/data/postgresql.conf"},
         {'cmd': "systemctl restart postgresql.service"},
-        {
-            'cmd': "sudo -u postgres psql",
-            'stdin': f"ALTER USER kluser WITH PASSWORD '{db_password}';"
-        },
     ]
 
     results = run_ssh_commands(host, user, password, harden_cmds)
@@ -71,7 +68,29 @@ def main():
         for r in results:
             print(f"STATUS: {r['status']} | CMD: {r['command']}")
             if r["status"] != 0:
-                print(f"ERRO: {r['stderr']}")
+                print(f"ERRO: [Command failed]")
+
+    # Executar a alteração de senha de forma segura e separada
+    print("--- Atualizando senha do banco de dados (postgres) ---")
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
+    try:
+        client.connect(host, username=user, password=password, timeout=15)
+        stdin, stdout, stderr = client.exec_command("sudo -S sudo -u postgres psql")
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdin.write(f"ALTER USER kluser WITH PASSWORD '{db_password}';\n")
+        stdin.flush()
+        stdin.channel.shutdown_write()
+        status = stdout.channel.recv_exit_status()
+        if status == 0:
+            print("Senha do banco de dados atualizada com sucesso.")
+        else:
+            print("Erro ao atualizar a senha do banco de dados.")
+        client.close()
+    except Exception:
+        print("Erro ao conectar para atualizar a senha do banco de dados.")
 
     print("\n--- Hardening Finalizado ---")
 

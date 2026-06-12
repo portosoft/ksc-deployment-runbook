@@ -18,9 +18,10 @@ def get_credentials():
 
 
 def connect_ssh(host, user, password):
-    print(f"Connecting to {user}@{host}...")
+    print("Connecting to the target host...")
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     client.connect(host, username=user, password=password, timeout=30)
     print("Connected successfully.\n")
     return client
