@@ -53,7 +53,8 @@ transport.close()
 
 # 3. Mover para o local definitivo via sudo
 client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.load_system_host_keys()
+client.set_missing_host_key_policy(paramiko.RejectPolicy())
 client.connect(host, username=user, password=password)
 
 print("Movendo arquivo para /var/opt/kaspersky/klnagent_srv/iam/...")

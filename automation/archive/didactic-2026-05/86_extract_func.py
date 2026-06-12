@@ -8,7 +8,8 @@ user = os.getenv("KSC_USER")
 password = os.getenv("KSC_PASS")
 
 client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+client.load_system_host_keys()
+client.set_missing_host_key_policy(paramiko.RejectPolicy())
 client.connect(host, username=user, password=password)
 
 # Busca o número da linha de forma isolada
