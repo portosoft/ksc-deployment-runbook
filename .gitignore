@@ -45,4 +45,6 @@ alerts.json
 ksc-web-console-setup.json
 /etc/ksc-web-console-setup.json
 configs/secrets.bin
-scratch/
+alerts.json
+scratch/setup.js
+scratch/all_extracted_sql.txt

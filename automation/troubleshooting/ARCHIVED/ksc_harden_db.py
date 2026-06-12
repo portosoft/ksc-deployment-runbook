@@ -9,7 +9,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../../configs/.env"))
 
 def run_ssh_commands(host, user, password, commands):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     results = []
     try:
         client.connect(host, username=user, password=password, timeout=15)
@@ -53,16 +54,11 @@ def main():
 
     print(f"--- Aplicando Hardening do PostgreSQL para KSC em {host} ---")
 
-    # Comandos baseados nas premissas validadas pelo usuário
     harden_cmds = [
         {'cmd': 'sed -i "s/^#max_connections = .*/max_connections = 200/" /var/lib/pgsql/data/postgresql.conf'},
         {'cmd': "grep -q 'escape_string_warning = on' /var/lib/pgsql/data/postgresql.conf || echo 'escape_string_warning = on' >> /var/lib/pgsql/data/postgresql.conf"},
         {'cmd': "grep -q 'standard_conforming_strings = on' /var/lib/pgsql/data/postgresql.conf || echo 'standard_conforming_strings = on' >> /var/lib/pgsql/data/postgresql.conf"},
         {'cmd': "systemctl restart postgresql.service"},
-        {
-            'cmd': "sudo -u postgres psql",
-            'stdin': f"ALTER USER kluser WITH PASSWORD '{db_password}';"
-        },
     ]
 
     results = run_ssh_commands(host, user, password, harden_cmds)
@@ -72,6 +68,17 @@ def main():
             print(f"STATUS: {r['status']} | CMD: {r['command']}")
             if r["status"] != 0:
                 print(f"ERRO: {r['stderr']}")
+
+    # Executa a atualização da senha de forma separada e com log seguro para evitar alerta do CodeQL
+    psql_cmd = [{
+        'cmd': "sudo -u postgres psql",
+        'stdin': f"ALTER USER kluser WITH PASSWORD '{db_password}';"
+    }]
+    psql_results = run_ssh_commands(host, user, password, psql_cmd)
+    if psql_results and psql_results[0]['status'] == 0:
+        print("STATUS: 0 | CMD: sudo -u postgres psql [Password Updated]")
+    else:
+        print("STATUS: 1 | CMD: sudo -u postgres psql [Failed to update password]")
 
     print("\n--- Hardening Finalizado ---")
 

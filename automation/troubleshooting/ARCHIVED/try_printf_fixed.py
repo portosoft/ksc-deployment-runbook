@@ -5,7 +5,8 @@ import sys
 
 def ksc_pass_update(host, user, password, db_pass):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     client.connect(host, username=user, password=password)
 
     # Escape single quotes for the bash string
