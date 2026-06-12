@@ -1,4 +1,5 @@
 import os
+import sys
 import stat
 import pytest
 from pathlib import Path
@@ -7,6 +8,11 @@ from automation.python.utils.secure_file import (
     make_secure_dir,
     temp_secure_file,
     assert_secure,
+)
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="POSIX file permissions are not supported on Windows"
 )
 
 
