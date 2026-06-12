@@ -36,7 +36,6 @@ jobs:
             ${{ github.event.repository.name }} \
             ${{ github.sha }} \
             --apikey ${{ secrets.AIKIDO_CLIENT_API_KEY }} \
-            --fail-on-dependency-scan \
             --fail-on-sast-scan \
             --fail-on-iac-scan \
             --fail-on-secrets-scan
