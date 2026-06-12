@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 def apply_hardening(host, user, password, apply=False):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
 
     harden_cmds = [
         'sed -i "s/^#max_connections = .*/max_connections = 1000/" /var/lib/pgsql/16/data/postgresql.conf',
