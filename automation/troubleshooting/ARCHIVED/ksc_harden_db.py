@@ -78,8 +78,7 @@ def main():
     if psql_results and psql_results[0]['status'] == 0:
         print("STATUS: 0 | CMD: sudo -u postgres psql [Password Updated]")
     else:
-        status_code = psql_results[0]['status'] if psql_results else 1
-        print(f"STATUS: {status_code} | CMD: sudo -u postgres psql [Failed to update password]")
+        print("STATUS: 1 | CMD: sudo -u postgres psql [Failed to update password]")
 
     print("\n--- Hardening Finalizado ---")
 
