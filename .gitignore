@@ -39,6 +39,7 @@ Thumbs.db
 *.log
 tmp/
 temp/
+alerts.json
 
 # Arquivos de resposta com dados reais
 ksc-web-console-setup.json
