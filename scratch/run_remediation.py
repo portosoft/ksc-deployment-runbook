@@ -52,7 +52,8 @@ def main():
         sys.exit(1)
 
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     print(f"Connecting to {user}@{host}...")
     client.connect(host, username=user, password=password)
     print("Connected.")

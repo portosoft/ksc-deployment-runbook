@@ -9,7 +9,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../../configs/.env"))
 
 def run_ssh_commands(host, user, password, commands):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     results = []
     try:
         client.connect(host, username=user, password=password, timeout=15)

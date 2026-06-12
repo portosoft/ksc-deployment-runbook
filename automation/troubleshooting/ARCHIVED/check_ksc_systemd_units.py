@@ -5,7 +5,8 @@ import sys
 
 def check_ksc_systemd_units(host, user, password):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
 

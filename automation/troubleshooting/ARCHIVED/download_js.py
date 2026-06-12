@@ -5,7 +5,8 @@ import sys
 
 def download_file(host, user, password, remote_path, local_path):
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     try:
         client.connect(host, username=user, password=password, timeout=30)
         sftp = client.open_sftp()
