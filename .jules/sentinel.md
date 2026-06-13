@@ -37,3 +37,8 @@
 **Vulnerability:** The script `automation/setup/reconfigure_ksc_service.py` was creating a remote configuration file (`/tmp/reconfig_ans.txt`) containing administrative passwords using `sftp.file(..., "w")` without setting explicit file permissions before writing the content.
 **Learning:** By default, files created via SFTP use the system's default umask. When creating sensitive configuration files in shared directories like `/tmp`, this allows local users to read passwords. If you attempt to fix this by setting permissions *after* the file is written, there is a Time-of-Check to Time-of-Use (TOCTOU) race condition during which the passwords are fully exposed.
 **Prevention:** When creating sensitive files over Paramiko SFTP, open the file object and immediately call its `chmod` method (e.g., `f.chmod(0o600)`) *before* calling `f.write(...)`. This ensures the file is secured before any sensitive data is written to disk.
+
+## 2025-02-28 - [CRITICAL] Prevent Local Credential Exposure via Insecure `open`
+**Vulnerability:** The script `automation/lib/vault.py` was creating sensitive files (`vault.key` and `secrets.bin`) using standard `open(..., "wb")` which relies on the system's default umask and can leave the encryption key and secrets readable by unauthorized local users.
+**Learning:** Depending on the standard Python `open` function when dealing with sensitive files is a high risk as the resulting file permissions are not explicitly enforced and could default to standard readability levels.
+**Prevention:** To prevent this, when creating files containing sensitive credentials, replace `open` with `os.fdopen(os.open(..., os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "wb")` to strictly limit access to the owner only.
