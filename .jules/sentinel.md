@@ -52,3 +52,8 @@
 **Vulnerability:** The script `automation/setup/reconfigure_ksc_service.py` creates a temporary response file (`/tmp/reconfig_ans.txt`) via SFTP containing plaintext credentials (`KLSRV_UNATT_DBMS_PASSWORD`, `KLSRV_UNATT_DBMS_IAM_PASSWORD`, `KLSRV_UNATT_KLADMINS_PASSWORD`) without setting strict permissions.
 **Learning:** Any file written over SFTP or locally that contains sensitive configuration or secrets is world-readable by default unless explicitly `chmod`'d to `0o600` or created with restricted permissions. Since `/tmp` is accessible by all users, writing credentials there exposes them to local privilege escalation and credential harvesting by any user on the system.
 **Prevention:** When creating temporary configuration files or files containing secrets via Paramiko SFTP, always execute `sftp.chmod(path, 0o600)` immediately after creation, or set the umask appropriately before creating the file.
+
+## 2026-06-03 - [CRITICAL] Prevent Password Exposure via Command-Line Arguments
+**Vulnerability:** The script `automation/python/fix_ksc_auth.py` was executing `kladduser` with the `-p` parameter to pass the administrative password. This means the password was passed directly as a command-line argument.
+**Learning:** Any secret passed as a command-line argument (even when escaped) is temporarily exposed in the remote machine's process list (`ps aux` or `/proc/[pid]/cmdline`), which can be read by other users.
+**Prevention:** Never pass secrets as command-line arguments to remote binaries. Always provide passwords via `stdin` by omitting the password flag and using `stdin.write(password + "\n")` after executing the command.
