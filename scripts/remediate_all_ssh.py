@@ -10,7 +10,7 @@ def main():
 
     for root, dirs, files in os.walk('.'):
         # Exclude directories
-        dirs[:] = [d for d in dirs if d not in ['.git', '.pytest_cache', '.jules', 'venv']]
+        dirs[:] = [d for d in dirs if d not in ['.git', '.pytest_cache', '.jules', 'venv', 'scratch']]
         for f in files:
             if f.endswith('.py'):
                 fp = os.path.join(root, f)
