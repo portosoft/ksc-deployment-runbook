@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: sentinel-fix-local-credential-exposure-17725357227211694878
+          ref: trigger-bot-pr
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --title "🛡️ Sentinel: Enforce secure SSH host key policies and resolve Code Scanning alerts" --body "Automated PR creation by bot. Resolves Code Scanning vulnerabilities for paramiko-missing-host-key-validation." --base main --head sentinel-fix-local-credential-exposure-17725357227211694878 || true
+          gh pr create --title "ci: add workflow to create bot PR" --body "Automated PR creation by bot to merge trigger-bot-pr branch." --base main --head trigger-bot-pr || true
