@@ -54,7 +54,6 @@ def main():
 
     print("--- Aplicando Hardening do PostgreSQL para KSC ---")
 
-    # Comandos baseados nas premissas validadas pelo usuário
     harden_cmds = [
         {'cmd': 'sed -i "s/^#max_connections = .*/max_connections = 200/" /var/lib/pgsql/data/postgresql.conf'},
         {'cmd': "grep -q 'escape_string_warning = on' /var/lib/pgsql/data/postgresql.conf || echo 'escape_string_warning = on' >> /var/lib/pgsql/data/postgresql.conf"},
@@ -91,6 +90,17 @@ def main():
         client.close()
     except Exception:
         print("Erro ao conectar para atualizar a senha do banco de dados.")
+
+    # Executa a atualização da senha de forma separada e com log seguro para evitar alerta do CodeQL
+    psql_cmd = [{
+        'cmd': "sudo -u postgres psql",
+        'stdin': f"ALTER USER kluser WITH PASSWORD '{db_password}';"
+    }]
+    psql_results = run_ssh_commands(host, user, password, psql_cmd)
+    if psql_results and psql_results[0]['status'] == 0:
+        print("STATUS: 0 | CMD: sudo -u postgres psql [Password Updated]")
+    else:
+        print("STATUS: 1 | CMD: sudo -u postgres psql [Failed to update password]")
 
     print("\n--- Hardening Finalizado ---")
 

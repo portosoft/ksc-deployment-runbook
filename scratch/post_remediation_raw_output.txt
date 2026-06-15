@@ -1,0 +1,593 @@
+=== PASSO 1.1.1 ===
+Comando: systemctl status kladminserver_srv --no-pager -l
+--- STDOUT ---
+● kladminserver_srv.service - Kaspersky Security Center.
+     Loaded: loaded (/usr/lib/systemd/system/kladminserver_srv.service; enabled; preset: disabled)
+     Active: active (running) since Sat 2026-05-23 12:23:50 -04; 2 days ago
+   Main PID: 1208043 (klserver)
+      Tasks: 33 (limit: 48747)
+     Memory: 148.8M (peak: 168.8M)
+        CPU: 32min 15.660s
+     CGroup: /system.slice/kladminserver_srv.service
+             └─1208043 /opt/kaspersky/ksc64/sbin/klserver -d -from_wd
+
+mai 25 00:24:26 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 00:24:26 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 03:24:27 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 03:24:27 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 06:24:28 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 06:24:28 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 09:24:29 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 09:24:29 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 12:24:30 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 12:24:30 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+================================================================================
+
+=== PASSO 1.1.2 ===
+Comando: systemctl status kliam_srv --no-pager -l
+--- STDOUT ---
+● kliam_srv.service - Kaspersky IAM.
+     Loaded: loaded (/usr/lib/systemd/system/kliam_srv.service; enabled; preset: disabled)
+     Active: active (running) since Sat 2026-05-23 12:24:20 -04; 2 days ago
+   Main PID: 1208154 (kliam)
+      Tasks: 10 (limit: 48747)
+     Memory: 14.8M (peak: 16.8M)
+        CPU: 43.804s
+     CGroup: /system.slice/kliam_srv.service
+             └─1208154 /opt/kaspersky/ksc64/sbin/kliam --config /var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml
+
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.001-0400","msg":"challenges cleaned","component":"voltron","version":"16.2.1023"}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.003-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001961782}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.003-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001004447}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001106389}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+================================================================================
+
+=== PASSO 1.1.3 ===
+Comando: systemctl status ksc-web-console --no-pager -l
+--- STDOUT ---
+● ksc-web-console.service - Kaspersky Security Center Web Console
+     Loaded: loaded (/etc/systemd/system/ksc-web-console.service; enabled; preset: disabled)
+     Active: active (running) since Sat 2026-05-23 12:24:50 -04; 2 days ago
+   Main PID: 1208216 (node)
+      Tasks: 11 (limit: 48747)
+     Memory: 95.1M (peak: 122.3M)
+        CPU: 5.437s
+     CGroup: /system.slice/ksc-web-console.service
+             └─1208216 /var/opt/kaspersky/ksc-web-console/node /var/opt/kaspersky/ksc-web-console/index.js
+
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 14:24:52.030
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     []
+================================================================================
+
+=== PASSO 1.1.4 ===
+Comando: systemctl status postgresql --no-pager -l
+--- STDOUT ---
+● postgresql.service - PostgreSQL database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: disabled)
+     Active: active (running) since Fri 2026-05-08 12:50:44 -04; 2 weeks 3 days ago
+   Main PID: 80214 (postgres)
+      Tasks: 18 (limit: 48747)
+     Memory: 4.0G (peak: 4.0G)
+        CPU: 1h 51min 17.529s
+     CGroup: /system.slice/postgresql.service
+             ├─  80214 /usr/bin/postgres -D /var/lib/pgsql/data
+             ├─  80215 "postgres: logger "
+             ├─  80216 "postgres: checkpointer "
+             ├─  80217 "postgres: background writer "
+             ├─  80219 "postgres: walwriter "
+             ├─  80220 "postgres: autovacuum launcher "
+             ├─  80221 "postgres: logical replication launcher "
+             ├─ 954214 "postgres: postgres postgres [local] idle"
+             ├─1208167 "postgres: kluser ksciam 127.0.0.1(46456) idle"
+             ├─1208180 "postgres: kluser ksciam 127.0.0.1(56584) idle"
+             ├─1274657 "postgres: kluser ksc 127.0.0.1(58882) idle"
+             ├─1275623 "postgres: kluser ksciam 127.0.0.1(41342) idle"
+             ├─1276853 "postgres: kluser ksc 127.0.0.1(60210) idle"
+             ├─1276855 "postgres: kluser ksc 127.0.0.1(60218) idle"
+             ├─1276896 "postgres: kluser ksciam 127.0.0.1(48268) idle"
+             ├─1276897 "postgres: kluser ksciam 127.0.0.1(48278) idle"
+             ├─1276926 "postgres: kluser ksciam 127.0.0.1(58948) idle"
+             └─1276981 "postgres: kluser ksc 127.0.0.1(47016) idle"
+
+Notice: journal has been rotated since unit was started, output may be incomplete.
+================================================================================
+
+=== PASSO 1.2 ===
+Comando: sudo ss -tlnp | grep -E '13000|13299|8080|5432|9500|4222'
+--- STDOUT ---
+LISTEN 0      2048                       0.0.0.0:13299      0.0.0.0:*    users:(("klserver",pid=1208043,fd=79))
+LISTEN 0      2048                       0.0.0.0:13000      0.0.0.0:*    users:(("klserver",pid=1208043,fd=77))
+LISTEN 0      400                      127.0.0.1:5432       0.0.0.0:*    users:(("postgres",pid=80214,fd=7))
+LISTEN 0      4096                             *:4222             *:*    users:(("nats-server",pid=599758,fd=6))
+LISTEN 0      2048                          [::]:13299         [::]:*    users:(("klserver",pid=1208043,fd=80))
+LISTEN 0      2048                          [::]:13000         [::]:*    users:(("klserver",pid=1208043,fd=78))
+LISTEN 0      4096                             *:9500             *:*    users:(("kliam",pid=1208154,fd=18))
+LISTEN 0      511                              *:8080             *:*    users:(("node",pid=1208216,fd=27))
+================================================================================
+
+=== PASSO 1.3 ===
+Comando: sudo cat /var/opt/kaspersky/ksc-web-console/server/config.json
+--- STDOUT ---
+{
+  "openAPIServers": {
+    "pools": [
+      {
+        "displayName": "Trusted servers",
+        "servers": [
+          {
+            "displayName": "kscserver.tail8b9ae.ts.net",
+            "isIAM": false,
+            "address": "127.0.0.1",
+            "port": 13299,
+            "certPath": "/var/opt/kaspersky/ksc-web-console/KLRootCA_iP2GHLIbbH.crt",
+            "version": "v1.0"
+          }
+        ]
+      }
+    ]
+  },
+  "port": 8080,
+  "updatesManager": {
+    "port": 3299
+  },
+  "clientIdleTimeout": 900000,
+  "clientLogoutTimeout": 300000,
+  "clientPasswordChangeCheckTimeout": 3600000,
+  "pingIntervalTimeout": 300000,
+  "serverLogoutTimeout": 1800000,
+  "dashboardDataLoadingAttemptLimit": 5,
+  "maxPolicyRevisionSizeToPreviewKb": 10240,
+  "socketUrl": "//kscserver.tail8b9ae.ts.net:8080",
+  "tempFolder": "/_temp/",
+  "tempWebPath": "/temp/",
+  "uploadPath": "/_upload",
+  "mockFolder": "server/mock/",
+  "cloudConsoleAddress": "kscserver.tail8b9ae.ts.net",
+  "host": "kscserver.tail8b9ae.ts.net",
+  "buildServicePort": "3001",
+  "https": true,
+  "version": "16.2.11309",
+  "dbSanityCheckInterval": 150000,
+  "virtualServerHealthCheckInterval": 10000,
+  "virtualServerUserInactiveStateTreshhold": 300000,
+  "virtualServerUserLogout": 7200000,
+  "collectUserFeedback": false,
+  "localization": {
+    "default": "enUS"
+  },
+  "webServer": {
+    "webServerCertPath": "./web-server.crt",
+    "webServerKeyPath": "./web-server.key"
+  },
+  "default_language": "enUS",
+  "plugins": {
+    "adminServer": "admin_server",
+    "adminNagent": "admin_agent",
+    "agentServer": "agent_server",
+    "kes": "kes_windows",
+    "kesl": "kes_linux",
+    "kesl11": "kes_linux_11",
+    "kesl11_1": "kes_linux_11_1",
+    "kesl11_2": "kes_linux_11_2",
+    "keslElbrus": "kes_linux_elbrus",
+    "keslArm64": "kes_linux_arm64",
+    "ksws": "ksws_windows",
+    "kess": "kess_windows",
+    "soyuzWindows": "soyuz_windows",
+    "kosForTc": "kos4tc",
+    "ksms": "ksms",
+    "kosForMobile": "kos4mobile",
+    "kasIoTSG": "kiotsg",
+    "kiotsg_2_1": "kiotsg_2_1",
+    "kesMac": "kes_mac",
+    "kesMac_11_1_0_0": "kes_mac_11_1_0_0",
+    "kesMac_11_2_0_0": "kes_mac_11_2_0_0",
+    "kics4Networks": "kics4Networks",
+    "VIISLA_5_1_0_0": "VIISLA_5_1_0_0",
+    "VIISLA_5_1_1_0": "VIISLA_5_1_1_0",
+    "VIISLA_5_1_2_0": "VIISLA_5_1_2_0",
+    "VIISLA_5_1_3_0": "VIISLA_5_1_3_0",
+    "VIISLA_5_2_0_0": "VIISLA_5_2_0_0",
+    "VIISLA_6_0_0_0": "VIISLA_6_0_0_0",
+    "SVM_5_1_0_0": "SVM_5_1_0_0",
+    "SVM_5_1_1_0": "SVM_5_1_1_0",
+    "SVM_5_1_2_0": "SVM_5_1_2_0",
+    "SVM_5_1_3_0": "SVM_5_1_3_0",
+    "SVM_5_2_0_0": "SVM_5_2_0_0",
+    "SVM_6_0_0_0": "SVM_6_0_0_0",
+    "KSVLA_5_1_0_0": "KSVLA_5_1_0_0",
+    "KSVLA_5_1_1_0": "KSVLA_5_1_1_0",
+    "KSVLA_5_1_2_0": "KSVLA_5_1_2_0",
+    "KSVLA_5_1_3_0": "KSVLA_5_1_3_0",
+    "KSVLA_5_2_0_0": "KSVLA_5_2_0_0",
+    "KSVLA_6_0_0_0": "KSVLA_6_0_0_0",
+    "KSVLALIN_5_1_0_0": "KSVLALIN_5_1_0_0",
+    "KSVLALIN_5_1_1_0": "KSVLALIN_5_1_1_0",
+    "KSVLALIN_5_1_2_0": "KSVLALIN_5_1_2_0",
+    "KSVLALIN_5_1_3_0": "KSVLALIN_5_1_3_0",
+    "KSVLALIN_5_2_0_0": "KSVLALIN_5_2_0_0",
+    "KSVLALIN_6_0_0_0": "KSVLALIN_6_0_0_0",
+    "VIISAL_5_0_0_0": "VIISAL_5_0_0_0",
+    "VIISAL_6_0_0_0": "VIISAL_6_0_0_0",
+    "VIISAL_7_0_0_0": "VIISAL_7_0_0_0",
+    "KSV_5_0_0_0": "KSV_5_0_0_0",
+    "KSV_6_0_0_0": "KSV_6_0_0_0",
+    "KSV_7_0_0_0": "KSV_7_0_0_0",
+    "KSVT_5_0_0_0": "KSVT_5_0_0_0",
+    "KSVT_6_0_0_0": "KSVT_6_0_0_0",
+    "KSVT_7_0_0_0": "KSVT_7_0_0_0",
+    "mdr": "mdr",
+    "kesAndroid": "kes_android",
+    "kicsWindows": "kics_windows",
+    "mobile_device_management": "mobile_device_management",
+    "ksbServer": "ksb_server",
+    "irp": "irp",
+    "testPlugin": "test_plugin",
+    "osmpIrp": "osmp_irp",
+    "tenant-manager": "tenant-manager"
+  },
+  "tlsSettings": {
+    "ciphers": "RSA-AES-256-GCM-SHA384:TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_CCM_SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305",
+    "minVersion": "TLSv1.2",
+    "maxVersion": "TLSv1.3",
+    "ecdhCurve": "P-256:P-384:secp521r1:X25519",
+    "hsts": {
+      "enabled": false,
+      "preload": false,
+      "includeSubDomains": false
+    }
+  },
+  "nsqRequestTimeout": 180000,
+  "production": "true",
+  "enable_log": true,
+  "workingDirectory": "/var/opt/kaspersky/ksc-web-console",
+  "consoleId": "ff39fc9e-ccf9-4705-be98-d4b0d2359f7f"
+}================================================================================
+
+=== PASSO 1.4 ===
+Comando: sudo cat /etc/ksc-web-console-setup.json
+--- STDOUT ---
+{
+  "acceptEula": true,
+  "address": "kscserver.tail8b9ae.ts.net",
+  "port": 8080,
+  "defaultLanguageId": "pt-BR",
+  "trusted": {
+    "kscserver.tail8b9ae.ts.net": {
+      "kscHost": "127.0.0.1",
+      "kscPort": 13299,
+      "kscCertPath": "/var/opt/kaspersky/ksc-web-console/KLRootCA.crt"
+    }
+  }
+}================================================================================
+
+=== PASSO 1.5.1 ===
+Comando: sudo ls -la /var/opt/kaspersky/ksc-web-console/KLRootCA.crt
+--- STDOUT ---
+-rwxr-xr-x. 1 root root 2121 mai 19 15:03 /var/opt/kaspersky/ksc-web-console/KLRootCA.crt
+================================================================================
+
+=== PASSO 1.5.2 ===
+Comando: sudo ls -la /var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer
+--- STDOUT ---
+-rw-rwS---. 1 root kladmins 2498 mai 18 16:48 /var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer
+================================================================================
+
+=== PASSO 1.5.3 ===
+Comando: sudo ls -la /var/opt/kaspersky/klnagent_srv/1093/cert/klsrvJWEsign.cer
+--- STDOUT ---
+-rw-rwS---. 1 root kladmins 1826 mai 18 16:48 /var/opt/kaspersky/klnagent_srv/1093/cert/klsrvJWEsign.cer
+================================================================================
+
+=== PASSO 1.5.4 ===
+Comando: sudo ls -la /var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEsign.prk
+--- STDOUT ---
+-rw-rwS---. 1 root kladmins 3243 mai 18 16:48 /var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEsign.prk
+================================================================================
+
+=== PASSO 1.5.5 ===
+Comando: sudo ls -la /var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEencrypt.cer
+--- STDOUT ---
+-rw-rwS---. 1 root kladmins 1826 mai 18 16:48 /var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEencrypt.cer
+================================================================================
+
+=== PASSO 1.6 ===
+Comando: sudo cat /var/opt/kaspersky/klnagent_srv/iam/iam_config.yaml
+--- STDOUT ---
+
+version: 1
+metadata:
+  name: "iam settings"
+server_iam:
+    iam_address: "kscserver.tail8b9ae.ts.net"
+    server_display_name: "kscserver.tail8b9ae.ts.net"
+    ksc_address: "127.0.0.1"
+    ksc_ca: "/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer"
+dbms_iam:
+    dbms_main:
+        dbms_type: "POSTGRES"
+        dbms_address: "127.0.0.1"
+        dbms_port: "5432"
+        dbms_db: "ksciam"
+        dbms_user: "kluser"
+        dbms_userpassword: "[REDACTED_DB_PASS]"
+        dbms_schema: ""
+    dbms_tls:
+        dbms_tl_opt_ssl_ca: ""
+        dbms_tl_opt_ssl_verify_server_cn: ""
+        dbms_tl_opt_ssl_cert: ""
+        dbms_tl_opt_ssl_key: ""
+        dbms_tl_opt_tls_pasphrase: ""
+        dbms_tl_opt_ssl_cipher: ""
+        dbms_tl_opt_ssl_tlsver_min: ""
+        dbms_tl_opt_ssl_tlsver_max: ""
+certificates_iam:
+      jwe_sign_privkey: "/var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEsign.prk"
+      jwe_sign_cert: "/var/opt/kaspersky/klnagent_srv/1093/cert/klsrvJWEsign.cer"
+      jwe_encrypt_cert:  "/var/opt/kaspersky/klnagent_srv/1093/iam/klsrvJWEencrypt.cer"
+================================================================================
+
+=== PASSO 1.7 ===
+Comando: sudo -u postgres psql -d ksciam -c "
+SELECT table_schema, COUNT(*) AS total_tabelas
+FROM information_schema.tables
+WHERE table_type = 'BASE TABLE'
+  AND table_schema NOT IN ('pg_catalog', 'information_schema')
+GROUP BY table_schema
+ORDER BY table_schema;
+"
+--- STDOUT ---
+ table_schema | total_tabelas
+--------------+---------------
+ client       |             2
+ iam          |            17
+ ksc          |            12
+ locker       |             1
+ pat          |             1
+ public       |            17
+ scope        |             1
+ voltron      |             2
+(8 linhas)
+
+================================================================================
+
+=== PASSO 1.8 ===
+Comando: sudo -u postgres psql -d ksciam -c "SELECT name, id FROM iam.users;"
+--- STDOUT ---
+--- STDERR ---
+ERRO:  não existe a relação "iam.users"
+LINHA 1: SELECT name, id FROM iam.users;
+                              ^
+================================================================================
+
+=== PASSO 1.9 ===
+Comando: sudo -u postgres psql -d ksc -c "
+SELECT \"wstrName\", \"binId\"
+FROM spl_users
+WHERE \"wstrName\" IN ('kscadmin', 'KLAdmins', 'kscadmin2');
+"
+--- STDOUT ---
+ wstrName  |               binId
+-----------+------------------------------------
+ kscadmin2 | \xbb688af2b99156c0e903aad8b32dd5b3
+ kscadmin  | \xf1419635f8a050f98849402db80bb715
+(2 linhas)
+
+================================================================================
+
+=== PASSO 1.10.1 ===
+Comando: sudo -u postgres psql -d ksc -c "SELECT * FROM mfa_totp_exceptions;"
+--- STDOUT ---
+ nIdentity |               binId                | binSidHash | wstrName
+-----------+------------------------------------+------------+-----------
+         1 | \xf1419635f8a050f98849402db80bb715 |            | kscadmin
+         2 | \xbb688af2b99156c0e903aad8b32dd5b3 |            | kscadmin2
+(2 linhas)
+
+================================================================================
+
+=== PASSO 1.10.2 ===
+Comando: sudo -u postgres psql -d ksc -c "SELECT * FROM mfa_totp_settings;"
+--- STDOUT ---
+ nIdentity | wstrMfaKeyIssuer | nTotpVerifyResyncPeriod | nTotpVerifyDelayPeriod | nTotpSecretKeyLength | nTotpSecretAlgorithm | nTotpSecretTimeStep | bMfaRequiredForAll
+-----------+------------------+-------------------------+------------------------+----------------------+----------------------+---------------------+--------------------
+         1 |                  |                       1 |                      1 |                    6 |                    0 |                  30 |                  0
+(1 linha)
+
+================================================================================
+
+=== PASSO 1.11 ===
+Comando: curl -k -s -o /dev/null -w "%{http_code}" -X POST https://127.0.0.1:13299/api/v1.0/login -H "Content-Type: application/json" -d '{}'
+--- STDOUT ---
+401================================================================================
+
+=== PASSO 1.12 ===
+Comando: sudo LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib /opt/kaspersky/ksc64/sbin/klscflag -ssvget -pv klserver -s 87 -n KLSRV_SP_OPEN_OAPI_PORT -ss '|ss_type = "SS_SETTINGS";'
+--- STDOUT ---
+
+
++--- (PARAMS_T)
+    +---KLSRV_SP_OPEN_OAPI_PORT = (BOOL_T)true
+
+
+
+================================================================================
+
+=== PASSO 1.13.1 ===
+Comando: sudo journalctl -u kladminserver_srv -n 50 --no-pager
+--- STDOUT ---
+mai 23 04:45:05 kscserver.tail8b9ae.ts.net klserver[1149717]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 07:45:06 kscserver.tail8b9ae.ts.net klserver[1149717]: [390B blob data]
+mai 23 07:45:06 kscserver.tail8b9ae.ts.net klserver[1149717]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 10:45:07 kscserver.tail8b9ae.ts.net klserver[1149717]: [390B blob data]
+mai 23 10:45:07 kscserver.tail8b9ae.ts.net klserver[1149717]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 12:23:48 kscserver.tail8b9ae.ts.net systemd[1]: Stopping Kaspersky Security Center....
+mai 23 12:23:48 kscserver.tail8b9ae.ts.net kladminserver_srv[1149717]: Kaspersky Administration Server stopped.    (5B5D2070726F647563742F6F736D702F6B73632F6465762F696E636C7564652F7374642F7270742F7265706F727465725F696E7472656E616C2E68403934)
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net klserver[1149717]: [334B blob data]
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net systemd[1]: kladminserver_srv.service: Deactivated successfully.
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net systemd[1]: Stopped Kaspersky Security Center..
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net systemd[1]: kladminserver_srv.service: Consumed 16min 54.026s CPU time, 158.1M memory peak.
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net systemd[1]: Started Kaspersky Security Center..
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net kladminserver_srv[1208043]: PostgreSQL 16.13    (5B4B4C44425D2070726F647563742F6F736D702F6B73632F6465762F7365727665722F64622F6462636F6E6E73746F72616765696D706C2E6370704031383130)
+mai 23 12:23:50 kscserver.tail8b9ae.ts.net kladminserver_srv[1208043]: PostgreSQL 16.13    (5B4B4C44425D2070726F647563742F6F736D702F6B73632F6465762F7365727665722F64622F6462636F6E6E73746F72616765696D706C2E6370704031383130)
+mai 23 12:23:52 kscserver.tail8b9ae.ts.net kladminserver_srv[1208043]: O Servidor de Administração 16.2.0.1023 está em execução    (5B4B4C5352565D2070726F647563742F6F736D702F6B73632F6465762F7365727665722F737276696E73742F7372765F696E69742E63707040373231)
+mai 23 12:24:14 kscserver.tail8b9ae.ts.net kladminserver_srv[1208043]: O Servidor de Administração está pronto para processar as sessões GUI    (5B4B4C5352565D2070726F647563742F6F736D702F6B73632F6465762F7365727665722F737276696E73742F6F6E6C6F635F6E61675F3173745F636F6E2E637070403233)
+mai 23 12:24:15 kscserver.tail8b9ae.ts.net klserver[1208043]:   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+mai 23 12:24:15 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 15:24:16 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 23 15:24:16 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 18:24:16 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 23 18:24:16 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 23 21:24:17 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 23 21:24:17 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 00:24:18 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 00:24:18 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 03:24:19 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 03:24:19 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 06:24:20 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 06:24:20 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 09:24:21 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 09:24:21 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 12:24:22 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 12:24:22 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 15:24:23 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 15:24:23 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 18:24:24 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 18:24:24 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 24 21:24:25 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 24 21:24:25 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 00:24:26 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 00:24:26 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 03:24:27 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 03:24:27 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 06:24:28 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 06:24:28 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 09:24:29 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 09:24:29 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+mai 25 12:24:30 kscserver.tail8b9ae.ts.net klserver[1208043]: [390B blob data]
+mai 25 12:24:30 kscserver.tail8b9ae.ts.net klserver[1208043]:                                  Dload  Upload  Total   Spent   Left   Speed
+================================================================================
+
+=== PASSO 1.13.2 ===
+Comando: sudo journalctl -u kliam_srv -n 50 --no-pager
+--- STDOUT ---
+mai 25 13:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:24:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:24:20.001-0400","msg":"challenges cleaned","component":"voltron","version":"16.2.1023"}
+mai 25 13:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:24:20.004-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.00300491}
+mai 25 13:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:24:20.004-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:29:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:29:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001238903}
+mai 25 13:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:29:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:34:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:34:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.00105957}
+mai 25 13:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:34:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:39:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:39:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:39:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:39:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.000955144}
+mai 25 13:39:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:39:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:44:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:44:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:44:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:44:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001088835}
+mai 25 13:44:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:44:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:49:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:49:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:49:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:49:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001032384}
+mai 25 13:49:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:49:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:54:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:54:20.000-0400","msg":"cleaning challenges...","component":"voltron","version":"16.2.1023"}
+mai 25 13:54:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:54:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:54:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:54:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001188506}
+mai 25 13:54:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:54:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 13:54:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:54:20.003-0400","msg":"challenges cleaned","component":"voltron","version":"16.2.1023"}
+mai 25 13:59:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:59:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 13:59:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:59:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001088293}
+mai 25 13:59:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T13:59:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:04:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:04:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:04:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:04:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001077835}
+mai 25 14:04:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:04:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:09:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:09:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:09:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:09:20.003-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001932409}
+mai 25 14:09:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:09:20.003-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:14:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:14:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:14:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:14:20.001-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001036739}
+mai 25 14:14:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:14:20.001-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:19:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:19:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:19:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:19:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.00105711}
+mai 25 14:19:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:19:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.000-0400","msg":"cleaning challenges...","component":"voltron","version":"16.2.1023"}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.001-0400","msg":"challenges cleaned","component":"voltron","version":"16.2.1023"}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.003-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001961782}
+mai 25 14:24:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:24:20.003-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.001-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001004447}
+mai 25 14:29:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:29:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.000-0400","msg":"request","component":"voltron","version":"16.2.1023","method":"POST","url":""}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.002-0400","msg":"response","component":"voltron","version":"16.2.1023","method":"POST","url":"","code":204,"duration sec":0.001106389}
+mai 25 14:34:20 kscserver.tail8b9ae.ts.net kliam[1208154]: {"level":"info","ts":"2026-05-25T14:34:20.002-0400","msg":"finished flush","component":"voltron","version":"16.2.1023"}
+================================================================================
+
+=== PASSO 1.13.3 ===
+Comando: sudo journalctl -u ksc-web-console -n 50 --no-pager
+--- STDOUT ---
+mai 25 10:24:51 kscserver.tail8b9ae.ts.net node[1208216]:     []
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 11:24:52.001
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 11:24:52.001
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
+mai 25 11:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     []
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 12:24:52.011
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 12:24:52.011
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
+mai 25 12:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     []
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 13:24:52.021
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 13:24:52.021
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
+mai 25 13:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     []
+mai 25 14:16:04 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 14:16:04.264
+mai 25 14:16:04 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 14:16:04 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [WebServer] core:checkAuthErrorMiddleware() => redirect to login
+mai 25 14:16:04 kscserver.tail8b9ae.ts.net node[1208216]: (node:1208216) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+mai 25 14:16:04 kscserver.tail8b9ae.ts.net node[1208216]: (Use `node --trace-deprecation ...` to show where the warning was created)
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 14:24:52.030
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  ERROR  [BusinessLogicServer] IPM::RotateContent => Preparing to remove files::readIPMDir error
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     "Error: ENOENT: no such file or directory, scandir '/var/opt/kaspersky/ksc-web-console/temp/ipm'\n" +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Object.readdir (node:internal/fs/promises:952:18)\n' +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async readIPMDir (/var/opt/kaspersky/ksc-web-console/server/core/server.js:265:37)\n' +
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:       '    at async Timeout.rotateIPMFiles [as _onTimeout] (/var/opt/kaspersky/ksc-web-console/server/core/server.js:291:37)'
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: ╭─ 14:24:52.030
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]: │ #OS Hostname: kscserver.tail8b9ae.ts.net
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:  INFO  [BusinessLogicServer] IPM::RotateContent => Files to delete
+mai 25 14:24:52 kscserver.tail8b9ae.ts.net node[1208216]:     []
+================================================================================
