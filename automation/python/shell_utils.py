@@ -12,7 +12,7 @@ class ShellCommandError(Exception):
 
 
 def run_command(
-    cmd: List[str], check: bool = True, capture_output: bool = True
+    cmd: List[str], check: bool = True, capture_output: bool = True, env: dict = None
 ) -> Tuple[str, str, int]:
     """
     Executa comando via subprocess.
@@ -23,6 +23,7 @@ def run_command(
         cmd,
         capture_output=capture_output,
         text=True,
+        env=env,
     )
 
     stdout = result.stdout if result.stdout else ""
