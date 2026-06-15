@@ -26,14 +26,18 @@ def fix_ksc_auth():
     try:
         client.connect(host, username=user, password=password, timeout=30)
 
-        # Escapar a senha administrativa para o shell
-        safe_pass = shlex.quote(ksc_admin_pass)
-
-        cmd = f"LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib /opt/kaspersky/ksc64/sbin/kladduser -n kscadmin -u kscadmin -p {safe_pass} -r Administrator"
+        cmd = f"LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib /opt/kaspersky/ksc64/sbin/kladduser -n kscadmin -u kscadmin -r Administrator"
 
         print(f"Executando no servidor...")
+        # 🛡️ Sentinel: Never pass secrets as command-line arguments (e.g. -p) to remote binaries
+        # to prevent exposure in the process list (ps aux). Pass them via stdin instead.
         stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
+        # Provide sudo password
         stdin.write(password + "\n")
+        # Provide kladduser password via stdin prompt
+        stdin.write(ksc_admin_pass + "\n")
+        # In case kladduser asks for confirmation, provide it again
+        stdin.write(ksc_admin_pass + "\n")
         stdin.flush()
         stdin.channel.shutdown_write()
 
