@@ -1,5 +1,6 @@
 from pathlib import Path
 from .checks import CheckResult
+from automation.python.utils.secure_file import write_secure_file
 
 
 def generate_markdown_report(
@@ -21,8 +22,7 @@ def generate_markdown_report(
     content += f"\n## Evidências\n"
     content += f"Todos os logs e evidências brutos podem ser encontrados em: `{evidence_root}`\n"
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(content)
+    write_secure_file(str(output_path), content, mode=0o600)
 
 
 def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:

@@ -54,7 +54,9 @@ KLSRV_UNATT_KLADMINS_PASSWORD={admin_pass}
 """
         sftp = client.open_sftp()
         with sftp.file("/tmp/reconfig_ans.txt", "w") as f:
-            f.chmod(0o600)  # Prevent TOCTOU password exposure
+            # Set permissions to 0o600 (read/write by owner only) before writing to prevent
+            # race conditions where an attacker could read the credentials from the shared /tmp directory.
+            f.chmod(0o600)
             f.write(ans_content)
         sftp.close()
 
