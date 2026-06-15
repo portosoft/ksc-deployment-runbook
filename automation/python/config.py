@@ -1,20 +1,45 @@
 import os
-from dataclasses import dataclass
-from typing import Optional
+import re
+from typing import Optional, Literal
+from pydantic import BaseModel, Field, field_validator, ValidationError
 
 
-@dataclass
-class KscConfig:
-    db_host: str
-    db_port: int
-    db_name: str
-    db_user: str
+class KscConfig(BaseModel):
+    db_host: str = "127.0.0.1"
+    db_port: int = Field(default=5432, ge=1, le=65535)
+    db_name: str = "ksciam"
+    db_user: str = "kluser"
     db_password: str
-    db_sslmode: str
+    db_sslmode: Literal["disable", "prefer", "require", "verify-ca", "verify-full"] = (
+        "prefer"
+    )
     ksc_admin_password: str
-    ksc_license_path: Optional[str]
-    web_port: int
-    selinux_expected_mode: str
+    ksc_license_path: Optional[str] = None
+    web_port: int = Field(default=443, ge=1, le=65535)
+    selinux_expected_mode: str = "enforcing"
+
+    ksc_host: str = "127.0.0.1"
+    ksc_user: str = "suporte"
+    ksc_pass: Optional[str] = None
+    ksc_fqdn: str = "kscserver.exemplo.ts.net"
+    ksc_admin_user: str = "KLAdmins"
+
+    @field_validator("ksc_fqdn")
+    @classmethod
+    def validate_fqdn(cls, v: str) -> str:
+        # Expressão regular simples para FQDN, hostname ou IP (com (?i) no início)
+        fqdn_regex = r"(?i)^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$|^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+        if not re.match(fqdn_regex, v):
+            raise ValueError(f"FQDN/Host inválido: {v}")
+        return v
+
+    @field_validator("ksc_admin_user")
+    @classmethod
+    def validate_admin_user(cls, v: str) -> str:
+        # Whitelist de caracteres seguros
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError(f"Nome de usuário administrativo inválido: {v}")
+        return v
 
 
 class ConfigError(Exception):
@@ -22,8 +47,6 @@ class ConfigError(Exception):
 
 
 def _load_dotenv(path):
-    import os
-
     try:
         with open(path) as f:
             for line in f:
@@ -36,7 +59,7 @@ def _load_dotenv(path):
 
 def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
     """
-    Lê o .env, valida obrigatórios e retorna KscConfig.
+    Lê o .env, valida obrigatórios e retorna KscConfig usando Pydantic.
     Lança ConfigError em caso de problema.
     """
     if not os.path.exists(env_path):
@@ -45,17 +68,36 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
     _load_dotenv(env_path)
 
     try:
-        # Puxamos as variáveis com prefixo KSC_ que costumam ser padrão
         db_host = os.getenv("KSC_DB_HOST", "127.0.0.1")
-        db_port = int(os.getenv("KSC_DB_PORT", "5432"))
+
+        try:
+            db_port = int(os.getenv("KSC_DB_PORT", "5432"))
+        except ValueError:
+            raise ConfigError(
+                "Erro de conversão de tipo nas configurações: KSC_DB_PORT deve ser um inteiro"
+            )
+
         db_name = os.getenv("KSC_IAM_NAME", "ksciam")
         db_user = os.getenv("KSC_DB_USER", "kluser")
         db_password = os.getenv("KSC_DB_PASS")
         db_sslmode = os.getenv("KSC_DB_SSLMODE", "prefer")
         ksc_admin_password = os.getenv("KSC_ADMIN_PASS")
         ksc_license_path = os.getenv("KSC_LICENSE_PATH")
-        web_port = int(os.getenv("KSC_WEB_PORT", "443"))
+
+        try:
+            web_port = int(os.getenv("KSC_WEB_PORT", "443"))
+        except ValueError:
+            raise ConfigError(
+                "Erro de conversão de tipo nas configurações: KSC_WEB_PORT deve ser um inteiro"
+            )
+
         selinux_expected_mode = os.getenv("KSC_SELINUX_MODE", "enforcing")
+
+        ksc_host = os.getenv("KSC_HOST", "127.0.0.1")
+        ksc_user = os.getenv("KSC_USER", "suporte")
+        ksc_pass = os.getenv("KSC_PASS")
+        ksc_fqdn = os.getenv("KSC_FQDN", "kscserver.exemplo.ts.net")
+        ksc_admin_user = os.getenv("KSC_ADMIN_USER", "KLAdmins")
 
         if not db_password:
             raise ConfigError("KSC_DB_PASS é obrigatória")
@@ -73,6 +115,15 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
             ksc_license_path=ksc_license_path,
             web_port=web_port,
             selinux_expected_mode=selinux_expected_mode,
+            ksc_host=ksc_host,
+            ksc_user=ksc_user,
+            ksc_pass=ksc_pass,
+            ksc_fqdn=ksc_fqdn,
+            ksc_admin_user=ksc_admin_user,
         )
-    except ValueError as e:
-        raise ConfigError(f"Erro de conversão de tipo nas configurações: {e}")
+    except ValidationError as e:
+        errors = []
+        for err in e.errors():
+            loc = ".".join(str(x) for x in err["loc"])
+            errors.append(f"{loc}: {err['msg']}")
+        raise ConfigError("Erro de validação nas configurações: " + "; ".join(errors))

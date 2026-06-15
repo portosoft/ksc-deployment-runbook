@@ -1,18 +1,22 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Smoke test para verificar a acessibilidade do Kaspersky Web Console.
+"""
+
+import sys
+import argparse
 import requests
 import urllib3
-import sys
-import os
-from dotenv import load_dotenv
-
-# Desativar avisos de certificado auto-assinado para o teste inicial
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from automation.python.config import load_config, ConfigError
 
 
-def smoke_test(url):
-    print(f"--- Iniciando Smoke Test em {url} ---")
+def smoke_test(url: str, verify: bool = True) -> bool:
+    print(f"--- Iniciando Smoke Test em {url} (verificação TLS: {verify}) ---")
+    if not verify:
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     try:
-        response = requests.get(url, verify=False, timeout=10)
+        response = requests.get(url, verify=verify, timeout=10)
         if response.status_code == 200:
             print("✅ SUCESSO: Web Console acessível (HTTP 200)")
             return True
@@ -24,17 +28,37 @@ def smoke_test(url):
         return False
 
 
-if __name__ == "__main__":
-    load_dotenv("configs/env/ksc_vars.env")
-    host = os.getenv("KSC_HOST")
-    port = os.getenv("KSC_WEB_PORT", "443")
+def main():
+    parser = argparse.ArgumentParser(description="Smoke test para o Web Console do KSC")
+    parser.add_argument(
+        "--config",
+        default="configs/env/ksc_vars.env",
+        help="Caminho do arquivo de configuração",
+    )
+    parser.add_argument(
+        "--insecure",
+        action="store_true",
+        help="Desabilita a verificação do certificado SSL (TLS) para testes iniciais",
+    )
+    args = parser.parse_args()
 
-    if not host:
-        print("Erro: KSC_HOST não definido no .env")
+    try:
+        config = load_config(args.config)
+    except ConfigError as e:
+        print(f"Erro ao carregar configurações: {e}")
         sys.exit(1)
 
-    target_url = f"https://{host}:{port}/"
-    if smoke_test(target_url):
+    target_url = f"https://{config.ksc_host}:{config.web_port}/"
+    verify = not args.insecure
+
+    if not verify:
+        print("⚠️ AVISO: A verificação de certificados SSL/TLS está desativada.")
+
+    if smoke_test(target_url, verify=verify):
         sys.exit(0)
     else:
         sys.exit(3)
+
+
+if __name__ == "__main__":
+    main()

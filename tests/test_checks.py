@@ -79,14 +79,27 @@ def test_check_ram_and_disk_ok(mock_disk, mock_ram, dummy_config):
         assert item.status == "ok"
 
 
+@patch("automation.python.checks.os.getenv", return_value="false")
 @patch("automation.python.checks._get_total_ram_mb", return_value=4096)
 @patch("automation.python.checks._get_disk_gb", return_value=50)
-def test_check_ram_and_disk_critical(mock_disk, mock_ram, dummy_config):
+def test_check_ram_and_disk_critical(mock_disk, mock_ram, mock_getenv, dummy_config):
     result = check_ram_and_disk(dummy_config)
     assert result.has_critical
     assert (
         len([i for i in result.items if i.status == "critical"]) == 3
     )  # ram, opt, varopt
+
+
+@patch("automation.python.checks.os.getenv", return_value="true")
+@patch("automation.python.checks._get_total_ram_mb", return_value=4096)
+@patch("automation.python.checks._get_disk_gb", return_value=50)
+def test_check_ram_and_disk_ci_warning(mock_disk, mock_ram, mock_getenv, dummy_config):
+    result = check_ram_and_disk(dummy_config)
+    assert not result.has_critical
+    assert (
+        len([i for i in result.items if i.status == "warning"]) == 3
+    )  # ram, opt, varopt
+
 
 
 @patch("automation.python.checks._get_selinux_mode", return_value="enforcing")

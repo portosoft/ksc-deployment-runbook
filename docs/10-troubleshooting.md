@@ -41,7 +41,35 @@ sudo /opt/kaspersky/ksc64/sbin/kladduser -n KLAdmins -p <NOVA_SENHA_MAX_16>
 Sempre que abrir um ticket, anexe:
 - `/var/log/kaspersky/ksc64/klserver.log`
 - `/var/log/messages`
-- Output do `ksc_audit.py --check`.
+- Output do `kscctl audit --check`.
+
+## Estudos de Caso de Troubleshooting (Histórico de Incidentes)
+
+### Caso 1: Deadlock de Autenticação Multifator (MFA)
+- **Sintoma**: Login via console web falha com `HTTP 401 Unauthorized` e cabeçalho `X-KSC-ErrorMsg: Two factor authentification configuration is forbidden`. O QR Code de configuração inicial não é exibido pela console.
+- **Causa**: O parâmetro global `KLSRV_SP_MFA_ENABLED` está definido como `false` nas configurações do servidor, mas contas de administradores globais exigem o segundo fator internamente. A API OpenAPI rejeita a geração do segredo TOTP inicial porque a funcionalidade global de MFA está desativada.
+- **Resolução**: Inserir uma exceção de MFA para a conta de administrador afetada diretamente no banco de dados e reiniciar os serviços:
+  ```sql
+  INSERT INTO mfa_totp_exceptions ("binId", "wstrName")
+  SELECT "binId", "wstrName" FROM spl_users WHERE "wstrName" IN ('kscadmin');
+  ```
+  Reiniciar os serviços no servidor KSC:
+  ```bash
+  sudo systemctl restart kladminserver_srv kliam_srv ksc-web-console
+  ```
+
+### Caso 2: Falha de Inicialização do IAM pós-Migração
+- **Sintoma**: O serviço `kliam_srv` não inicia devido a tabelas ausentes ou com inconsistência estrutural no schema `iam` após atualizações ou migrações do PostgreSQL.
+- **Causa**: Inconsistências causadas por migrações marcadas como sujas (`schema_migrations.dirty` com valor `true`) ou corrupção de tabelas.
+- **Resolução**: Parar os serviços, realizar o reset completo dos esquemas `ksc` e `ksciam` de forma controlada via CLI e reexecutar a reconfiguração:
+  1. Executar o reset dos bancos:
+     ```bash
+     python3 -m automation.python.kscctl db reset --apply --confirm-token=RESET-CONFIRM
+     ```
+  2. Reexecutar a reconfiguração estruturada do serviço para reconstruir o banco PostgreSQL limpo:
+     ```bash
+     python3 -m automation.python.kscctl setup --apply
+     ```
 
 ---
 [Próximo Passo: Rollback >>](11-rollback.md)

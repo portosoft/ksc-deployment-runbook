@@ -38,6 +38,15 @@ Antes de enviar suas mudanças, rode:
 pre-commit run --all-files
 ```
 O `detect-secrets` baseia-se no arquivo `.secrets.baseline`. Se você adicionou um "falso positivo", precisará atualizar a baseline localmente.
+
+## Governança e Automação de PR via Agentes de IA
+Este repositório utiliza agentes de IA (Jules, Antigravity, Claude Code) como executores de prompts de implementação com escopo restrito (arquivos e critérios de aceite definidos previamente). PRs abertos por esses agentes passam pelo pipeline de CI completo (lint, testes, SAST, secret scanning) e exigem aprovação humana obrigatória antes do merge na branch `main`.
+
+Os workflows automatizados operam sob regras rígidas:
+- O workflow `recreate-prs.yml` permite recriar PRs sob a identidade `github-actions[bot]` para fins de revisão.
+- O workflow `trigger-bot-pr.yml` automatiza a abertura de PRs a partir da branch `trigger-bot-pr`, que é protegida e restrita a mantenedores autorizados.
+- Todos os segredos e chamadas de API de automação nos fluxos utilizam o escopo de token efêmero padrão `GITHUB_TOKEN`, eliminando o uso de PATs pessoais.
+
 ## Estilo de Documentação
 - Documentação técnica deve ser direta ao ponto (estilo runbook).
 - Utilize Markdown para formatação.

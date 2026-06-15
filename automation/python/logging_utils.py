@@ -1,7 +1,6 @@
 import json
 import logging
 from datetime import datetime
-import os
 from pathlib import Path
 from typing import Literal
 

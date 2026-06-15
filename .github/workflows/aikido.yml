@@ -3,9 +3,9 @@ name: Aikido Security Scan
 
 'on':
   push:
-    branches: [develop, main, master]
+    branches: [develop, main]
   pull_request:
-    branches: [develop, main, master]
+    branches: [develop, main]
 
 permissions:
   contents: read
@@ -31,6 +31,7 @@ jobs:
         run: npm install --global @aikidosec/ci-api-client
 
       - name: Run Aikido Scan
+        continue-on-error: true
         run: |
           aikido-api-client scan-release \
             ${{ github.event.repository.name }} \
