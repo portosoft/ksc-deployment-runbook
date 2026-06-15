@@ -21,8 +21,8 @@ jobs:
 
       - name: Install Python and dependencies
         run: |
-          dnf install -y python3-pip iproute
-          python3 -m pip install -r requirements.txt
+          dnf install -y python3.11 python3.11-pip iproute
+          python3.11 -m pip install -r requirements.txt
 
       - name: Run audit and operational checks in dry-run mode
         env:
@@ -40,7 +40,7 @@ jobs:
           echo 'KSC_WEB_PORT="8080"' >> configs/env/ksc_vars.env
 
           # Executa comandos locais de check
-          python3 -m automation.python.kscctl setup --check
-          python3 -m automation.python.kscctl db reset --check
-          python3 -m automation.python.kscctl iam purge-mfa --check
-          python3 -m automation.python.kscctl web fix-config --check
+          python3.11 -m automation.python.kscctl setup --check
+          python3.11 -m automation.python.kscctl db reset --check
+          python3.11 -m automation.python.kscctl iam purge-mfa --check
+          python3.11 -m automation.python.kscctl web fix-config --check
