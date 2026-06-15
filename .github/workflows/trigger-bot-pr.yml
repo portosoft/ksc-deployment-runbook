@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: bot-jules-fix
+          ref: sentinel-fix-local-credential-exposure-17725357227211694878
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --title "🛡️ Sentinel: [HIGH] Fix Local Credential Exposure via Insecure File Permissions" --body "Automated PR creation by bot. Replaces #17 to allow the original author to review and approve." --base main --head bot-jules-fix || true
+          gh pr create --title "🛡️ Sentinel: Enforce secure SSH host key policies and resolve Code Scanning alerts" --body "Automated PR creation by bot. Resolves Code Scanning vulnerabilities for paramiko-missing-host-key-validation." --base main --head sentinel-fix-local-credential-exposure-17725357227211694878 || true
