@@ -19,16 +19,21 @@ def run_command(
     Retorna (stdout, stderr, returncode).
     Se check=True e retorno != 0, lança ShellCommandError.
     """
-    result = subprocess.run(
-        cmd,
-        capture_output=capture_output,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=capture_output,
+            text=True,
+        )
+        stdout = result.stdout if result.stdout else ""
+        stderr = result.stderr if result.stderr else ""
+        rc = result.returncode
+    except FileNotFoundError:
+        stdout = ""
+        stderr = f"Command not found: {cmd[0]}"
+        rc = 127
 
-    stdout = result.stdout if result.stdout else ""
-    stderr = result.stderr if result.stderr else ""
+    if check and rc != 0:
+        raise ShellCommandError(cmd, rc, stdout, stderr)
 
-    if check and result.returncode != 0:
-        raise ShellCommandError(cmd, result.returncode, stdout, stderr)
-
-    return stdout, stderr, result.returncode
+    return stdout, stderr, rc

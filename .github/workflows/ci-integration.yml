@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Python and dependencies
         run: |
-          dnf install -y python3-pip
+          dnf install -y python3-pip iproute
           python3 -m pip install -r requirements.txt
 
       - name: Run audit and operational checks in dry-run mode
