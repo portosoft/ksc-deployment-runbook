@@ -294,7 +294,7 @@ def _check_db_select_1(config: KscConfig) -> bool:
         "-c",
         "SELECT 1;",
     ]
-    stdout, stderr, rc = run_command(conn_args, check=False)
+    stdout, stderr, rc = run_command(conn_args, check=False, env=env)
     return rc == 0 and "1" in stdout
 
 
