@@ -1,1 +1,2 @@
-disable=all
+# shellcheck configuration
+disable=SC2086  # Disable double quote warnings where expansion is intentional

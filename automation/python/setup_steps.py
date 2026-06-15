@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 from .config import KscConfig
 from .checks import CheckResult, run_precheck
 from .shell_utils import run_command, ShellCommandError

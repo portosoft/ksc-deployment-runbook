@@ -170,14 +170,14 @@ def _get_selinux_mode() -> str:
         return "unknown"
 
 
-def check_selinux(config: KscConfig) -> CheckResult:
+def check_selinux(config: KscConfig, is_postcheck: bool = False) -> CheckResult:
     result = CheckResult(items=[])
     mode = _get_selinux_mode()
     if mode == "unknown":
         result.add(
             CheckItem(
                 name="selinux",
-                status="warning",
+                status="critical" if is_postcheck else "warning",
                 message="Não foi possível determinar o modo.",
             )
         )
@@ -188,7 +188,7 @@ def check_selinux(config: KscConfig) -> CheckResult:
         result.add(
             CheckItem(
                 name="selinux",
-                status="warning",
+                status="critical" if is_postcheck else "warning",
                 message=f"SELinux '{mode}'. Esperado: '{expected}'.",
             )
         )
@@ -374,4 +374,5 @@ def run_postcheck(config: KscConfig) -> CheckResult:
     aggregated = CheckResult(items=[])
     aggregated.items.extend(check_services_and_db(config).items)
     aggregated.items.extend(check_web_console(config).items)
+    aggregated.items.extend(check_selinux(config, is_postcheck=True).items)
     return aggregated

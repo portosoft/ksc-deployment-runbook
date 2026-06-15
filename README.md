@@ -18,7 +18,15 @@ Garantir deploys de KSC 16.x repetíveis, seguros e auditáveis através de auto
 | Uso de PostgreSQL 16 local ou remoto. | Versões de KSC anteriores à 15.0. |
 | Necessidade de auditoria e hardening automático. | Ambientes com MySQL/MariaDB. |
 
-> **Nota de Posicionamento:** Este runbook encapsula o "Jeito Portosoft" de implantar KSC. Ele é um produto interno mantido pela engenharia. Empresas que queiram adotá-lo podem usar o core open source e nos consultar para customizações avançadas.
+## 🏗️ Posicionamento e Governança
+
+### O que este Runbook é?
+Este runbook é uma ferramenta open-core desenvolvida para automatizar e auditar implantações do KSC 16.x no Linux. Ele serve como base para deploys repetíveis e seguros.
+
+### Engajamento Comercial com a Portosoft
+Se a sua empresa precisa de customizações avançadas, integração com ferramentas enterprise (ex: HashiCorp Vault, Active Directory complexo), suporte a ambientes multi-tenant ou consultoria dedicada de DevOps/SecOps, entre em contato através dos nossos canais de atendimento comercial.
+
+---
 
 ## 🏗️ Escopo
 - **In-Scope**: Setup do SO, Preparação do Postgres 16, Instalação do KSC Server, Web Console, Hardening de Segurança.
@@ -41,10 +49,10 @@ cp configs/env/ksc_vars.env.example configs/env/ksc_vars.env
 vi configs/env/ksc_vars.env
 
 # 3. Execute o Pre-check
-python3 automation/python/ksc_audit.py --check
+python3 -m automation.python.kscctl audit --check
 
 # 4. Inicie a Instalação
-python3 automation/python/ksc_setup.py --apply
+python3 -m automation.python.kscctl setup --apply
 ```
 
 ## 🗺️ Estrutura do Repositório
@@ -72,20 +80,20 @@ Siga esta trilha para um deploy seguro e auditável:
 
 ## 🤝 Contratos de Automação
 Este projeto utiliza uma convenção rigorosa de argumentos CLI:
-- `--check`: Apenas valida pré-requisitos (Dry-run).
-- `--apply`: Executa as alterações no sistema.
+- `--check`: Apenas valida pré-requisitos ou simula operações (Dry-run).
+- `--apply`: Executa as alterações no sistema local ou remoto.
 - `--report`: Gera um PDF/Markdown com as evidências da etapa.
 
 ## ✅ Critérios de Sucesso (Definition of Done)
 1. PostgreSQL operacional com parâmetros de performance aplicados.
 2. KSC Administration Server rodando (`klnagent` e `klserver` ativos).
 3. Web Console acessível via HTTPS na porta 443.
-4. Relatório de auditoria gerado pelo `ksc_audit.py` com 0 falhas críticas.
+4. Relatório de auditoria gerado pelo `kscctl audit --report` com 0 falhas críticas.
 
 ## 📏 Service Level Indicators (SLIs) Internos
 Como um produto interno, visamos as seguintes métricas operacionais:
-- **Deploy Time**: O comando `--apply` deve finalizar em menos de 10 minutos (assumindo rede estável).
-- **Audit Time**: O comando `--check` deve executar em menos de 15 segundos.
+- **Deploy Time**: O comando `kscctl setup --apply` deve finalizar em menos de 10 minutos (assumindo rede estável).
+- **Audit Time**: O comando `kscctl audit --check` deve executar em menos de 15 segundos.
 - **Fail Rate**: Zero falhas silenciosas. O script deve quebrar barulhentamente em qualquer desvio de pré-requisito (*Fail Fast, Fail Loud*).
 
 ## ⚠️ Riscos Conhecidos

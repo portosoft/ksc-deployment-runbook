@@ -1,0 +1,46 @@
+---
+name: Integration Dry-Run
+
+'on':
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  dry-run:
+    name: Dry-run check on Rocky Linux 9
+    runs-on: ubuntu-latest
+    container:
+      image: rockylinux:9
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install Python and dependencies
+        run: |
+          dnf install -y python3-pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Run audit and operational checks in dry-run mode
+        env:
+          PYTHONPATH: .
+        run: |
+          mkdir -p configs/env
+          # Escreve um arquivo de configuração de mock com pragma para evitar falsos positivos
+          echo 'KSC_DB_PASS="unittest-dummy-db-pass-000"' > configs/env/ksc_vars.env  # pragma: allowlist secret
+          echo 'KSC_ADMIN_PASS="unittest-dummy-admin-pass-999"' >> configs/env/ksc_vars.env  # pragma: allowlist secret
+          echo 'KSC_HOST="127.0.0.1"' >> configs/env/ksc_vars.env
+          echo 'KSC_USER="suporte"' >> configs/env/ksc_vars.env
+          echo 'KSC_PASS="unittest-dummy-ssh-pass-111"' >> configs/env/ksc_vars.env  # pragma: allowlist secret
+          echo 'KSC_FQDN="kscserver.exemplo.ts.net"' >> configs/env/ksc_vars.env
+          echo 'KSC_ADMIN_USER="KLAdmins"' >> configs/env/ksc_vars.env
+          echo 'KSC_WEB_PORT="8080"' >> configs/env/ksc_vars.env
+
+          # Executa comandos locais de check
+          python3 -m automation.python.kscctl setup --check
+          python3 -m automation.python.kscctl db reset --check
+          python3 -m automation.python.kscctl iam purge-mfa --check
+          python3 -m automation.python.kscctl web fix-config --check
