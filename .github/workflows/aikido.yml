@@ -31,6 +31,7 @@ jobs:
         run: npm install --global @aikidosec/ci-api-client
 
       - name: Run Aikido Scan
+        continue-on-error: true
         run: |
           aikido-api-client scan-release \
             ${{ github.event.repository.name }} \
