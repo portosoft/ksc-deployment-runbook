@@ -1,0 +1,19 @@
+name: Create Bot PR
+on:
+  push:
+    branches:
+      - trigger-bot-pr
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: trigger-bot-pr
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --title "ci: add workflow to create bot PR" --body "Automated PR creation by bot to merge trigger-bot-pr branch." --base main --head trigger-bot-pr || true
