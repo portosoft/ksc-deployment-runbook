@@ -37,7 +37,7 @@ def run_ssh_commands(host, user, password, commands):
             results.append(res)
         client.close()
     except Exception as e:
-        print(f"Erro de Conexão: {e}")
+        print(f"Erro de Conexão: SSH connection failed.")
         return None
     return results
 
@@ -52,7 +52,7 @@ def main():
         print("Erro: Variáveis de ambiente incompletas.")
         sys.exit(1)
 
-    print(f"--- Aplicando Hardening do PostgreSQL para KSC em {host} ---")
+    print("--- Aplicando Hardening do PostgreSQL para KSC ---")
 
     harden_cmds = [
         {'cmd': 'sed -i "s/^#max_connections = .*/max_connections = 200/" /var/lib/pgsql/data/postgresql.conf'},
@@ -67,7 +67,29 @@ def main():
         for r in results:
             print(f"STATUS: {r['status']} | CMD: {r['command']}")
             if r["status"] != 0:
-                print(f"ERRO: {r['stderr']}")
+                print(f"ERRO: [Command failed]")
+
+    # Executar a alteração de senha de forma segura e separada
+    print("--- Atualizando senha do banco de dados (postgres) ---")
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
+    try:
+        client.connect(host, username=user, password=password, timeout=15)
+        stdin, stdout, stderr = client.exec_command("sudo -S sudo -u postgres psql")
+        stdin.write(password + "\n")
+        stdin.flush()
+        stdin.write(f"ALTER USER kluser WITH PASSWORD '{db_password}';\n")
+        stdin.flush()
+        stdin.channel.shutdown_write()
+        status = stdout.channel.recv_exit_status()
+        if status == 0:
+            print("Senha do banco de dados atualizada com sucesso.")
+        else:
+            print("Erro ao atualizar a senha do banco de dados.")
+        client.close()
+    except Exception:
+        print("Erro ao conectar para atualizar a senha do banco de dados.")
 
     # Executa a atualização da senha de forma separada e com log seguro para evitar alerta do CodeQL
     psql_cmd = [{

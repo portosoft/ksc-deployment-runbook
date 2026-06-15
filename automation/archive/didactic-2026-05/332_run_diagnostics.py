@@ -149,7 +149,7 @@ def run_diagnostic_commands(client, commands, password, output_filepath):
 def main():
     host, user, password = get_credentials()
 
-    print(f"Connecting to {user}@{host}...")
+    print("Connecting to the target host...")
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.RejectPolicy())
