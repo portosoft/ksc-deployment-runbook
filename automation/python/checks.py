@@ -52,13 +52,16 @@ def _get_disk_gb(path: str) -> int:
 
 def check_ram_and_disk(config: KscConfig) -> CheckResult:
     result = CheckResult(items=[])
+    is_ci = os.getenv("GITHUB_ACTIONS") == "true" or os.getenv("KSC_SKIP_RESOURCE_CHECK") == "true"
 
     # RAM
     try:
         total_ram_mb = _get_total_ram_mb()
         if total_ram_mb < MIN_RAM_MB:
-            status = "critical"
+            status = "warning" if is_ci else "critical"
             msg = f"RAM total {total_ram_mb} MB abaixo do mínimo ({MIN_RAM_MB} MB)."
+            if is_ci:
+                msg += " (Tratado como warning em ambiente CI/mock)."
         elif total_ram_mb < RECOMMENDED_RAM_MB:
             status = "warning"
             msg = f"RAM total {total_ram_mb} MB abaixo da recomendação ({RECOMMENDED_RAM_MB} MB)."
@@ -68,39 +71,43 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
         result.add(CheckItem(name="ram_total", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="ram_total", status="critical", message=f"Falha: {exc}")
+            CheckItem(name="ram_total", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
         )
 
     # Disco /opt
     try:
         opt_gb = _get_disk_gb("/opt")
         if opt_gb < MIN_DISK_OPT_GB:
-            status = "critical"
+            status = "warning" if is_ci else "critical"
             msg = (
                 f"Espaço em /opt ({opt_gb} GB) abaixo do mínimo ({MIN_DISK_OPT_GB} GB)."
             )
+            if is_ci:
+                msg += " (Tratado como warning em ambiente CI/mock)."
         else:
             status = "ok"
             msg = f"Espaço em /opt ({opt_gb} GB) adequado."
         result.add(CheckItem(name="disk_opt", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="disk_opt", status="critical", message=f"Falha: {exc}")
+            CheckItem(name="disk_opt", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
         )
 
     # Disco /var/opt
     try:
         varopt_gb = _get_disk_gb("/var/opt")
         if varopt_gb < MIN_DISK_VAROPT_GB:
-            status = "critical"
+            status = "warning" if is_ci else "critical"
             msg = f"Espaço em /var/opt ({varopt_gb} GB) abaixo do mínimo ({MIN_DISK_VAROPT_GB} GB)."
+            if is_ci:
+                msg += " (Tratado como warning em ambiente CI/mock)."
         else:
             status = "ok"
             msg = f"Espaço em /var/opt ({varopt_gb} GB) adequado."
         result.add(CheckItem(name="disk_varopt", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="disk_varopt", status="critical", message=f"Falha: {exc}")
+            CheckItem(name="disk_varopt", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
         )
 
     return result
