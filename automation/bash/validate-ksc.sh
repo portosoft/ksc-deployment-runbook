@@ -28,7 +28,7 @@ echo -e "\n[2] Verificando portas em escuta (ss)..."
 PORTS=("8080" "8443" "13000" "13001")
 
 for port in "${PORTS[@]}"; do
-    if ss -tlnp | grep -q ":$port "; then
+    if grep -q -- ":$port " < <(ss -tlnp); then
         echo -e "${GREEN}OK${NC}: Porta $port está aberta e escutando."
     else
         echo -e "${RED}ERRO${NC}: Porta $port não detectada no ss."
@@ -39,7 +39,7 @@ done
 echo -e "\n[3] Verificando regras de firewall..."
 FW_PORTS=$(sudo firewall-cmd --list-ports)
 for port in "${PORTS[@]}"; do
-    if echo "$FW_PORTS" | grep -q "$port/tcp"; then
+    if grep -q -- "$port/tcp" <<<"$FW_PORTS"; then
         echo -e "${GREEN}OK${NC}: Porta $port/tcp liberada no firewalld."
     else
         echo -e "${RED}ERRO${NC}: Porta $port/tcp NÃO encontrada no firewalld."
@@ -50,7 +50,7 @@ done
 echo -e "\n[4] Verificando PostgreSQL (standard_conforming_strings)..."
 if command -v psql >/dev/null 2>&1; then
     PG_STATUS=$(sudo -u postgres psql -t -c "SHOW standard_conforming_strings;" | xargs)
-    if [ "$PG_STATUS" == "on" ]; then
+    if [[ "$PG_STATUS" == "on" ]]; then
         echo -e "${GREEN}OK${NC}: standard_conforming_strings está ON."
     else
         echo -e "${RED}ERRO${NC}: standard_conforming_strings está $PG_STATUS (deveria ser ON)."
