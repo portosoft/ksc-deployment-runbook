@@ -27,4 +27,25 @@ Preparar o terreno antes de iniciar qualquer script de instalação.
 - O operador deve ter privilégios de `sudo` total.
 
 ---
+
+## Passo 2.5 — Geração Interativa do Arquivo de Variáveis de Ambiente
+
+Antes de executar o `ksc_audit.py --check`, preencha as variáveis de ambiente de produção com o script interativo:
+
+```bash
+python3 -m automation.python.init_config
+```
+
+> [!IMPORTANT]
+> O arquivo gerado (`configs/env/ksc_vars.env`) **não deve ser commitado** no repositório.
+> Para cifrar os campos sensíveis, use a flag `--vault`:
+> ```bash
+> python3 -m automation.python.init_config --vault
+> ```
+> Isso grava as credenciais cifradas em `configs/secrets.bin`.
+
+As variáveis solicitadas interativamente são:
+`KSC_DB_HOST`, `KSC_DB_PORT`, `KSC_DB_USER`, `KSC_FQDN`, `KSC_HOST`, `KSC_USER`, `KSC_WEB_PORT`, `KSC_SELINUX_MODE`, `KSC_DB_PASS`, `KSC_ADMIN_PASS`, `KSC_PASS`.
+
+---
 [Próximo Passo: Precheck >>](04-precheck.md)

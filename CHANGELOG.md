@@ -5,6 +5,14 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Geração sintética de credenciais para testes (`credentials.py` + fixtures pytest)
+- `init_config.py` para configuração interativa segura de variáveis de ambiente de produção
+
+### Changed
+- Arquivos `.example` agora usam marcadores `<PREENCHER>` ao invés de valores com aparência realista
+
 ## [1.1.0] - 2026-05-16
 ### Added
 - Arquitetura DevSecOps em Python (`automation/python/`).

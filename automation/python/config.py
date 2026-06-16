@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 from typing import Optional, Literal
@@ -21,7 +22,7 @@ class KscConfig(BaseModel):
     ksc_host: str = "127.0.0.1"
     ksc_user: str = "suporte"
     ksc_pass: Optional[str] = None
-    ksc_fqdn: str = "kscserver.exemplo.ts.net"
+    ksc_fqdn: str = "ksc-placeholder.test"
     ksc_admin_user: str = "KLAdmins"
 
     @field_validator("ksc_fqdn")
@@ -67,6 +68,16 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
 
     _load_dotenv(env_path)
 
+    secrets_path = "configs/secrets.bin"  # pragma: allowlist secret
+    if os.path.exists(secrets_path):
+        try:
+            from automation.lib.vault import decrypt_secrets
+            vault_values = decrypt_secrets()
+            for key, val in vault_values.items():
+                os.environ[key] = val
+        except Exception as exc:
+            logging.warning("Vault decrypt falhou, usando .env: %s", exc)
+
     try:
         db_host = os.getenv("KSC_DB_HOST", "127.0.0.1")
 
@@ -96,7 +107,7 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
         ksc_host = os.getenv("KSC_HOST", "127.0.0.1")
         ksc_user = os.getenv("KSC_USER", "suporte")
         ksc_pass = os.getenv("KSC_PASS")
-        ksc_fqdn = os.getenv("KSC_FQDN", "kscserver.exemplo.ts.net")
+        ksc_fqdn = os.getenv("KSC_FQDN", "ksc-placeholder.test")
         ksc_admin_user = os.getenv("KSC_ADMIN_USER", "KLAdmins")
 
         if not db_password:
