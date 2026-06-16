@@ -8,7 +8,6 @@ Usage:
 
 import argparse
 import getpass
-import os
 import pathlib
 import sys
 
@@ -69,7 +68,7 @@ def _parse_env_file(path: pathlib.Path) -> dict:
                 if "=" in line:
                     key, _, value = line.partition("=")
                     result[key.strip()] = value.strip().strip("\"'")
-    except OSError:
+    except FileNotFoundError:
         pass
     return result
 

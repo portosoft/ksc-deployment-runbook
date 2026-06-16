@@ -12,7 +12,7 @@ Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.9
 """
 import sys
 import pytest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 from automation.python import init_config
 from automation.python.init_config import main
@@ -76,6 +76,7 @@ class TestHappyPath:
         # Second positional arg is the content
         written_content = call_args[0][1]
 
+        assert written_path == "configs/env/ksc_vars.env"
         assert "KSC_DB_HOST" in written_content
         assert "KSC_DB_PORT" in written_content
         assert "KSC_DB_USER" in written_content
