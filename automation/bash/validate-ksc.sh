@@ -39,7 +39,7 @@ done
 echo -e "\n[3] Verificando regras de firewall..."
 FW_PORTS=$(sudo firewall-cmd --list-ports)
 for port in "${PORTS[@]}"; do
-    if grep -q -- "$port/tcp" <<<"$FW_PORTS"; then
+    if grep -Eq "(^|[[:space:]])${port}/tcp([[:space:]]|$)" <<<"$FW_PORTS"; then
         echo -e "${GREEN}OK${NC}: Porta $port/tcp liberada no firewalld."
     else
         echo -e "${RED}ERRO${NC}: Porta $port/tcp NÃO encontrada no firewalld."

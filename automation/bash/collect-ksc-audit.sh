@@ -20,7 +20,7 @@ echo -e "\n[3] Verificando Processos Ativos..."
 pgrep -a -f 'kladminserver|klwebsrv|kliam|postgres'
 
 echo -e "\n[4] Verificando Portas (ss)..."
-if ! grep -E '13000|13001|8443|5432|4222' < <(ss -tlnp); then
+if ! grep -Eq ':(13000|13001|8443|5432|4222)\b' < <(ss -tlnp); then
     echo "Portas esperadas nao encontradas."
 fi
 

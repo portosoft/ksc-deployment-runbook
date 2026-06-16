@@ -51,13 +51,29 @@ ENV_FILE_PATH = pathlib.Path("configs/env/ksc_vars.env")
 # ---------------------------------------------------------------------------
 
 def _is_sensitive_key(key: str) -> bool:
-    """Return True if the key name ends with a known sensitive suffix."""
+    """Return True if the key name ends with a known sensitive suffix.
+
+    Args:
+        key: Nome da chave a ser verificada (ex.: ``KSC_DB_PASS``).
+
+    Returns:
+        True se o nome da chave terminar com algum dos sufixos
+        definidos em ``_SENSITIVE_KEY_SUFFIXES``.
+    """
     upper = key.upper()
     return any(upper.endswith(suffix) for suffix in _SENSITIVE_KEY_SUFFIXES)
 
 
 def _parse_env_file(path: pathlib.Path) -> dict:
-    """Parse a KEY=value env file into a dict, skipping comments and blanks."""
+    """Parse a KEY=value env file into a dict, skipping comments and blanks.
+
+    Args:
+        path: Caminho para o arquivo .env a ser parseado.
+
+    Returns:
+        Dicionário mapping variable names to their values (stripped of quotes).
+        Retorna dict vazio se o arquivo não existir.
+    """
     result = {}
     try:
         with open(path) as fh:
@@ -74,7 +90,15 @@ def _parse_env_file(path: pathlib.Path) -> dict:
 
 
 def _render_env_content(values: dict) -> str:
-    """Render a dict into KEY=value lines."""
+    """Render a dict into KEY=value lines suitable for a .env file.
+
+    Args:
+        values: Dicionário com pares chave=valor.
+
+    Returns:
+        String no formato ``KEY=value\\n`` para cada entrada, com uma
+        quebra de linha final.
+    """
     lines = []
     for key, value in values.items():
         lines.append(f"{key}={value}")
@@ -86,9 +110,21 @@ def _render_env_content(values: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_ksc_config(values: dict) -> KscConfig:
-    """
-    Attempt to build a KscConfig from the collected key→value dict.
-    Raises ValidationError or ConfigError on failure.
+    """Constrói um :class:`KscConfig` a partir do dicionário de valores coletados.
+
+    Valida e converte tipos (portas como int, senhas como str não vazia)
+    antes de instanciar o modelo.
+
+    Args:
+        values: Dicionário com as variáveis de ambiente coletadas.
+
+    Returns:
+        Instância de :class:`KscConfig` populada.
+
+    Raises:
+        ConfigError: Se ``KSC_DB_PORT`` ou ``KSC_WEB_PORT`` não forem
+            inteiros válidos, ou se ``KSC_DB_PASS`` / ``KSC_ADMIN_PASS``
+            estiverem vazias.
     """
     try:
         db_port = int(values.get("KSC_DB_PORT", "5432"))
@@ -128,10 +164,16 @@ def _build_ksc_config(values: dict) -> KscConfig:
 # ---------------------------------------------------------------------------
 
 def _collect_all_fields() -> dict:
-    """
-    Interactively collect all fields from the operator.
+    """Coleta interativamente todos os campos do operador via stdin.
+
     Re-prompts any field whose collected set fails KscConfig validation.
-    Returns a dict mapping env key → value.
+
+    O loop externo repete a coleta completa sempre que a validação
+    via :func:`_build_ksc_config` falhar, garantindo que apenas valores
+    válidos sejam aceitos.
+
+    Returns:
+        Dicionário mapping env key → value (ex.: ``{"KSC_DB_HOST": "127.0.0.1"}``).
     """
     values: dict = {}
 
@@ -180,7 +222,18 @@ def _collect_all_fields() -> dict:
 
 
 def _extract_error_message(exc: Exception) -> str:
-    """Extract a human-readable message from a ValidationError or ConfigError."""
+    """Extrai uma mensagem legível de uma exceção de validação.
+
+    Suporta :class:`ConfigError` (retorna a mensagem direta) e
+    :class:`ValidationError` do Pydantic (extrai e concatena os erros
+    de campo). Para qualquer outra exceção, retorna ``str(exc)``.
+
+    Args:
+        exc: Instância de exceção a ser processada.
+
+    Returns:
+        Mensagem de erro formatada como string legível.
+    """
     if isinstance(exc, ConfigError):
         return str(exc)
     if isinstance(exc, ValidationError):
@@ -197,6 +250,18 @@ def _extract_error_message(exc: Exception) -> str:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    """Ponto de entrada principal do CLI interativo de configuração.
+
+    Fluxo:
+        1. Se o arquivo ``configs/env/ksc_vars.env`` já existir, exibe
+           um diff de chaves e solicita confirmação antes de sobrescrever.
+        2. Coleta todos os campos (sensíveis e não-sensíveis) interativamente.
+        3. Escreve o arquivo .env com permissão ``0o600``.
+        4. Opcionalmente (com ``--vault``), cifra os campos sensíveis.
+
+    Uso:
+        ``python3 -m automation.python.init_config [--vault]``
+    """
     parser = argparse.ArgumentParser(
         description="Preenche interativamente as variáveis de ambiente de produção."
     )
@@ -249,9 +314,20 @@ def _show_diff_and_confirm_keys_only(
     existing: dict,
     new_keys: set,
 ) -> bool:
-    """
-    Show added/removed/changed keys comparing the existing file to the expected
-    key set. For changed keys, never reveal values. Returns True if confirmed.
+    """Exibe diff de chaves e solicita confirmação antes de sobrescrever.
+
+    Compara as chaves do arquivo existente com o conjunto esperado de
+    chaves. Para chaves em comum com sufixo sensível, o valor não é
+    exibido. Chaves adicionadas são marcadas com ``[+]``, removidas com
+    ``[-]`` e alteradas com ``[~]``.
+
+    Args:
+        existing_path: Caminho do arquivo .env existente.
+        existing: Dicionário com as chaves/valores atuais.
+        new_keys: Conjunto de chaves esperadas no novo arquivo.
+
+    Returns:
+        True se o operador confirmar a sobrescrita (responder "s" ou "S").
     """
     existing_keys = set(existing.keys())
 
