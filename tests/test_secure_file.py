@@ -18,7 +18,7 @@ pytestmark = pytest.mark.skipif(
 
 def test_write_secure_file(tmp_path):
     path = tmp_path / "secret.txt"
-    content = "my secret content"
+    content = "test file content"
     write_secure_file(str(path), content, 0o600)
 
     assert path.read_text() == content
@@ -38,7 +38,7 @@ def test_make_secure_dir(tmp_path):
 
 
 def test_temp_secure_file():
-    content = "temporary secret"
+    content = "test temp content"
     with temp_secure_file(content, 0o600) as path:
         assert os.path.exists(path)
         with open(path, "r") as f:

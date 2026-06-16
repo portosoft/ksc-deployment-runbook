@@ -1,7 +1,14 @@
+import logging
 import os
 import pytest
 from unittest.mock import patch
 from automation.python.config import KscConfig, ConfigError, load_config
+from automation.python.credentials import generate_password
+
+# Module-level passwords generated at import time — no hardcoded secrets
+_DB_PASS = generate_password()
+_ADMIN_PASS = generate_password()
+_VAULT_PASS = generate_password()
 
 
 def test_load_config_missing_file():
@@ -11,18 +18,18 @@ def test_load_config_missing_file():
 
 @patch("automation.python.config.os.path.exists", return_value=True)
 @patch("automation.python.config._load_dotenv")
-@patch.dict(os.environ, {"KSC_DB_PASS": "unittest-dummy-db-pass-000", "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999"})  # pragma: allowlist secret
+@patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS, "KSC_ADMIN_PASS": _ADMIN_PASS})
 def test_load_config_success(mock_load_dotenv, mock_exists):
     config = load_config("mock_path.env")
     assert isinstance(config, KscConfig)
-    assert config.db_password == "unittest-dummy-db-pass-000"  # pragma: allowlist secret
-    assert config.ksc_admin_password == "unittest-dummy-admin-pass-999"  # pragma: allowlist secret
+    assert config.db_password == _DB_PASS
+    assert config.ksc_admin_password == _ADMIN_PASS
     assert config.db_host == "127.0.0.1"  # default
 
 
 @patch("automation.python.config.os.path.exists", return_value=True)
 @patch("automation.python.config._load_dotenv")
-@patch.dict(os.environ, {"KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999"}, clear=True)  # pragma: allowlist secret
+@patch.dict(os.environ, {"KSC_ADMIN_PASS": _ADMIN_PASS}, clear=True)
 def test_load_config_missing_db_pass(mock_load_dotenv, mock_exists):
     with pytest.raises(ConfigError, match="KSC_DB_PASS é obrigatória"):
         load_config("mock_path.env")
@@ -30,7 +37,7 @@ def test_load_config_missing_db_pass(mock_load_dotenv, mock_exists):
 
 @patch("automation.python.config.os.path.exists", return_value=True)
 @patch("automation.python.config._load_dotenv")
-@patch.dict(os.environ, {"KSC_DB_PASS": "unittest-dummy-db-pass-000"}, clear=True)  # pragma: allowlist secret
+@patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS}, clear=True)
 def test_load_config_missing_admin_pass(mock_load_dotenv, mock_exists):
     with pytest.raises(ConfigError, match="KSC_ADMIN_PASS é obrigatória"):
         load_config("mock_path.env")
@@ -41,8 +48,8 @@ def test_load_config_missing_admin_pass(mock_load_dotenv, mock_exists):
 @patch.dict(
     os.environ,
     {
-        "KSC_DB_PASS": "unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999",  # pragma: allowlist secret
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
         "KSC_DB_PORT": "not_an_int",
     },
 )
@@ -56,8 +63,8 @@ def test_load_config_invalid_type(mock_load_dotenv, mock_exists):
 @patch.dict(
     os.environ,
     {
-        "KSC_DB_PASS": "unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999",  # pragma: allowlist secret
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
         "KSC_FQDN": "invalid@fqdn.com",
     },
 )
@@ -71,8 +78,8 @@ def test_load_config_invalid_fqdn(mock_load_dotenv, mock_exists):
 @patch.dict(
     os.environ,
     {
-        "KSC_DB_PASS": "unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999",  # pragma: allowlist secret
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
         "KSC_ADMIN_USER": "admin; injection",
     },
 )
@@ -86,8 +93,8 @@ def test_load_config_invalid_admin_user(mock_load_dotenv, mock_exists):
 @patch.dict(
     os.environ,
     {
-        "KSC_DB_PASS": "unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999",  # pragma: allowlist secret
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
         "KSC_DB_PORT": "70000",
     },
 )
@@ -101,11 +108,36 @@ def test_load_config_invalid_port_range(mock_load_dotenv, mock_exists):
 @patch.dict(
     os.environ,
     {
-        "KSC_DB_PASS": "unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        "KSC_ADMIN_PASS": "unittest-dummy-admin-pass-999",  # pragma: allowlist secret
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
         "KSC_DB_SSLMODE": "invalid-ssl-mode",
     },
 )
 def test_load_config_invalid_sslmode(mock_load_dotenv, mock_exists):
     with pytest.raises(ConfigError, match="Erro de validação nas configurações.*db_sslmode"):
         load_config("mock_path.env")
+
+
+# --- Vault integration tests (Requirements 6.3, 6.4) ---
+
+@patch("automation.lib.vault.decrypt_secrets", return_value={"KSC_DB_PASS": _VAULT_PASS})
+@patch("automation.python.config.os.path.exists", return_value=True)
+@patch("automation.python.config._load_dotenv")
+@patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS, "KSC_ADMIN_PASS": _ADMIN_PASS})
+def test_load_config_vault_merges_over_env(mock_load_dotenv, mock_exists, mock_decrypt):
+    """Vault values override .env values (Requirement 6.3)."""
+    config = load_config("mock_path.env")
+    assert config.db_password == _VAULT_PASS
+
+
+@patch("automation.lib.vault.decrypt_secrets", side_effect=Exception("vault error"))
+@patch("automation.python.config.os.path.exists", return_value=True)
+@patch("automation.python.config._load_dotenv")
+@patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS, "KSC_ADMIN_PASS": _ADMIN_PASS})
+def test_load_config_vault_decrypt_failure_uses_env(mock_load_dotenv, mock_exists, mock_decrypt, caplog):
+    """When vault decrypt raises, falls back to .env values and logs a WARNING (Requirement 6.4)."""
+    with caplog.at_level(logging.WARNING):
+        config = load_config("mock_path.env")
+    assert config.db_password == _DB_PASS
+    assert any("vault" in record.message.lower() or "vault" in record.getMessage().lower()
+               for record in caplog.records)
