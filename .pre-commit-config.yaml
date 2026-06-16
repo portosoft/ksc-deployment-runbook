@@ -26,3 +26,4 @@ repos:
     hooks:
       - id: shellcheck
         args: ['-e', 'SC2086']
+        files: ^automation/bash/.*\.sh$
