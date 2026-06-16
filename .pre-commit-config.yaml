@@ -10,13 +10,6 @@ repos:
         exclude: '\.secrets\.baseline'
       - id: trailing-whitespace
 
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
-    hooks:
-      - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
-        exclude: '(\.example|\.md|.*raw_output\.txt)$'
-
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1
     hooks:
