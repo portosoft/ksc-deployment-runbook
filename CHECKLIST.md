@@ -26,6 +26,7 @@ Este checklist deve ser preenchido ao final de cada implantação e arquivado na
 - [ ] Porta 443 (Web) aberta e acessível externamente.
 
 ## 📂 5. Execução do Runbook (Pre-check)
+- [ ] `python3 -m automation.python.init_config` executado interativamente pelo operador (sem .env copiado de outro host)
 - [ ] Arquivo de variáveis `.env` populado sem segredos pendentes.
 - [ ] Executou `python3 automation/python/ksc_audit.py --check`
 - [ ] O output validou o SELinux, Memória e Discos sem falhas críticas.

@@ -23,6 +23,8 @@ from automation.ops.fix_web_console_config import fix_web_console_config
 
 
 def main():
+    """Ponto de entrada do CLI unificado kscctl. Parseia subcomandos e delega para
+    as funções específicas de cada operação. Retorna código de saída inteiro."""
     parser = argparse.ArgumentParser(
         description="kscctl - Interface de linha de comando unificada para deploy e operações do KSC 16."
     )

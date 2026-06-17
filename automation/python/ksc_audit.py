@@ -10,6 +10,7 @@ from .report_utils import generate_markdown_report, convert_markdown_to_pdf
 
 
 def parse_args() -> argparse.Namespace:
+    """Parseia e retorna os argumentos de linha de comando para o ksc_audit."""
     parser = argparse.ArgumentParser(
         description="Auditoria do ambiente para Kaspersky Security Center 16.x"
     )
@@ -33,6 +34,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def print_summary(result: CheckResult) -> None:
+    """Imprime o resumo dos checks no stdout com status e mensagens.
+
+    Args:
+        result: Resultado dos checks a serem exibidos.
+    """
     print("\n=== RESUMO DOS CHECKS ===")
     for item in result.items:
         print(f"- [{item.status.upper()}] {item.name}: {item.message}")
@@ -102,6 +108,11 @@ def run_audit_report(config) -> int:
 
 
 def main() -> int:
+    """Ponto de entrada do ksc_audit, carrega config e delega ao subcomando.
+
+    Returns:
+        Código de saída: 0 sucesso, 1 falha em checks, 2 erro de config.
+    """
     args = parse_args()
 
     try:

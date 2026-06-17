@@ -9,6 +9,17 @@ def generate_markdown_report(
     evidence_root: Path,
     output_path: Path,
 ) -> None:
+    """Gera relatório Markdown a partir dos resultados de check.
+
+    O relatório inclui seções de pré-check e pós-check com status e mensagens,
+    além do caminho para as evidências brutas.
+
+    Args:
+        precheck_result: Resultado dos checks de pré-instalação.
+        postcheck_result: Resultado dos checks pós-instalação.
+        evidence_root: Diretório raiz onde as evidências foram salvas.
+        output_path: Caminho do arquivo Markdown de saída.
+    """
     content = "# Relatório de Auditoria KSC 16.x\n\n"
 
     content += "## Pré-check\n"
@@ -26,6 +37,12 @@ def generate_markdown_report(
 
 
 def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:
+    """Converte o relatório Markdown para PDF via md2pdf. Loga warning em caso de falha.
+
+    Args:
+        markdown_path: Caminho do arquivo Markdown de entrada.
+        pdf_path: Caminho do arquivo PDF de saída.
+    """
     try:
         from md2pdf.core import md2pdf
 

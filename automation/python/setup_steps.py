@@ -31,18 +31,36 @@ def _get_selinux_mode() -> str:
 
 
 def ensure_os_prereqs(config: KscConfig, logger: logging.Logger) -> None:
+    """Verifica e instala pré-requisitos do SO (mock em ambiente de desenvolvimento).
+
+    Args:
+        config: Configuração do KSC.
+        logger: Logger para registro das operações.
+    """
     logger.info("Verificando/instalando pré-requisitos do SO...")
     # Exemplo real seria: run_command(["dnf", "install", "-y", "tar", "curl", "wget"])
     logger.info("[Mock] Pré-requisitos instalados.")
 
 
 def setup_postgres(config: KscConfig, logger: logging.Logger) -> None:
+    """Configura o PostgreSQL 16 para uso pelo KSC (mock).
+
+    Args:
+        config: Configuração do KSC.
+        logger: Logger para registro das operações.
+    """
     logger.info("Configurando PostgreSQL...")
     # Aqui entraria a chamada ao script ansible ou psql real
     logger.info("[Mock] PostgreSQL 16 provisionado e preparado.")
 
 
 def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
+    """Instala o KSC Server e Web Console via RPM silencioso (mock).
+
+    Args:
+        config: Configuração do KSC.
+        logger: Logger para registro das operações.
+    """
     logger.info("Instalando KSC Server e Web Console...")
     # Wrapper real de instalação silenciosa
     logger.info("[Mock] KSC Server RPM instalado.")
@@ -52,11 +70,26 @@ def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
 
 
 def post_install_hardening(config: KscConfig, logger: logging.Logger) -> None:
+    """Aplica hardening pós-instalação: permissões, SELinux, serviços (mock).
+
+    Args:
+        config: Configuração do KSC.
+        logger: Logger para registro das operações.
+    """
     logger.info("Aplicando hardening pós-instalação...")
     logger.info("[Mock] Permissões em /opt/kaspersky restritas.")
 
 
 def perform_precheck_only(config: KscConfig, logger: logging.Logger) -> CheckResult:
+    """Executa apenas os pré-checks sem iniciar a instalação. Retorna CheckResult.
+
+    Args:
+        config: Configuração do KSC.
+        logger: Logger para registro das operações.
+
+    Returns:
+        CheckResult com os resultados dos pré-checks.
+    """
     return run_precheck(config)
 
 

@@ -25,6 +25,14 @@ def _assert_secure(path: str, required_mode: int = 0o600) -> None:
 
 
 def ensure_key():
+    """Cria ou lê a chave Fernet, verificando permissões 0o600.
+
+    Se a chave não existir, gera uma nova e a salva com permissões 0o600.
+    Se existir, verifica as permissões antes de ler.
+
+    Returns:
+        bytes: Conteúdo da chave Fernet.
+    """
     if not os.path.exists(KEY_PATH):
         key = Fernet.generate_key()
         # 🛡️ Sentinel: Enforce strict permissions (0o600) on vault key creation
@@ -37,6 +45,11 @@ def ensure_key():
 
 
 def encrypt_secrets(secrets_dict):
+    """Cifra dict de segredos e grava em SECRETS_PATH com 0o600.
+
+    Args:
+        secrets_dict: Dicionário com os segredos a serem cifrados.
+    """
     key = ensure_key()
     f = Fernet(key)
     data = json.dumps(secrets_dict).encode()
@@ -47,6 +60,11 @@ def encrypt_secrets(secrets_dict):
 
 
 def decrypt_secrets():
+    """Decifra secrets.bin e retorna dict; retorna {} se não existir.
+
+    Returns:
+        dict: Segredos decifrados, ou dicionário vazio se o arquivo não existir.
+    """
     if not os.path.exists(SECRETS_PATH):
         return {}
     key = ensure_key()

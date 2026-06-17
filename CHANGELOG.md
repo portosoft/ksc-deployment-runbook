@@ -12,6 +12,25 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 - Arquivos `.example` agora usam marcadores `<PREENCHER>` ao invés de valores com aparência realista
+- `kscctl.py`, `ksc_audit.py`, `ksc_setup.py`: eliminado anti-pattern `sys.argv` — subcomandos
+  agora chamam funções diretamente (`run_audit_check`, `run_setup_check`, etc.)
+- `automation/ops/reconfigure_ksc_service.py`: usa `run_remote_sudo` centralizado em vez de
+  `client.exec_command` direto
+- `automation/lib/vault.py`: adicionada verificação de permissões 0o600 na chave antes da leitura
+- `automation/bash/*.sh`: adicionado `# shellcheck shell=bash` para compatibilidade com runners
+- `.pre-commit-config.yaml`: hook shellcheck migrado para `language: system` (sem Docker)
+- `docs/03-pre-requisitos.md`: nota explícita de que `--vault` também grava `.env` plaintext
+- `CHECKLIST.md`: comando exato `python3 -m automation.python.init_config` no item de pre-check
+- `.github/workflows/trigger-bot-pr.yml`: PRs gerados agora seguem o template com título e
+  body informativos derivados do último commit e do CHANGELOG
+
+### Fixed
+- `tests/test_remote.py`: migrado para fixture `ksc_test_config` (removia pragma hardcoded)
+- `.github/workflows/ci-integration.yml`: substituídas credenciais hardcoded por
+  `generate_password()`; removidos subcomandos que exigiam SSH real no dry-run
+- `.github/workflows/codeql.yml` e `recreate-prs.yml`: hash do `actions/checkout` atualizado
+  para Node.js 24
+- `.secrets.baseline`: entradas marcadas como `is_verified: true`
 
 ## [1.1.0] - 2026-05-16
 ### Added
