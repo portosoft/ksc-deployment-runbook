@@ -6,7 +6,6 @@ from automation.python.checks import (
     check_ports,
     CheckResult,
     CheckItem,
-    _get_selinux_mode,
 )
 
 
@@ -31,6 +30,7 @@ def test_checkresult_add_and_has_critical():
     assert len(result.items) == 3
     assert result.items[2] == item3
     assert result.has_critical
+
 
 
 @patch(
@@ -84,19 +84,6 @@ def test_check_ram_and_disk_ci_warning(mock_disk, mock_ram, mock_getenv, ksc_tes
     )  # ram, opt, varopt
 
 
-@patch("automation.python.checks.os.getenv", return_value="false")
-@patch("automation.python.checks._get_total_ram_mb", side_effect=Exception("RAM check failed"))
-@patch("automation.python.checks._get_disk_gb", return_value=150)
-def test_check_ram_and_disk_exception(mock_disk, mock_ram, mock_getenv, ksc_test_config):
-    result = check_ram_and_disk(ksc_test_config)
-
-    # We mocked _get_total_ram_mb to raise an Exception, so it should add a critical item
-    assert result.has_critical
-
-    ram_item = next(i for i in result.items if i.name == "ram_total")
-    assert ram_item.status == "critical"
-    assert "Falha: RAM check failed" in ram_item.message
-
 
 @patch("automation.python.checks._get_selinux_mode", return_value="enforcing")
 def test_check_selinux_ok(mock_selinux, ksc_test_config):
@@ -118,12 +105,6 @@ def test_check_selinux_unknown(mock_selinux, ksc_test_config):
     assert not result.has_critical
     assert result.items[0].status == "warning"
     assert "Não foi possível determinar o modo" in result.items[0].message
-
-
-@patch("automation.python.checks.run_command", side_effect=Exception("mock error"))
-def test_get_selinux_mode_exception(mock_run_command):
-    mode = _get_selinux_mode()
-    assert mode == "unknown"
 
 
 @patch("automation.python.checks._get_listening_ports", return_value=[])

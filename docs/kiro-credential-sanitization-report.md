@@ -115,7 +115,7 @@ Funções factory para construir `CheckResult` e `CheckItem` sem strings hardcod
 
 ### 4.2. `configs/examples/ksc.env.example`
 
-- `KSC_HOSTNAME=kscserver.ksc-runbook.local` → `KSC_HOSTNAME=<PREENCHER: hostname ou IP do servidor KSC>`
+- `KSC_HOSTNAME=kscserver.portosoft.local` → `KSC_HOSTNAME=<PREENCHER: hostname ou IP do servidor KSC>`
 - Adicionado `KSC_DB_PASS=<PREENCHER: gerar com openssl rand -base64 24>`
 
 ### 4.3. `requirements.txt`

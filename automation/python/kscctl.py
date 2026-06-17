@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ferramenta CLI Unificada KSCCTL - Entrypoint Operacional do KSC Runbook.
+Ferramenta CLI Unificada KSCCTL - Entrypoint Operacional da Portosoft.
 Permite executar auditorias locais, instalação e todas as operações remotas
 com auditoria e tokens de confirmação para ações destrutivas.
 """

@@ -1,4 +1,7 @@
+import sys
 from unittest.mock import patch, MagicMock
+
+import pytest
 
 from automation.python.ksc_audit import main, ConfigError
 from automation.python.checks import CheckResult

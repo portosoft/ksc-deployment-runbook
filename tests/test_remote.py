@@ -5,6 +5,7 @@ Testes unitários para o módulo remote.py (conexão SSH e execução sudo remot
 Usa a fixture ksc_test_config do conftest.py para credenciais sintéticas,
 sem valores literais hardcoded.
 """
+import pytest
 from unittest.mock import MagicMock, patch
 from automation.python.remote import connect_ksc_host, run_remote_sudo, run_remote_sudo_batch
 
