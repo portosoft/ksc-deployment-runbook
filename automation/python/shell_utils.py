@@ -4,6 +4,14 @@ from typing import List, Tuple
 
 class ShellCommandError(Exception):
     def __init__(self, cmd: List[str], returncode: int, stdout: str, stderr: str):
+        """Inicializa a exceção com o comando, código de retorno e saídas capturadas.
+
+        Args:
+            cmd: Lista de argumentos do comando executado.
+            returncode: Código de retorno do processo.
+            stdout: Saída padrão capturada.
+            stderr: Saída de erro capturada.
+        """
         super().__init__(f"Command failed: {' '.join(cmd)}")
         self.cmd = cmd
         self.returncode = returncode

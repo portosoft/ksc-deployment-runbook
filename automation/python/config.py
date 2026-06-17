@@ -28,6 +28,17 @@ class KscConfig(BaseModel):
     @field_validator("ksc_fqdn")
     @classmethod
     def validate_fqdn(cls, v: str) -> str:
+        """Valida que v é um hostname, FQDN ou IPv4 válido. Lança ValueError se inválido.
+
+        Args:
+            v: Valor do campo ksc_fqdn a ser validado.
+
+        Returns:
+            str: O valor validado.
+
+        Raises:
+            ValueError: Se o valor não for um hostname, FQDN ou IPv4 válido.
+        """
         # Expressão regular simples para FQDN, hostname ou IP (com (?i) no início)
         fqdn_regex = r"(?i)^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$|^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
         if not re.match(fqdn_regex, v):
@@ -37,6 +48,17 @@ class KscConfig(BaseModel):
     @field_validator("ksc_admin_user")
     @classmethod
     def validate_admin_user(cls, v: str) -> str:
+        """Valida que v contém apenas caracteres alfanuméricos, underscore e hífen.
+
+        Args:
+            v: Valor do campo ksc_admin_user a ser validado.
+
+        Returns:
+            str: O valor validado.
+
+        Raises:
+            ValueError: Se o valor contiver caracteres não permitidos.
+        """
         # Whitelist de caracteres seguros
         if not re.match(r"^[a-zA-Z0-9_-]+$", v):
             raise ValueError(f"Nome de usuário administrativo inválido: {v}")
@@ -48,6 +70,11 @@ class ConfigError(Exception):
 
 
 def _load_dotenv(path):
+    """Lê o arquivo .env e injeta as variáveis em os.environ, ignorando comentários.
+
+    Args:
+        path: Caminho para o arquivo .env.
+    """
     try:
         with open(path) as f:
             for line in f:

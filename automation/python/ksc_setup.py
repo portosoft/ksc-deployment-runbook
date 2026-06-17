@@ -7,6 +7,7 @@ from .setup_steps import perform_setup, perform_precheck_only, SetupError
 
 
 def parse_args() -> argparse.Namespace:
+    """Parseia e retorna os argumentos de linha de comando para o ksc_setup."""
     parser = argparse.ArgumentParser(
         description="Setup do ambiente para Kaspersky Security Center 16.x"
     )
@@ -25,6 +26,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def print_summary(result) -> None:
+    """Imprime o resumo dos checks no stdout."""
     print("\n=== RESUMO DOS CHECKS ===")
     for item in result.items:
         print(f"- [{item.status.upper()}] {item.name}: {item.message}")
@@ -62,6 +64,11 @@ def run_setup_apply(config) -> int:
 
 
 def main():
+    """Ponto de entrada do ksc_setup, carrega config e delega ao subcomando.
+
+    Returns:
+        Código de saída: 0 sucesso, 1 falha em checks, 2 erro de config/setup.
+    """
     args = parse_args()
     try:
         config = load_config()

@@ -29,13 +29,16 @@ class CheckResult:
 
     @property
     def has_critical(self) -> bool:
+        """True se algum item tem status 'critical'."""
         return any(i.status == "critical" for i in self.items)
 
     def add(self, item: CheckItem) -> None:
+        """Adiciona um CheckItem à lista de resultados."""
         self.items.append(item)
 
 
 def _get_total_ram_mb() -> int:
+    """Lê /proc/meminfo e retorna a RAM total em MB."""
     with open("/proc/meminfo", "r", encoding="utf-8") as f:
         for line in f:
             if line.startswith("MemTotal:"):
@@ -46,11 +49,24 @@ def _get_total_ram_mb() -> int:
 
 
 def _get_disk_gb(path: str) -> int:
+    """Retorna o espaço livre em GB para o caminho informado."""
     usage = shutil.disk_usage(path)
     return usage.free // (1024 * 1024 * 1024)
 
 
 def check_ram_and_disk(config: KscConfig) -> CheckResult:
+    """Verifica se a RAM e os discos /opt e /var/opt atendem aos requisitos mínimos.
+
+    Em ambiente CI (GITHUB_ACTIONS=true ou KSC_SKIP_RESOURCE_CHECK=true),
+    falhas são rebaixadas para warning.
+
+    Args:
+        config: Configuração do KSC (não usada diretamente, mas mantida para
+            consistência de interface).
+
+    Returns:
+        CheckResult com itens para ram_total, disk_opt e disk_varopt.
+    """
     result = CheckResult(items=[])
     is_ci = os.getenv("GITHUB_ACTIONS") == "true" or os.getenv("KSC_SKIP_RESOURCE_CHECK") == "true"
 
@@ -114,6 +130,7 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
 
 
 def _read_os_release() -> dict:
+    """Lê /etc/os-release e retorna dict de chave=valor."""
     data = {}
     try:
         with open("/etc/os-release", "r", encoding="utf-8") as f:
@@ -129,6 +146,11 @@ def _read_os_release() -> dict:
 
 
 def check_os_version() -> CheckResult:
+    """Verifica se o sistema operacional e a versão major são suportados.
+
+    Returns:
+        CheckResult com item os_version (e os_id em caso de falha).
+    """
     result = CheckResult(items=[])
     try:
         os_release = _read_os_release()
@@ -168,6 +190,7 @@ def check_os_version() -> CheckResult:
 
 
 def _get_selinux_mode() -> str:
+    """Retorna o modo SELinux atual via getenforce, ou 'unknown'."""
     try:
         stdout, _, rc = run_command(["getenforce"], check=False)
         if rc != 0:
@@ -178,6 +201,16 @@ def _get_selinux_mode() -> str:
 
 
 def check_selinux(config: KscConfig, is_postcheck: bool = False) -> CheckResult:
+    """Verifica se o SELinux está no modo esperado definido em config.
+
+    Args:
+        config: Configuração do KSC com o campo selinux_expected_mode.
+        is_postcheck: Se True, falhas são reportadas como critical;
+            caso contrário, como warning.
+
+    Returns:
+        CheckResult com item selinux.
+    """
     result = CheckResult(items=[])
     mode = _get_selinux_mode()
     if mode == "unknown":
@@ -207,6 +240,7 @@ def check_selinux(config: KscConfig, is_postcheck: bool = False) -> CheckResult:
 
 
 def _get_listening_ports() -> List[int]:
+    """Retorna lista de portas TCP em LISTEN via ss -lnt."""
     stdout, _, rc = run_command(["ss", "-lnt"], check=False)
     if rc != 0:
         return []
@@ -228,6 +262,14 @@ def _get_listening_ports() -> List[int]:
 
 
 def check_ports(config: KscConfig) -> CheckResult:
+    """Verifica se as portas padrão (13000, 14000, 443) e a porta web configurada estão livres.
+
+    Args:
+        config: Configuração do KSC com web_port opcional.
+
+    Returns:
+        CheckResult com itens port_N para cada porta verificada.
+    """
     result = CheckResult(items=[])
     ports_in_use = _get_listening_ports()
 
@@ -254,6 +296,14 @@ def check_ports(config: KscConfig) -> CheckResult:
 
 
 def run_precheck(config: KscConfig) -> CheckResult:
+    """Agrega os checks de pré-instalação: SO, SELinux, portas, RAM e disco.
+
+    Args:
+        config: Configuração do KSC.
+
+    Returns:
+        CheckResult consolidado com todos os checks de pré-instalação.
+    """
     aggregated = CheckResult(items=[])
     aggregated.items.extend(check_os_version().items)
     aggregated.items.extend(check_selinux(config).items)
@@ -263,6 +313,7 @@ def run_precheck(config: KscConfig) -> CheckResult:
 
 
 def _systemd_is_active(unit: str) -> Optional[bool]:
+    """Retorna True se a unit está active, False se inativa, None se não encontrada."""
     stdout, stderr, rc = run_command(["systemctl", "is-active", unit], check=False)
     if rc != 0:
         if "could not be found" in stderr.lower() or "not found" in stderr.lower():
@@ -272,10 +323,12 @@ def _systemd_is_active(unit: str) -> Optional[bool]:
 
 
 def _check_tcp_port_open(port: int) -> bool:
+    """Retorna True se a porta está na lista de portas em LISTEN."""
     return port in _get_listening_ports()
 
 
 def _check_db_select_1(config: KscConfig) -> bool:
+    """Testa conectividade com o banco executando SELECT 1; retorna bool."""
     env = os.environ.copy()
     if config.db_password:
         env["PGPASSWORD"] = config.db_password
@@ -299,6 +352,15 @@ def _check_db_select_1(config: KscConfig) -> bool:
 
 
 def check_services_and_db(config: KscConfig) -> CheckResult:
+    """Verifica se os serviços PostgreSQL, klnagent_srv e kladminserver_srv estão ativos
+    e testa a conectividade com o banco via SELECT 1.
+
+    Args:
+        config: Configuração do KSC com credenciais de banco.
+
+    Returns:
+        CheckResult com itens postgresql, klnagent_srv, kladminserver_srv e db_query.
+    """
     result = CheckResult(items=[])
 
     pg_units = ["postgresql", "postgresql-16"]
@@ -357,6 +419,14 @@ def check_services_and_db(config: KscConfig) -> CheckResult:
 
 
 def check_web_console(config: KscConfig) -> CheckResult:
+    """Verifica se a porta do Web Console está em LISTEN.
+
+    Args:
+        config: Configuração do KSC com web_port.
+
+    Returns:
+        CheckResult com item web_console.
+    """
     result = CheckResult(items=[])
     if _check_tcp_port_open(config.web_port):
         result.add(
@@ -378,6 +448,14 @@ def check_web_console(config: KscConfig) -> CheckResult:
 
 
 def run_postcheck(config: KscConfig) -> CheckResult:
+    """Agrega os checks pós-instalação: serviços, banco, web console e SELinux.
+
+    Args:
+        config: Configuração do KSC.
+
+    Returns:
+        CheckResult consolidado com todos os checks pós-instalação.
+    """
     aggregated = CheckResult(items=[])
     aggregated.items.extend(check_services_and_db(config).items)
     aggregated.items.extend(check_web_console(config).items)
