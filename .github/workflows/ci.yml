@@ -49,10 +49,10 @@ jobs:
             . || true
           git add .secrets.baseline
 
-      - name: Auto-format Python files (isort + black)
+      - name: Auto-format Python files (isort + black via pre-commit)
         run: |
-          isort automation/python/ --profile black --check-only --diff || isort automation/python/ --profile black
-          black automation/python/ --check --diff || black automation/python/ --quiet
+          pre-commit run isort --all-files || pre-commit run isort --all-files
+          pre-commit run black --all-files || pre-commit run black --all-files
 
       - name: Run pre-commit hooks (validate — detect-secrets removed from hooks)
         run: pre-commit run --all-files
