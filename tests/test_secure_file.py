@@ -2,7 +2,6 @@ import os
 import sys
 import stat
 import pytest
-from pathlib import Path
 from automation.python.utils.secure_file import (
     write_secure_file,
     make_secure_dir,

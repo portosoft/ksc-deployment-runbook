@@ -1,7 +1,6 @@
 from cryptography.fernet import Fernet
 import os
 import json
-import stat
 
 KEY_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../configs/vault.key")
