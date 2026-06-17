@@ -6,8 +6,9 @@ Fornece abstração segura de conexão e comandos sudo remotos.
 
 import logging
 import shlex
+from typing import List, Optional, Tuple
+
 import paramiko
-from typing import List, Tuple, Optional
 
 logger = logging.getLogger(__name__)
 

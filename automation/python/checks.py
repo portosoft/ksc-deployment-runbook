@@ -3,8 +3,8 @@ import shutil
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .shell_utils import run_command
 from .config import KscConfig
+from .shell_utils import run_command
 
 SUPPORTED_ID = {"rocky", "ol", "ol9", "oracle", "rhel"}
 SUPPORTED_MAJOR_VERSION = {9}
@@ -68,7 +68,10 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
         CheckResult com itens para ram_total, disk_opt e disk_varopt.
     """
     result = CheckResult(items=[])
-    is_ci = os.getenv("GITHUB_ACTIONS") == "true" or os.getenv("KSC_SKIP_RESOURCE_CHECK") == "true"
+    is_ci = (
+        os.getenv("GITHUB_ACTIONS") == "true"
+        or os.getenv("KSC_SKIP_RESOURCE_CHECK") == "true"
+    )
 
     # RAM
     try:
@@ -87,7 +90,11 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
         result.add(CheckItem(name="ram_total", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="ram_total", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
+            CheckItem(
+                name="ram_total",
+                status="warning" if is_ci else "critical",
+                message=f"Falha: {exc}",
+            )
         )
 
     # Disco /opt
@@ -106,7 +113,11 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
         result.add(CheckItem(name="disk_opt", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="disk_opt", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
+            CheckItem(
+                name="disk_opt",
+                status="warning" if is_ci else "critical",
+                message=f"Falha: {exc}",
+            )
         )
 
     # Disco /var/opt
@@ -123,7 +134,11 @@ def check_ram_and_disk(config: KscConfig) -> CheckResult:
         result.add(CheckItem(name="disk_varopt", status=status, message=msg))
     except Exception as exc:
         result.add(
-            CheckItem(name="disk_varopt", status="warning" if is_ci else "critical", message=f"Falha: {exc}")
+            CheckItem(
+                name="disk_varopt",
+                status="warning" if is_ci else "critical",
+                message=f"Falha: {exc}",
+            )
         )
 
     return result

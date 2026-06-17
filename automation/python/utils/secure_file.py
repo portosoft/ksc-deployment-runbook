@@ -1,7 +1,7 @@
+import contextlib
 import os
 import stat
 import tempfile
-import contextlib
 from pathlib import Path
 
 
