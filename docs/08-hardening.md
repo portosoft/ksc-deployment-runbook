@@ -37,9 +37,11 @@ A segurança geral da implantação é dividida entre os seguintes atores:
 
 1. **Kaspersky (Provedor do Produto)**:
    - Garantir a segurança interna, correções de vulnerabilidades e integridade dos pacotes do KSC Server, Web Console e agentes.
-2. **Portosoft (Provedor da Automação - Open-Core)**:
+2. **Mantenedores do Runbook (Projeto Open-Source)**:
    - Fornecer scripts de implantação seguros (sem vazamentos, sem passagem de parâmetros inseguros).
-   - Manter as ferramentas operacionais de auditoria e hardening atualizadas e livre de vulnerabilidades.
+   - Manter as ferramentas operacionais de auditoria e hardening atualizadas e
+     livres de vulnerabilidades conhecidas.
+   - Aceitar contribuições da comunidade via pull requests revisados.
 3. **Cliente / Operador (Provedor da Infraestrutura e Governança)**:
    - Rotacionar e gerenciar credenciais de produção (`KSC_PASS`, `KSC_DB_PASS`, `KSC_ADMIN_PASS`) de forma segura.
    - Manter o repositório privado caso contenha configurações ou variáveis locais.
