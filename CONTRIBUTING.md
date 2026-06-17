@@ -17,6 +17,13 @@ Obrigado por seu interesse em contribuir com este projeto open-source!
 ## Padrões de Commit
 - Utilize mensagens curtas e descritivas (ex.: `docs: adiciona caso de erro no postgres`, `feat: novo script de validação`).
 - Prefira o uso de Conventional Commits.
+- **Commits obrigatoriamente assinados (GPG ou SSH)**. Configure sua chave no GitHub ([docs](https://docs.github.com/authentication/managing-commit-signature-verification)) e ative o signing no Git local:
+  ```bash
+  git config --global commit.gpgsign true
+  # ou para SSH:
+  git config --global gpg.format ssh
+  git config --global user.signingkey ~/.ssh/id_ed25519.pub
+  ```
 
 ## Segurança e Privacidade
 - **MUITO IMPORTANTE**: Nunca inclua segredos nos seus commits. Isso inclui:

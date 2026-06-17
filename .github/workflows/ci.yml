@@ -17,6 +17,16 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Import GPG key for signed commits
+        uses: crazy-max/ghaction-import-gpg@cb3bde0e4c81152a6e26f1fc5212e6b63dbe2113 # v6.3.0
+        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_tag_gpgsign: true
+
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
         with:
@@ -44,3 +54,13 @@ jobs:
         env:
           PYTHONPATH: .
         run: python -m pytest tests/
+
+      - name: Auto-commit fixes (baseline + pre-commit)
+        if: ${{ github.event_name == 'push' }}
+        uses: stefanzweifel/git-auto-commit-action@e3481030cbb8540e0e7a01f1a147ddbe11e4bdc5 # v5.1.0
+        with:
+          commit_message: "chore: update .secrets.baseline and pre-commit fixes"
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
+          commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          commit_gpgsign: true
