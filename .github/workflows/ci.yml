@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
 
       - name: Import GPG key for signed commits
-        uses: crazy-max/ghaction-import-gpg@cb3bde0e4c81152a6e26f1fc5212e6b63dbe2113 # v6.3.0
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         if: ${{ env.HAS_GPG_KEY == 'true' }}
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -59,7 +59,7 @@ jobs:
 
       - name: Auto-commit fixes (baseline + pre-commit)
         if: ${{ github.event_name == 'push' && env.HAS_GPG_KEY == 'true' }}
-        uses: stefanzweifel/git-auto-commit-action@e3481030cbb8540e0e7a01f1a147ddbe11e4bdc5 # v5.1.0
+        uses: stefanzweifel/git-auto-commit-action@e348103e9026cc0eee72ae06630dbe30c8bf7a79 # v5.1.0
         with:
           commit_message: "chore: update .secrets.baseline and pre-commit fixes"
           commit_user_name: github-actions[bot]
