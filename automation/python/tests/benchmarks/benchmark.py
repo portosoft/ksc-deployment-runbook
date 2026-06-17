@@ -1,5 +1,6 @@
 import time
 from unittest.mock import MagicMock
+import paramiko
 
 class MockChannel:
     def recv_exit_status(self):

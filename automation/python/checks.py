@@ -271,7 +271,7 @@ def check_ports(config: KscConfig) -> CheckResult:
         CheckResult com itens port_N para cada porta verificada.
     """
     result = CheckResult(items=[])
-    ports_in_use = set(_get_listening_ports())
+    ports_in_use = _get_listening_ports()
 
     ports_to_check = DEFAULT_PORTS.copy()
     if config.web_port not in ports_to_check:

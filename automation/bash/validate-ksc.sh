@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck shell=bash
 # Script de Validação do Kaspersky Security Center (KSC)
-# KSC Runbook Community
+# Portosoft DevOps Team
 
 set -euo pipefail
 

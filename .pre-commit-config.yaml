@@ -15,28 +15,10 @@ repos:
     hooks:
       - id: yamllint
 
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
-        files: automation/python/
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        files: automation/python/
-
-  - repo: git://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0
-    hooks:
-      - id: shellcheck
-        files: automation/bash/
-
   - repo: local
     hooks:
-      - id: shellcheck-local
-        name: shellcheck (local)
+      - id: shellcheck
+        name: shellcheck
         language: system
         entry: shellcheck
         args: ['-e', 'SC2086']

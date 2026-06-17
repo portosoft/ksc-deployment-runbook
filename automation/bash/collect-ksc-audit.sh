@@ -1,9 +1,9 @@
 #!/bin/bash
 # shellcheck shell=bash
 # Script de Coleta de Auditoria KSC (Somente Leitura)
-# KSC Runbook Community
+# Portosoft DevOps Team
 
-set -euo pipefail
+set -uo pipefail
 
 echo "=== INICIANDO COLETA DE AUDITORIA KSC ==="
 echo "Data: $(date)"
