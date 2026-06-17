@@ -32,7 +32,6 @@ def test_checkresult_add_and_has_critical():
     assert result.has_critical
 
 
-
 @patch(
     "builtins.open", new_callable=mock_open, read_data='ID="rocky"\nVERSION_ID="9.2"\n'
 )
@@ -83,6 +82,19 @@ def test_check_ram_and_disk_ci_warning(mock_disk, mock_ram, mock_getenv, ksc_tes
         len([i for i in result.items if i.status == "warning"]) == 3
     )  # ram, opt, varopt
 
+
+@patch("automation.python.checks.os.getenv", return_value="false")
+@patch("automation.python.checks._get_total_ram_mb", side_effect=Exception("RAM check failed"))
+@patch("automation.python.checks._get_disk_gb", return_value=150)
+def test_check_ram_and_disk_exception(mock_disk, mock_ram, mock_getenv, ksc_test_config):
+    result = check_ram_and_disk(ksc_test_config)
+
+    # We mocked _get_total_ram_mb to raise an Exception, so it should add a critical item
+    assert result.has_critical
+
+    ram_item = next(i for i in result.items if i.name == "ram_total")
+    assert ram_item.status == "critical"
+    assert "Falha: RAM check failed" in ram_item.message
 
 
 @patch("automation.python.checks._get_selinux_mode", return_value="enforcing")
