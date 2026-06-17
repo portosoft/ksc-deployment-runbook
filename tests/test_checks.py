@@ -6,6 +6,7 @@ from automation.python.checks import (
     check_ports,
     CheckResult,
     CheckItem,
+    _get_selinux_mode,
 )
 
 
@@ -117,6 +118,12 @@ def test_check_selinux_unknown(mock_selinux, ksc_test_config):
     assert not result.has_critical
     assert result.items[0].status == "warning"
     assert "Não foi possível determinar o modo" in result.items[0].message
+
+
+@patch("automation.python.checks.run_command", side_effect=Exception("mock error"))
+def test_get_selinux_mode_exception(mock_run_command):
+    mode = _get_selinux_mode()
+    assert mode == "unknown"
 
 
 @patch("automation.python.checks._get_listening_ports", return_value=[])
