@@ -56,9 +56,12 @@ jobs:
       - name: Check for uncommitted changes after pre-commit
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "::error::Pre-commit hooks modified files. Please run 'pre-commit run --all-files' locally and commit."
+          UNSTAGED=$(git diff --name-only)
+          if [ -n "$UNSTAGED" ]; then
+            echo "::error::Pre-commit hooks modified files:"
+            echo "$UNSTAGED"
             git diff
+            echo "::error::Please run 'pre-commit run --all-files' locally and commit the changes."
             exit 1
           fi
 
