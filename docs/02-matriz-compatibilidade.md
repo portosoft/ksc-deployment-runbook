@@ -1,7 +1,7 @@
 # 02 - Matriz de Compatibilidade
 
 ## Objetivo
-Garantir que o hardware e o software escolhidos são oficialmente suportados pela Kaspersky e otimizados pelo time Portosoft.
+Garantir que o hardware e o software escolhidos são oficialmente suportados pela Kaspersky e otimizados pela comunidade KSC Runbook.
 
 ## Sistemas Operacionais
 | SO | Versão | Status |

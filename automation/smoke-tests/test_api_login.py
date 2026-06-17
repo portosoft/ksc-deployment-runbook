@@ -7,7 +7,6 @@ import sys
 import argparse
 import base64
 import urllib.request
-import urllib.error
 import ssl
 from automation.python.config import load_config, ConfigError
 

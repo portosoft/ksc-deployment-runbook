@@ -26,6 +26,9 @@ venv/
 ENV/
 build/
 dist/
+.coverage
+.coverage.*
+htmlcov/
 
 # Sistema e Editor
 .DS_Store
