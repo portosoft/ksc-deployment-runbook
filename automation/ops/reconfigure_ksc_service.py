@@ -97,20 +97,12 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
         run_cmd = f"-E bash -c '{postinstall_cmd}'"
         log_json(run_logger, "run_command_start", cmd="postinstall.pl (silencioso)")
 
-        stdin, stdout, stderr = client.exec_command(f"sudo -S {run_cmd}")
-        stdin.write(config.ksc_pass + "\n")
-        stdin.flush()
-        stdin.channel.shutdown_write()
-
-        # Stream output
-        while True:
-            line = stdout.readline()
-            if not line:
-                break
-            run_logger.info(line.strip())
-
-        err = stderr.read().decode("utf-8", errors="ignore").strip()
-        status = stdout.channel.recv_exit_status()
+        out, err, status = run_remote_sudo(
+            client, f"-E bash -c '{postinstall_cmd}'", config.ksc_pass
+        )
+        if out:
+            for line in out.splitlines():
+                run_logger.info(line.strip())
         log_json(run_logger, "run_command_end", status=status, stderr=err)
 
         # Limpeza do arquivo temporário

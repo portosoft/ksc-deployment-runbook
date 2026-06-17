@@ -42,6 +42,65 @@ def print_summary(result: CheckResult) -> None:
         print("\nStatus geral: OK (sem falhas críticas).")
 
 
+def run_audit_check(config) -> int:
+    """Executa pré-check (pré-requisitos antes da instalação)."""
+    evidence_dir = init_evidence_dir("precheck")
+    logger = configure_logger(evidence_dir)
+    log_json(logger, "precheck_start")
+
+    result = run_precheck(config)
+    log_json(
+        logger,
+        "precheck_result",
+        has_critical=result.has_critical,
+        total_items=len(result.items),
+    )
+
+    print_summary(result)
+    return 1 if result.has_critical else 0
+
+
+def run_audit_postcheck(config) -> int:
+    """Executa pós-check (após instalação do KSC)."""
+    evidence_dir = init_evidence_dir("postcheck")
+    logger = configure_logger(evidence_dir)
+    log_json(logger, "postcheck_start")
+
+    result = run_postcheck(config)
+    log_json(
+        logger,
+        "postcheck_result",
+        has_critical=result.has_critical,
+        total_items=len(result.items),
+    )
+
+    print_summary(result)
+    return 1 if result.has_critical else 0
+
+
+def run_audit_report(config) -> int:
+    """Gera relatório consolidado a partir das evidências."""
+    evidence_root = Path("evidence")
+
+    print("Coletando estado atual para relatório...")
+    pre = run_precheck(config)
+    post = run_postcheck(config)
+
+    report_dir = init_evidence_dir("reports")
+    md_path = report_dir / "report.md"
+    pdf_path = report_dir / "report.pdf"
+
+    generate_markdown_report(pre, post, evidence_root, md_path)
+    print(f"Relatório Markdown gerado em {md_path}")
+
+    print("Gerando PDF...")
+    convert_markdown_to_pdf(md_path, pdf_path)
+    if pdf_path.exists():
+        print(f"Relatório PDF gerado em {pdf_path}")
+
+    return 0
+
+
 def main() -> int:
     args = parse_args()
 
@@ -52,59 +111,13 @@ def main() -> int:
         return 2
 
     if args.check:
-        evidence_dir = init_evidence_dir("precheck")
-        logger = configure_logger(evidence_dir)
-        log_json(logger, "precheck_start")
-
-        result = run_precheck(config)
-        log_json(
-            logger,
-            "precheck_result",
-            has_critical=result.has_critical,
-            total_items=len(result.items),
-        )
-
-        print_summary(result)
-        return 1 if result.has_critical else 0
+        return run_audit_check(config)
 
     if args.postcheck:
-        evidence_dir = init_evidence_dir("postcheck")
-        logger = configure_logger(evidence_dir)
-        log_json(logger, "postcheck_start")
-
-        result = run_postcheck(config)
-        log_json(
-            logger,
-            "postcheck_result",
-            has_critical=result.has_critical,
-            total_items=len(result.items),
-        )
-
-        print_summary(result)
-        return 1 if result.has_critical else 0
+        return run_audit_postcheck(config)
 
     if args.report:
-        evidence_root = Path("evidence")
-
-        # Para gerar o report dinâmico, rodamos os checks em modo leve
-        # Na prática, isso poderia ler logs de `evidence_root`.
-        print("Coletando estado atual para relatório...")
-        pre = run_precheck(config)
-        post = run_postcheck(config)
-
-        report_dir = init_evidence_dir("reports")
-        md_path = report_dir / "report.md"
-        pdf_path = report_dir / "report.pdf"
-
-        generate_markdown_report(pre, post, evidence_root, md_path)
-        print(f"Relatório Markdown gerado em {md_path}")
-
-        print("Gerando PDF...")
-        convert_markdown_to_pdf(md_path, pdf_path)
-        if pdf_path.exists():
-            print(f"Relatório PDF gerado em {pdf_path}")
-
-        return 0
+        return run_audit_report(config)
 
     return 2
 

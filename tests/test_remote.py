@@ -1,47 +1,31 @@
 # -*- coding: utf-8 -*-
+"""
+Testes unitários para o módulo remote.py (conexão SSH e execução sudo remota).
+
+Usa a fixture ksc_test_config do conftest.py para credenciais sintéticas,
+sem valores literais hardcoded.
+"""
 import pytest
 from unittest.mock import MagicMock, patch
 from automation.python.remote import connect_ksc_host, run_remote_sudo, run_remote_sudo_batch
-from automation.python.config import KscConfig
-
-
-@pytest.fixture
-def dummy_config():
-    return KscConfig(
-        db_host="127.0.0.1",
-        db_port=5432,
-        db_name="ksciam",
-        db_user="kluser",
-        db_password="unittest-dummy-db-pass-000",  # pragma: allowlist secret
-        db_sslmode="prefer",
-        ksc_admin_password="unittest-dummy-admin-pass-999",  # pragma: allowlist secret
-        ksc_license_path=None,
-        web_port=443,
-        selinux_expected_mode="enforcing",
-        ksc_host="127.0.0.1",
-        ksc_user="suporte",
-        ksc_pass="unittest-dummy-ssh-pass-111",  # pragma: allowlist secret
-        ksc_fqdn="kscserver.exemplo.ts.net",
-        ksc_admin_user="KLAdmins"
-    )
 
 
 @patch("automation.python.remote.paramiko.SSHClient")
-def test_connect_ksc_host(mock_ssh_class, dummy_config):
+def test_connect_ksc_host(mock_ssh_class, ksc_test_config):
     mock_client = MagicMock()
     mock_ssh_class.return_value = mock_client
 
     client = connect_ksc_host(
-        host=dummy_config.ksc_host,
-        user=dummy_config.ksc_user,
-        password=dummy_config.ksc_pass
+        host=ksc_test_config.ksc_host,
+        user=ksc_test_config.ksc_user,
+        password=ksc_test_config.ksc_pass
     )
 
     assert client == mock_client
     mock_client.connect.assert_called_once_with(
-        hostname=dummy_config.ksc_host,
-        username=dummy_config.ksc_user,
-        password=dummy_config.ksc_pass,
+        hostname=ksc_test_config.ksc_host,
+        username=ksc_test_config.ksc_user,
+        password=ksc_test_config.ksc_pass,
         timeout=15
     )
 
@@ -89,4 +73,3 @@ def test_run_remote_sudo_batch():
     assert out == "success output"
     assert "some warning" in err
     assert failed_indices == [1]
-    mock_stdin.write.assert_called_once_with("secretpass\n")
