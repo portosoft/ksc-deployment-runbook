@@ -30,15 +30,15 @@ jobs:
         run: |
           mkdir -p configs/env
           python3.11 -c "
-import pathlib, sys
-sys.path.insert(0, '.')
-from automation.python.credentials import generate_password
-env_path = pathlib.Path('configs/env/ksc_vars.env')
-content = 'KSC_DB_PASS={}\nKSC_ADMIN_PASS={}\nKSC_HOST=127.0.0.1\nKSC_USER=suporte\nKSC_PASS={}\nKSC_FQDN=ksc-placeholder.test\nKSC_ADMIN_USER=KLAdmins\nKSC_WEB_PORT=8080\n'.format(generate_password(), generate_password(), generate_password())
-env_path.write_text(content)
-env_path.chmod(0o600)
-print('.env criado com credenciais sinteticas')
-"
+          import pathlib, sys
+          sys.path.insert(0, '.')
+          from automation.python.credentials import generate_password
+          env_path = pathlib.Path('configs/env/ksc_vars.env')
+          content = 'KSC_DB_PASS={}\nKSC_ADMIN_PASS={}\nKSC_HOST=127.0.0.1\nKSC_USER=suporte\nKSC_PASS={}\nKSC_FQDN=ksc-placeholder.test\nKSC_ADMIN_USER=KLAdmins\nKSC_WEB_PORT=8080\n'.format(generate_password(), generate_password(), generate_password())
+          env_path.write_text(content)
+          env_path.chmod(0o600)
+          print('.env criado com credenciais sinteticas')
+          "
 
       - name: Run local checks in dry-run mode
         env:
