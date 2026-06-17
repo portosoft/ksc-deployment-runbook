@@ -1,6 +1,6 @@
 # Contribuindo para o KSC Deployment Runbook
 
-Obrigado por seu interesse em contribuir para a documentação e automação da Portosoft!
+Obrigado por seu interesse em contribuir com este projeto open-source!
 
 ## Como contribuir
 
@@ -50,6 +50,3 @@ Os workflows automatizados operam sob regras rígidas:
 ## Estilo de Documentação
 - Documentação técnica deve ser direta ao ponto (estilo runbook).
 - Utilize Markdown para formatação.
-
----
-Portosoft - DevOps Team

@@ -11,7 +11,7 @@ Atualmente, apenas a versão estável mais recente do runbook é suportada.
 
 ## Reporting a Vulnerability
 
-Se você encontrar uma vulnerabilidade de segurança, por favor não abra uma Issue pública. Envie um e-mail para `seguranca@portosoft.com.br`.
+Se você encontrar uma vulnerabilidade de segurança, por favor não abra uma Issue pública. Abra uma [GitHub Security Advisory](https://github.com/portosoft/ksc-deployment-runbook/security/advisories/new) no repositório, ou envie um e-mail para `security@ksc-runbook.dev` (placeholder — o mantenedor configurará este canal; se não disponível, use a Security Advisory do GitHub).
 
 Nós responderemos em até 48 horas com um plano de mitigação.
 

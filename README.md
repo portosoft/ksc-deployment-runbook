@@ -18,13 +18,16 @@ Garantir deploys de KSC 16.x repetíveis, seguros e auditáveis através de auto
 | Uso de PostgreSQL 16 local ou remoto. | Versões de KSC anteriores à 15.0. |
 | Necessidade de auditoria e hardening automático. | Ambientes com MySQL/MariaDB. |
 
-## 🏗️ Posicionamento e Governança
+## 🏗️ Sobre este Projeto
 
-### O que este Runbook é?
-Este runbook é uma ferramenta open-core desenvolvida para automatizar e auditar implantações do KSC 16.x no Linux. Ele serve como base para deploys repetíveis e seguros.
+### O que é este Runbook?
+Um runbook open-source para automatizar e auditar implantações do KSC 16.x no Linux.
+Desenvolvido colaborativamente para ser repetível, seguro e auditável — adequado tanto
+para ambientes de laboratório quanto para produção corporativa.
 
-### Engajamento Comercial com a Portosoft
-Se a sua empresa precisa de customizações avançadas, integração com ferramentas enterprise (ex: HashiCorp Vault, Active Directory complexo), suporte a ambientes multi-tenant ou consultoria dedicada de DevOps/SecOps, entre em contato através dos nossos canais de atendimento comercial.
+### Contribuindo
+Issues, pull requests e discussões são bem-vindos. Veja [CONTRIBUTING.md](CONTRIBUTING.md)
+para diretrizes. Para reportar vulnerabilidades de segurança, veja [SECURITY.md](SECURITY.md).
 
 ---
 
@@ -101,6 +104,6 @@ Como um produto interno, visamos as seguintes métricas operacionais:
 - **LD_LIBRARY_PATH**: Binários do KSC em Linux podem falhar sem o path correto para bibliotecas internas.
 
 ---
-**Status do Projeto:** `Produção`
-**Roadmap:** Implementação de suporte a PostgreSQL Externo (RDS/Cloud SQL) e Integração com Vault.
-**Governança:** Mantido pelo time de DevOps Portosoft.
+**Status do Projeto:** `Estável`
+**Roadmap:** Suporte a PostgreSQL Externo (RDS/Cloud SQL) e integração com HashiCorp Vault.
+**Licença:** Apache 2.0 — veja [LICENSE](LICENSE).
