@@ -14,6 +14,8 @@ jobs:
         with:
           ref: develop
           fetch-depth: 10
+          persist-credentials: false
+
       - name: Create or update PR develop → main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

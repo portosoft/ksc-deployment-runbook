@@ -4,6 +4,7 @@ Script Operacional para reconfiguração/redefinição do usuário kscadmin do K
 """
 
 import logging
+import shlex
 from automation.python.config import KscConfig
 from automation.python.remote import connect_ksc_host, run_remote_sudo
 from automation.python.logging_utils import (
@@ -31,9 +32,10 @@ def fix_ksc_auth(config: KscConfig, apply: bool = False) -> None:
         apply=apply,
     )
 
+    escaped_user = shlex.quote(config.ksc_admin_user)
     cmd = (
         "LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib "
-        f"/opt/kaspersky/ksc64/sbin/kladduser -n {config.ksc_admin_user} -u {config.ksc_admin_user} -r Administrator"
+        f"/opt/kaspersky/ksc64/sbin/kladduser -n {escaped_user} -u {escaped_user} -r Administrator"
     )
 
     if not apply:
