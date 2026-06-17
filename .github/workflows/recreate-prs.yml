@@ -16,16 +16,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Import GPG key for signed commits
-        uses: crazy-max/ghaction-import-gpg@cb3bde0e4c81152a6e26f1fc5212e6b63dbe2113 # v6.3.0
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: true
-          git_tag_gpgsign: true
-
       - name: Recreate PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
