@@ -42,7 +42,7 @@ python3 -m automation.python.init_config
 > ```bash
 > python3 -m automation.python.init_config --vault
 > ```
-> Isso grava as credenciais cifradas em `configs/secrets.bin`.
+> Isso grava as credenciais cifradas em `configs/secrets.bin`, mas o arquivo `.env` com as credenciais em texto puro **também é gravado** no mesmo passo (o `.env` é necessário para carregamento pelo `load_config()`).
 
 As variáveis solicitadas interativamente são:
 `KSC_DB_HOST`, `KSC_DB_PORT`, `KSC_DB_USER`, `KSC_FQDN`, `KSC_HOST`, `KSC_USER`, `KSC_WEB_PORT`, `KSC_SELINUX_MODE`, `KSC_DB_PASS`, `KSC_ADMIN_PASS`, `KSC_PASS`.

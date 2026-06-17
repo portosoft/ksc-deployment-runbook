@@ -8,8 +8,12 @@ com auditoria e tokens de confirmação para ações destrutivas.
 import sys
 import argparse
 from automation.python.config import load_config, ConfigError
-from automation.python.ksc_audit import main as run_audit
-from automation.python.ksc_setup import main as run_setup
+from automation.python.ksc_audit import (
+    run_audit_check,
+    run_audit_postcheck,
+    run_audit_report,
+)
+from automation.python.ksc_setup import run_setup_check, run_setup_apply
 
 # Importa as operações refatoradas
 from automation.ops.ksc_harden_db import apply_hardening
@@ -148,24 +152,20 @@ def main():
         print(f"[ERROR] Configuração inválida: {e}", file=sys.stderr)
         return 2
 
-    # Execução baseada no comando
+    # Execução baseada no comando — chama diretamente as funções específicas
     if args.command == "audit":
-        sys.argv = [sys.argv[0]]
         if args.check:
-            sys.argv.append("--check")
+            return run_audit_check(config)
         elif args.postcheck:
-            sys.argv.append("--postcheck")
+            return run_audit_postcheck(config)
         elif args.report:
-            sys.argv.append("--report")
-        return run_audit()
+            return run_audit_report(config)
 
     elif args.command == "setup":
-        sys.argv = [sys.argv[0]]
         if args.check:
-            sys.argv.append("--check")
+            return run_setup_check(config)
         elif args.apply:
-            sys.argv.append("--apply")
-        return run_setup()
+            return run_setup_apply(config)
 
     elif args.command == "db" and args.subcommand == "harden":
         apply = args.apply

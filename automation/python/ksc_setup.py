@@ -34,6 +34,33 @@ def print_summary(result) -> None:
         print("\nStatus geral: OK (sem falhas críticas).")
 
 
+def run_setup_check(config) -> int:
+    """Valida apenas as variáveis e pré-requisitos locais."""
+    evidence_dir = init_evidence_dir("precheck")
+    logger = configure_logger(evidence_dir)
+    log_json(logger, "setup_precheck_start")
+    result = perform_precheck_only(config, logger)
+    log_json(logger, "setup_precheck_result", has_critical=result.has_critical)
+    print_summary(result)
+    return 1 if result.has_critical else 0
+
+
+def run_setup_apply(config) -> int:
+    """Executa a instalação local completa."""
+    evidence_dir = init_evidence_dir("deploy")
+    logger = configure_logger(evidence_dir)
+    log_json(logger, "setup_apply_start")
+    try:
+        perform_setup(config, logger)
+    except SetupError as e:
+        log_json(logger, "setup_apply_failed", error=str(e))
+        print(f"[ERROR] Falha na instalação: {e}", file=sys.stderr)
+        return 2
+    log_json(logger, "setup_apply_success")
+    print("Instalação concluída com sucesso.")
+    return 0
+
+
 def main():
     args = parse_args()
     try:
@@ -43,27 +70,10 @@ def main():
         return 2
 
     if args.check:
-        evidence_dir = init_evidence_dir("precheck")
-        logger = configure_logger(evidence_dir)
-        log_json(logger, "setup_precheck_start")
-        result = perform_precheck_only(config, logger)
-        log_json(logger, "setup_precheck_result", has_critical=result.has_critical)
-        print_summary(result)
-        return 1 if result.has_critical else 0
+        return run_setup_check(config)
 
     if args.apply:
-        evidence_dir = init_evidence_dir("deploy")
-        logger = configure_logger(evidence_dir)
-        log_json(logger, "setup_apply_start")
-        try:
-            perform_setup(config, logger)
-        except SetupError as e:
-            log_json(logger, "setup_apply_failed", error=str(e))
-            print(f"[ERROR] Falha na instalação: {e}", file=sys.stderr)
-            return 2
-        log_json(logger, "setup_apply_success")
-        print("Instalação concluída com sucesso.")
-        return 0
+        return run_setup_apply(config)
 
 
 if __name__ == "__main__":

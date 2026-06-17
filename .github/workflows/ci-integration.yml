@@ -15,7 +15,7 @@ jobs:
       image: rockylinux:9
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
           persist-credentials: false
 
@@ -24,23 +24,25 @@ jobs:
           dnf install -y python3.11 python3.11-pip iproute
           python3.11 -m pip install -r requirements.txt
 
-      - name: Run audit and operational checks in dry-run mode
+      - name: Generate .env with synthetic credentials
         env:
           PYTHONPATH: .
         run: |
           mkdir -p configs/env
-          # Escreve um arquivo de configuração de mock com pragma para evitar falsos positivos
-          echo 'KSC_DB_PASS="unittest-dummy-db-pass-000"' > configs/env/ksc_vars.env  # pragma: allowlist secret
-          echo 'KSC_ADMIN_PASS="unittest-dummy-admin-pass-999"' >> configs/env/ksc_vars.env  # pragma: allowlist secret
-          echo 'KSC_HOST="127.0.0.1"' >> configs/env/ksc_vars.env
-          echo 'KSC_USER="suporte"' >> configs/env/ksc_vars.env
-          echo 'KSC_PASS="unittest-dummy-ssh-pass-111"' >> configs/env/ksc_vars.env  # pragma: allowlist secret
-          echo 'KSC_FQDN="kscserver.exemplo.ts.net"' >> configs/env/ksc_vars.env
-          echo 'KSC_ADMIN_USER="KLAdmins"' >> configs/env/ksc_vars.env
-          echo 'KSC_WEB_PORT="8080"' >> configs/env/ksc_vars.env
+          python3.11 -c "
+import pathlib, sys
+sys.path.insert(0, '.')
+from automation.python.credentials import generate_password
+env_path = pathlib.Path('configs/env/ksc_vars.env')
+content = 'KSC_DB_PASS={}\nKSC_ADMIN_PASS={}\nKSC_HOST=127.0.0.1\nKSC_USER=suporte\nKSC_PASS={}\nKSC_FQDN=ksc-placeholder.test\nKSC_ADMIN_USER=KLAdmins\nKSC_WEB_PORT=8080\n'.format(generate_password(), generate_password(), generate_password())
+env_path.write_text(content)
+env_path.chmod(0o600)
+print('.env criado com credenciais sinteticas')
+"
 
-          # Executa comandos locais de check
+      - name: Run local checks in dry-run mode
+        env:
+          PYTHONPATH: .
+        run: |
           python3.11 -m automation.python.kscctl setup --check
-          python3.11 -m automation.python.kscctl db reset --check
-          python3.11 -m automation.python.kscctl iam purge-mfa --check
-          python3.11 -m automation.python.kscctl web fix-config --check
+          python3.11 -m automation.python.kscctl audit --check

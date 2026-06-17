@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck shell=bash
 # Script de Coleta de Auditoria KSC (Somente Leitura)
 # Portosoft DevOps Team
 
