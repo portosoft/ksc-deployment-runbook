@@ -31,19 +31,20 @@ def fix_web_console_config(config: KscConfig, apply: bool = False) -> None:
         apply=apply,
     )
 
-    # Comandos de correção usando sed
-    cmds = [
-        r"sed -i 's/\\$web_console_port\\$/8080/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
-        f"sed -i 's/\\\\$web_console_address\\\\$/{config.ksc_fqdn}/g' /var/opt/kaspersky/ksc-web-console/server/config.json",
-        r'sed -i \'s/"port": "13000"/"port": "13299"/g\' /var/opt/kaspersky/ksc-web-console/server/config.json',
-    ]
+    # Comando de correção usando sed
+    sed_cmd = (
+        "sed -i "
+        r"-e 's/\$web_console_port\$/8080/g' "
+        f"-e 's/\\$web_console_address\\$/{config.ksc_fqdn}/g' "
+        "-e 's/\"port\": \"13000\"/\"port\": \"13299\"/g' "
+        "/var/opt/kaspersky/ksc-web-console/server/config.json"
+    )
 
     if not apply:
         run_logger.info(
-            "[CHECK] Seriam aplicadas as seguintes correções via sed no config.json remoto:"
+            "[CHECK] Seria aplicada a seguinte correção via sed no config.json remoto:"
         )
-        for cmd in cmds:
-            run_logger.info(f"  - {cmd}")
+        run_logger.info(f"  - {sed_cmd}")
         run_logger.info(
             "[CHECK] A propriedade de /var/opt/kaspersky/ksc-web-console/ seria alterada para ksc:kladmins."
         )
@@ -55,16 +56,15 @@ def fix_web_console_config(config: KscConfig, apply: bool = False) -> None:
     try:
         client = connect_ksc_host(config.ksc_host, config.ksc_user, config.ksc_pass)
 
-        # Executa comandos de substituição
-        for cmd in cmds:
-            log_json(run_logger, "run_command_start", cmd=cmd)
-            out, err, status = run_remote_sudo(client, cmd, config.ksc_pass)
-            log_json(
-                run_logger, "run_command_end", status=status, stdout=out, stderr=err
-            )
+        # Executa comando de substituição
+        log_json(run_logger, "run_command_start", cmd=sed_cmd)
+        out, err, status = run_remote_sudo(client, sed_cmd, config.ksc_pass)
+        log_json(
+            run_logger, "run_command_end", status=status, stdout=out, stderr=err
+        )
 
-            if status != 0:
-                raise OpsError(f"Falha ao executar sed no config.json: {err}")
+        if status != 0:
+            raise OpsError(f"Falha ao executar sed no config.json: {err}")
 
         # Corrige permissões de dono/grupo
         chown_cmd = "chown -R ksc:kladmins /var/opt/kaspersky/ksc-web-console/"
