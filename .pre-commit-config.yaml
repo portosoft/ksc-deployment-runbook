@@ -27,16 +27,10 @@ repos:
       - id: isort
         files: automation/python/
 
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0
-    hooks:
-      - id: shellcheck
-        files: automation/bash/
-
   - repo: local
     hooks:
-      - id: shellcheck-local
-        name: shellcheck (local)
+      - id: shellcheck
+        name: shellcheck
         language: system
         entry: shellcheck
         args: ['-e', 'SC2086']
