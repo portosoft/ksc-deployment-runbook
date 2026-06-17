@@ -50,8 +50,17 @@ jobs:
             . || true
           git add .secrets.baseline
 
-      - name: Run pre-commit hooks (validate — detect-secrets removed from hooks)
+      - name: Run pre-commit hooks (allow formatting fixes)
         run: pre-commit run --all-files || true
+
+      - name: Check for uncommitted changes after pre-commit
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Pre-commit hooks modified files. Please run 'pre-commit run --all-files' locally and commit."
+            git diff
+            exit 1
+          fi
 
       - name: Run Pytest
         env:
