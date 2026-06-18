@@ -48,10 +48,12 @@ jobs:
 
       - name: Regenerate .secrets.baseline for Linux environment
         run: |
+          OLD_TS=$(python3 -c "import json; print(json.load(open('.secrets.baseline'))['generated_at'])")
           detect-secrets scan --baseline .secrets.baseline \
             --exclude-files '(\.example|\.md|.*raw_output\.txt)$' \
             --exclude-lines '^(from|import)\s' \
             . || true
+          python3 -c "import json;b=json.load(open('.secrets.baseline'));b['generated_at']='$OLD_TS';json.dump(b,open('.secrets.baseline','w'),indent=2,sort_keys=True);print('generated_at restored')"
           git add .secrets.baseline
 
       - name: Run pre-commit hooks (allow formatting fixes)
