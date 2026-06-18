@@ -1,25 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-Ferramenta CLI Unificada KSCCTL - Entrypoint Operacional da Portosoft.
+Ferramenta CLI Unificada KSCCTL - Entrypoint Operacional do KSC Runbook.
 Permite executar auditorias locais, instalação e todas as operações remotas
 com auditoria e tokens de confirmação para ações destrutivas.
 """
 
-import sys
 import argparse
-from automation.python.config import load_config, ConfigError
-from automation.python.ksc_audit import (
-    run_audit_check,
-    run_audit_postcheck,
-    run_audit_report,
-)
-from automation.python.ksc_setup import run_setup_check, run_setup_apply
+import sys
 
+from automation.ops.fix_web_console_config import fix_web_console_config
 # Importa as operações refatoradas
 from automation.ops.ksc_harden_db import apply_hardening
-from automation.ops.reset_ksc_databases import reset_ksc_databases
 from automation.ops.purge_iam_mfa import purge_iam_mfa
-from automation.ops.fix_web_console_config import fix_web_console_config
+from automation.ops.reset_ksc_databases import reset_ksc_databases
+from automation.python.config import ConfigError, load_config
+from automation.python.ksc_audit import (run_audit_check, run_audit_postcheck,
+                                         run_audit_report)
+from automation.python.ksc_setup import run_setup_apply, run_setup_check
 
 
 def main():

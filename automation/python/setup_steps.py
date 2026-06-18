@@ -1,7 +1,8 @@
 import logging
-from .config import KscConfig
+
 from .checks import CheckResult, run_precheck
-from .shell_utils import run_command, ShellCommandError
+from .config import KscConfig
+from .shell_utils import ShellCommandError, run_command
 
 
 class SetupError(Exception):

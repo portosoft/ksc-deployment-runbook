@@ -4,6 +4,7 @@ Credential_Generator — geração de credenciais sintéticas criptograficamente
 Usa exclusivamente stdlib Python: secrets, string, uuid.
 Nenhuma dependência externa é introduzida.
 """
+
 import secrets
 import string
 import uuid
@@ -24,9 +25,7 @@ def generate_password(length: int = 24, *, include_symbols: bool = True) -> str:
         ValueError: Se `length` < 8 ou `length` > 256.
     """
     if length < 8 or length > 256:
-        raise ValueError(
-            f"length deve estar entre 8 e 256, recebido: {length}"
-        )
+        raise ValueError(f"length deve estar entre 8 e 256, recebido: {length}")
 
     alphabet = string.ascii_letters + string.digits
     if include_symbols:

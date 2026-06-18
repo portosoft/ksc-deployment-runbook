@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import sys
 import argparse
+import sys
 from pathlib import Path
 
-from .config import load_config, ConfigError
-from .logging_utils import init_evidence_dir, configure_logger, log_json
-from .checks import run_precheck, run_postcheck, CheckResult
-from .report_utils import generate_markdown_report, convert_markdown_to_pdf
+from .checks import CheckResult, run_postcheck, run_precheck
+from .config import ConfigError, load_config
+from .logging_utils import configure_logger, init_evidence_dir, log_json
+from .report_utils import convert_markdown_to_pdf, generate_markdown_report
 
 
 def parse_args() -> argparse.Namespace:

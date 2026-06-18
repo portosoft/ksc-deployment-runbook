@@ -1,11 +1,12 @@
 import time
 from unittest.mock import MagicMock
-import paramiko
+
 
 class MockChannel:
     def recv_exit_status(self):
         time.sleep(0.05)
         return 0
+
 
 class MockSSHClient(MagicMock):
     def exec_command(self, cmd):
@@ -16,6 +17,7 @@ class MockSSHClient(MagicMock):
         stderr = MagicMock()
         return stdin, stdout, stderr
 
+
 def run_unoptimized(client, harden_cmds):
     for cmd in harden_cmds:
         stdin, stdout, stderr = client.exec_command(f"sudo -S {cmd}")
@@ -23,15 +25,18 @@ def run_unoptimized(client, harden_cmds):
         stdin.flush()
         status = stdout.channel.recv_exit_status()
 
+
 def run_optimized(client, harden_cmds):
     # This is a sample optimized implementation using sh -c
     import shlex
+
     batch_cmd = " && ".join(harden_cmds)
     escaped_batch = shlex.quote(batch_cmd)
     stdin, stdout, stderr = client.exec_command(f"sudo -S sh -c {escaped_batch}")
     stdin.write("pass" + "\n")
     stdin.flush()
     status = stdout.channel.recv_exit_status()
+
 
 cmds = [
     'sed -i "s/^#max_connections = .*/max_connections = 1000/" /var/lib/pgsql/16/data/postgresql.conf',

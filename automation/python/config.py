@@ -1,8 +1,9 @@
 import logging
 import os
 import re
-from typing import Optional, Literal
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from typing import Literal, Optional
+
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 
 class KscConfig(BaseModel):
@@ -99,6 +100,7 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
     if os.path.exists(secrets_path):
         try:
             from automation.lib.vault import decrypt_secrets
+
             vault_values = decrypt_secrets()
             for key, val in vault_values.items():
                 os.environ[key] = val

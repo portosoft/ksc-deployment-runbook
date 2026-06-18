@@ -1,6 +1,8 @@
 from pathlib import Path
-from .checks import CheckResult
+
 from automation.python.utils.secure_file import write_secure_file
+
+from .checks import CheckResult
 
 
 def generate_markdown_report(
