@@ -5,6 +5,7 @@ Script Operacional para converter arquivos de configuração .env para variávei
 
 import os
 import logging
+import yaml
 from automation.python.config import KscConfig
 from automation.python.utils.secure_file import write_secure_file
 from automation.ops.purge_iam_mfa import OpsError
@@ -42,15 +43,15 @@ def env_to_ansible(
         with open(env_path, "r", encoding="utf-8") as env_file:
             lines = env_file.readlines()
 
-        yaml_vars = [
+        header = [
             "---",
             "# Gerado automaticamente a partir do .env",
             "# NÃO EDITE ESTE ARQUIVO DIRETAMENTE",
         ]
 
+        parsed_vars = {}
         for line in lines:
             line = line.strip()
-            # Ignora comentários e linhas em branco
             if not line or line.startswith("#"):
                 continue
 
@@ -58,10 +59,11 @@ def env_to_ansible(
                 key, value = line.split("=", 1)
                 yaml_key = key.strip().lower()
                 yaml_value = value.strip().strip('"').strip("'")
-                yaml_vars.append(f'{yaml_key}: "{yaml_value}"')
+                parsed_vars[yaml_key] = yaml_value
 
-        # 🛡️ Sentinel: Grava o arquivo YAML gerado com permissões restritas 0600
-        write_secure_file(output_file, "\n".join(yaml_vars) + "\n", 0o600)
+        yaml_content = "\n".join(header) + "\n" + yaml.safe_dump(parsed_vars, default_flow_style=False)
+
+        write_secure_file(output_file, yaml_content, 0o600)
         logger.info(f"Sucesso! Variáveis convertidas para Ansible em: {output_file}")
     except Exception as e:
         raise OpsError(f"Falha ao gerar arquivo de variáveis do Ansible: {e}")

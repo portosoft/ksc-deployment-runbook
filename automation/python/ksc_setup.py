@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import sys
 import argparse
-from .config import load_config, ConfigError
-from .logging_utils import init_evidence_dir, configure_logger, log_json
-from .setup_steps import perform_setup, perform_precheck_only, SetupError
+import sys
+
+from .config import ConfigError, load_config
+from .logging_utils import configure_logger, init_evidence_dir, log_json
+from .setup_steps import SetupError, perform_precheck_only, perform_setup
 
 
 def parse_args() -> argparse.Namespace:

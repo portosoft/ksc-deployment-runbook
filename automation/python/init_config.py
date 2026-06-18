@@ -13,9 +13,9 @@ import sys
 
 from pydantic import ValidationError
 
-from automation.python.config import KscConfig, ConfigError
-from automation.python.utils.secure_file import write_secure_file
 from automation.lib import vault
+from automation.python.config import ConfigError, KscConfig
+from automation.python.utils.secure_file import write_secure_file
 
 # ---------------------------------------------------------------------------
 # Field definitions
@@ -23,13 +23,13 @@ from automation.lib import vault
 
 # Non-sensitive fields: collected via input() with default shown
 NON_SENSITIVE_FIELDS = [
-    ("KSC_DB_HOST",      "127.0.0.1"),
-    ("KSC_DB_PORT",      "5432"),
-    ("KSC_DB_USER",      "kluser"),
-    ("KSC_FQDN",         "ksc-placeholder.test"),
-    ("KSC_HOST",         "127.0.0.1"),
-    ("KSC_USER",         "suporte"),
-    ("KSC_WEB_PORT",     "443"),
+    ("KSC_DB_HOST", "127.0.0.1"),
+    ("KSC_DB_PORT", "5432"),
+    ("KSC_DB_USER", "kluser"),
+    ("KSC_FQDN", "ksc-placeholder.test"),
+    ("KSC_HOST", "127.0.0.1"),
+    ("KSC_USER", "suporte"),
+    ("KSC_WEB_PORT", "443"),
     ("KSC_SELINUX_MODE", "enforcing"),
 ]
 
@@ -49,6 +49,7 @@ ENV_FILE_PATH = pathlib.Path("configs/env/ksc_vars.env")
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _is_sensitive_key(key: str) -> bool:
     """Return True if the key name ends with a known sensitive suffix.
@@ -109,6 +110,7 @@ def _render_env_content(values: dict) -> str:
 # Validation
 # ---------------------------------------------------------------------------
 
+
 def _build_ksc_config(values: dict) -> KscConfig:
     """Constrói um :class:`KscConfig` a partir do dicionário de valores coletados.
 
@@ -162,6 +164,7 @@ def _build_ksc_config(values: dict) -> KscConfig:
 # ---------------------------------------------------------------------------
 # Collection loop
 # ---------------------------------------------------------------------------
+
 
 def _collect_all_fields() -> dict:
     """Coleta interativamente todos os campos do operador via stdin.
@@ -248,6 +251,7 @@ def _extract_error_message(exc: Exception) -> str:
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """Ponto de entrada principal do CLI interativo de configuração.
