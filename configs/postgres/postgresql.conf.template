@@ -1,0 +1,5 @@
+# postgresql.conf — KSC 16.x Deployment Template
+# Aplicar via: kscctl db harden --apply
+max_connections = 1000
+shared_preload_libraries = 'pg_stat_statements'
+# Os demais parametros sao mantidos nos defaults do PostgreSQL 16
