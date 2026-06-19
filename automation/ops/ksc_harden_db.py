@@ -4,18 +4,19 @@ Script Operacional para hardening do banco PostgreSQL remoto do KSC.
 """
 
 import logging
+
+from automation.ops.purge_iam_mfa import OpsError
 from automation.python.config import KscConfig
+from automation.python.logging_utils import (
+    configure_logger,
+    init_evidence_dir,
+    log_json,
+)
 from automation.python.remote import (
     connect_ksc_host,
     run_remote_sudo,
     run_remote_sudo_batch,
 )
-from automation.python.logging_utils import (
-    init_evidence_dir,
-    configure_logger,
-    log_json,
-)
-from automation.ops.purge_iam_mfa import OpsError
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,14 @@ def apply_hardening(config: KscConfig, apply: bool = False) -> None:
 
     client = None
     try:
+        if not apply:
+            run_logger.info("[CHECK] Verificaria hardening remoto via SSH.")
+            run_logger.info(
+                "[CHECK] Seriam aplicadas: max_connections=1000 e shared_preload_libraries='pg_stat_statements'."
+            )
+            log_json(run_logger, "db_hardening_check_only_local")
+            return
+
         client = connect_ksc_host(config.ksc_host, config.ksc_user, config.ksc_pass)
 
         # Validação real: lê o arquivo postgresql.conf do host remoto
@@ -71,32 +80,6 @@ def apply_hardening(config: KscConfig, apply: bool = False) -> None:
                 and "pg_stat_statements" in line
             ):
                 shared_preload_configured = True
-
-        if not apply:
-            run_logger.info("=== RESULTADO DA VERIFICAÇÃO DE HARDENING ===")
-            if max_conn_configured:
-                run_logger.info("[OK] max_connections já está configurado como 1000.")
-            else:
-                run_logger.info(
-                    "[MUDANÇA REQUERIDA] max_connections será alterado para 1000."
-                )
-
-            if shared_preload_configured:
-                run_logger.info(
-                    "[OK] shared_preload_libraries já contém pg_stat_statements."
-                )
-            else:
-                run_logger.info(
-                    "[MUDANÇA REQUERIDA] shared_preload_libraries = 'pg_stat_statements' será adicionado."
-                )
-
-            log_json(
-                run_logger,
-                "db_hardening_check_only",
-                max_conn_ok=max_conn_configured,
-                shared_preload_ok=shared_preload_configured,
-            )
-            return
 
         # Executa as alterações se necessário
         if max_conn_configured and shared_preload_configured:

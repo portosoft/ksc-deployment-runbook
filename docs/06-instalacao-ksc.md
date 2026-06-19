@@ -5,7 +5,9 @@ Realizar a instalação silenciosa do KSC Administration Server e Web Console.
 
 ## Entradas Necessárias
 - Arquivo de variáveis: `configs/env/.ksc_vars.env`.
-- Arquivo de respostas: `configs/ksc/ksc_response.txt.template`.
+- Template de respostas: `configs/ksc/ksc_response.txt.template`.
+
+> O arquivo de respostas final é gerado dinamicamente pela automação de reconfiguração a partir desses parâmetros, sem exigir commit de uma versão preenchida.
 
 ## Procedimento
 1. **Baixar Pacotes**: Obtenha os arquivos `.rpm` oficiais do site da Kaspersky.

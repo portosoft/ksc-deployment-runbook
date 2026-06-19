@@ -1,3 +1,4 @@
+from importlib import import_module
 from pathlib import Path
 
 from automation.python.utils.secure_file import write_secure_file
@@ -33,9 +34,14 @@ def generate_markdown_report(
         content += f"- **{item.name}** [{item.status.upper()}]: {item.message}\n"
 
     content += f"\n## Evidências\n"
-    content += f"Todos os logs e evidências brutos podem ser encontrados em: `{evidence_root}`\n"
+    content += f"Todos os logs e evidências brutos podem ser encontrados em: `{evidence_root.as_posix()}`\n"
 
     write_secure_file(str(output_path), content, mode=0o600)
+
+
+def _load_md2pdf():
+    """Carrega a função md2pdf de forma tardia para facilitar testes e tolerar dependências opcionais."""
+    return import_module("md2pdf.core").md2pdf
 
 
 def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:
@@ -46,8 +52,7 @@ def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:
         pdf_path: Caminho do arquivo PDF de saída.
     """
     try:
-        from md2pdf.core import md2pdf
-
+        md2pdf = _load_md2pdf()
         md2pdf(pdf_path, md_file_path=str(markdown_path))
     except Exception as e:
         import logging

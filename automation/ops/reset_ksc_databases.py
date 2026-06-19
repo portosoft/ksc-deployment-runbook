@@ -4,6 +4,7 @@ Script Operacional para reset e reinicialização de bancos de dados KSC.
 """
 
 import logging
+import shlex
 from automation.python.config import KscConfig
 from automation.python.remote import connect_ksc_host, run_remote_sudo
 from automation.python.logging_utils import (
@@ -63,13 +64,13 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
         # Drop e Recreate
         for db in dbs:
             # Terminar conexões ativas
-            term_cmd = (
-                f'-u postgres psql -c "'
+            term_query = (
                 f"SELECT pg_terminate_backend(pg_stat_activity.pid) "
                 f"FROM pg_stat_activity "
                 f"WHERE pg_stat_activity.datname = '{db}' "
-                f'AND pid <> pg_backend_pid();"'
+                f"AND pid <> pg_backend_pid();"
             )
+            term_cmd = f"-u postgres psql -c {shlex.quote(term_query)}"
             log_json(
                 run_logger, "run_command_start", cmd=f"terminate connections to {db}"
             )
@@ -83,7 +84,8 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
                 )
 
             # Drop database
-            drop_cmd = f'-u postgres psql -c "DROP DATABASE {db};"'
+            drop_query = f"DROP DATABASE {db};"
+            drop_cmd = f"-u postgres psql -c {shlex.quote(drop_query)}"
             log_json(run_logger, "run_command_start", cmd=f"DROP DATABASE {db}")
             out, err, status = run_remote_sudo(client, drop_cmd, config.ksc_pass)
             log_json(
@@ -93,10 +95,12 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
                 raise OpsError(f"Falha no DROP DATABASE {db}: {err}")
 
             # Create database
-            create_cmd = (
-                f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'
-            )
-            log_json(run_logger, "run_command_start", cmd=f"CREATE DATABASE {db}")
+            # Ensure the database owner is properly quoted as a SQL identifier
+            # to prevent SQL injection at the query level.
+            safe_db_user = config.db_user.replace('"', '""')
+            create_query = f'CREATE DATABASE "{db}" OWNER "{safe_db_user}";'
+            create_cmd = f"-u postgres psql -c {shlex.quote(create_query)}"
+            log_json(run_logger, "run_command_start", cmd=f'CREATE DATABASE "{db}"')
             out, err, status = run_remote_sudo(client, create_cmd, config.ksc_pass)
             log_json(
                 run_logger, "run_command_end", status=status, stdout=out, stderr=err
