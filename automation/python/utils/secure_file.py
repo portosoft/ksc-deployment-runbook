@@ -11,16 +11,20 @@ def write_secure_file(path: str, content: str, mode: int = 0o600) -> None:
     fd, temp_path = tempfile.mkstemp(dir=dir_path, text=True)
 
     try:
-        # Set permissions securely
-        os.fchmod(fd, mode)
-        with os.fdopen(fd, "w") as f:
+        if hasattr(os, "fchmod"):
+            os.fchmod(fd, mode)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            fd = -1
             f.write(content)
-        # Atomically replace the target file
+        if not hasattr(os, "fchmod"):
+            os.chmod(temp_path, mode)
         os.replace(temp_path, path)
     except Exception:
-        # Clean up temp file on failure
+        if fd != -1:
+            os.close(fd)
         if os.path.exists(temp_path):
-            os.unlink(temp_path)
+            with contextlib.suppress(PermissionError, FileNotFoundError):
+                os.unlink(temp_path)
         raise
 
 
@@ -36,13 +40,21 @@ def temp_secure_file(content: str, mode: int = 0o600):
     """Context manager for ephemeral secret files."""
     fd, temp_path = tempfile.mkstemp(text=True)
     try:
-        os.fchmod(fd, mode)
-        with os.fdopen(fd, "w") as f:
+        if hasattr(os, "fchmod"):
+            os.fchmod(fd, mode)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            fd = -1
             f.write(content)
+        if not hasattr(os, "fchmod"):
+            os.chmod(temp_path, mode)
         yield temp_path
     finally:
+        if fd != -1:
+            with contextlib.suppress(OSError):
+                os.close(fd)
         if os.path.exists(temp_path):
-            os.unlink(temp_path)
+            with contextlib.suppress(PermissionError, FileNotFoundError):
+                os.unlink(temp_path)
 
 
 def verify_permissions(path: str, expected_mode: int) -> bool:
