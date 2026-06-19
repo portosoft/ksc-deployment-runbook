@@ -9,6 +9,9 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 - Geração sintética de credenciais para testes (`credentials.py` + fixtures pytest)
 - `init_config.py` para configuração interativa segura de variáveis de ambiente de produção
+- `automation/bash/validate-harden.sh` para validação pós-hardening em Rocky Linux 9 / KSC 16.x
+- `configs/ksc/ksc_response.txt.template` como template de respostas do instalador silencioso
+- `configs/postgres/postgresql.conf.template` com parâmetros mínimos de hardening do PostgreSQL
 
 ### Changed
 - Arquivos `.example` agora usam marcadores `<PREENCHER>` ao invés de valores com aparência realista
@@ -23,6 +26,10 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `CHECKLIST.md`: comando exato `python3 -m automation.python.init_config` no item de pre-check
 - `.github/workflows/trigger-bot-pr.yml`: PRs gerados agora seguem o template com título e
   body informativos derivados do último commit e do CHANGELOG
+- `automation/ops/ksc_harden_db.py`: modo `--check` agora respeita dry-run local, sem abrir SSH
+- `automation/python/utils/secure_file.py`: compatibilidade aprimorada para ambientes sem `os.fchmod`
+- `automation/python/report_utils.py`: carregamento tardio de `md2pdf` e normalização POSIX do caminho de evidências
+- `docs/06-instalacao-ksc.md`: template de respostas documentado como artefato-base para geração dinâmica
 
 ### Fixed
 - `tests/test_remote.py`: migrado para fixture `ksc_test_config` (removia pragma hardcoded)
@@ -31,6 +38,8 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `.github/workflows/codeql.yml` e `recreate-prs.yml`: hash do `actions/checkout` atualizado
   para Node.js 24
 - `.secrets.baseline`: entradas marcadas como `is_verified: true`
+- `tests/ops/ksc_harden_db_test.py`: check mode agora valida ausência de conexão SSH
+- `tests/test_report_utils.py`: mocks e asserções ajustados para estabilidade local e compatibilidade com Windows
 
 ## [1.1.0] - 2026-05-16
 ### Added
