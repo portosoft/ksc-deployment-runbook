@@ -17,7 +17,7 @@ jobs:
     name: Run pr agent on every pull request
     steps:
       - name: The PR Agent
-        uses: The-PR-Agent/pr-agent@ffe1f89a4dafc7d8e88b9cf010a3233e30b49f43
+        uses: The-PR-Agent/pr-agent@85178bef87b7a03081cd30592a5aad100284f9a7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
