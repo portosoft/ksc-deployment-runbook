@@ -78,3 +78,8 @@
 **Vulnerability:** Shell command injection vulnerability identified when passing user-controlled or configured data directly into string-interpolated shell commands (e.g. `f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'`). Even when nested in double quotes within the python f-string, double-quotes in the substituted parameter break out of the shell quotes.
 **Learning:** Whenever parameters (such as configuration variables, database names, users) are injected into a string that will be evaluated by a shell (like `sudo -S {cmd}` or `-c "{query}"`), they must be properly escaped to ensure the shell treats them as a single literal argument.
 **Prevention:** Always use `shlex.quote()` on the full query string before interpolating it into the shell command string (e.g., `query = f"CREATE DATABASE {db} OWNER {config.db_user};"; cmd = f"-u postgres psql -c {shlex.quote(query)}"`) or use argument arrays where supported.
+
+## 2025-02-28 - Predictable Temporary File Vulnerability in Reconfiguration Script
+**Vulnerability:** A hardcoded temporary file path (`/tmp/reconfig_ans.txt`) was used when writing the KSC auto-answers configuration file via SFTP.
+**Learning:** Hardcoded or predictable paths in world-writable directories (like `/tmp`) can lead to Time-of-Check to Time-of-Use (TOCTOU) race conditions, symlink attacks, or local privilege escalation. In this instance, another user could have created a symlink or pre-created the file before execution, potentially leading to unauthorized data disclosure or overwriting.
+**Prevention:** Always generate unpredictable file names for temporary files in shared directories using cryptographic or random UUIDs (e.g., `f"/tmp/reconfig_ans_{uuid.uuid4().hex}.txt"`) and enforce strict permissions.
