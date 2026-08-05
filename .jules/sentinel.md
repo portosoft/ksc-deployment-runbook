@@ -78,3 +78,8 @@
 **Vulnerability:** Shell command injection vulnerability identified when passing user-controlled or configured data directly into string-interpolated shell commands (e.g. `f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'`). Even when nested in double quotes within the python f-string, double-quotes in the substituted parameter break out of the shell quotes.
 **Learning:** Whenever parameters (such as configuration variables, database names, users) are injected into a string that will be evaluated by a shell (like `sudo -S {cmd}` or `-c "{query}"`), they must be properly escaped to ensure the shell treats them as a single literal argument.
 **Prevention:** Always use `shlex.quote()` on the full query string before interpolating it into the shell command string (e.g., `query = f"CREATE DATABASE {db} OWNER {config.db_user};"; cmd = f"-u postgres psql -c {shlex.quote(query)}"`) or use argument arrays where supported.
+
+## 2026-06-03 - [CRITICAL] Fix predictable temporary file vulnerability
+**Vulnerability:** Hardcoded and predictable temporary file name (`/tmp/reconfig_ans.txt`) in a world-writable directory.
+**Learning:** Using predictable file names in shared directories like `/tmp` can lead to race conditions, symlink attacks, and local privilege escalation.
+**Prevention:** Always use randomly generated file names (e.g., with `uuid.uuid4().hex`) when creating temporary files in shared directories.
