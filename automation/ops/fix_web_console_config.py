@@ -4,6 +4,7 @@ Script Operacional para correções no config.json do Kaspersky Web Console.
 """
 
 import logging
+import shlex
 from automation.python.config import KscConfig
 from automation.python.remote import connect_ksc_host, run_remote_sudo
 from automation.python.logging_utils import (
@@ -32,11 +33,15 @@ def fix_web_console_config(config: KscConfig, apply: bool = False) -> None:
     )
 
     # Comando de correção usando sed
+    # Sanitize and safely quote parameters interpolated into the shell command
+    # Any '/' must be escaped for the sed substitute expression
+    safe_fqdn = config.ksc_fqdn.replace('/', r'\/')
+    arg1 = shlex.quote(r's/\$web_console_port\$/8080/g')
+    arg2 = shlex.quote(f's/\\$web_console_address\\$/{safe_fqdn}/g')
+    arg3 = shlex.quote(r's/"port": "13000"/"port": "13299"/g')
+
     sed_cmd = (
-        "sed -i "
-        r"-e 's/\$web_console_port\$/8080/g' "
-        f"-e 's/\\$web_console_address\\$/{config.ksc_fqdn}/g' "
-        "-e 's/\"port\": \"13000\"/\"port\": \"13299\"/g' "
+        f"sed -i -e {arg1} -e {arg2} -e {arg3} "
         "/var/opt/kaspersky/ksc-web-console/server/config.json"
     )
 
