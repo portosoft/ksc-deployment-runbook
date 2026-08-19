@@ -78,3 +78,8 @@
 **Vulnerability:** Shell command injection vulnerability identified when passing user-controlled or configured data directly into string-interpolated shell commands (e.g. `f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'`). Even when nested in double quotes within the python f-string, double-quotes in the substituted parameter break out of the shell quotes.
 **Learning:** Whenever parameters (such as configuration variables, database names, users) are injected into a string that will be evaluated by a shell (like `sudo -S {cmd}` or `-c "{query}"`), they must be properly escaped to ensure the shell treats them as a single literal argument.
 **Prevention:** Always use `shlex.quote()` on the full query string before interpolating it into the shell command string (e.g., `query = f"CREATE DATABASE {db} OWNER {config.db_user};"; cmd = f"-u postgres psql -c {shlex.quote(query)}"`) or use argument arrays where supported.
+
+## 2025-02-28 - [CRITICAL] Prevent Predictable Temporary File Vulnerabilities (CWE-377)
+**Vulnerability:** The script `automation/ops/reconfigure_ksc_service.py` was creating a temporary file with a hardcoded name (`/tmp/reconfig_ans.txt`) via Paramiko's SFTP in a shared world-writable directory.
+**Learning:** Creating files with predictable names in a shared directory like `/tmp` makes the system vulnerable to symlink attacks, race conditions, or unauthorized access, especially when those files contain sensitive credentials.
+**Prevention:** Always use random, unpredictable filenames (e.g., by appending `uuid.uuid4().hex`) when generating temporary files in shared directories, to avoid race conditions and predictable file path vulnerabilities.
