@@ -4,7 +4,7 @@ md2pdf==3.1.1
 pyyaml==6.0.2
 requests==2.33.0
 cryptography==48.0.1
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 jinja2==3.1.6
 lxml==6.1.0
 pytest==9.1.0
