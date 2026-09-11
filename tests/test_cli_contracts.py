@@ -46,3 +46,18 @@ def test_setup_missing_args():
         or "esperado" in result.stderr.lower()
         or "error:" in result.stderr.lower()
     )
+
+
+def test_packages_help():
+    result = run_script("automation.python.kscctl", ["packages", "--help"])
+    assert result.returncode == 0
+    assert "--list" in result.stdout
+    assert "--verify-dir" in result.stdout
+    assert "--download" in result.stdout
+
+
+def test_packages_list():
+    result = run_script("automation.python.kscctl", ["packages", "--list"])
+    assert result.returncode == 0
+    assert "ksc-server-16.3-pt-BR" in result.stdout
+    assert "kesl-distributive-12.5" in result.stdout

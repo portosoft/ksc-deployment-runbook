@@ -55,6 +55,35 @@ def setup_postgres(config: KscConfig, logger: logging.Logger) -> None:
     logger.info("[Mock] PostgreSQL 16 provisionado e preparado.")
 
 
+def verify_ksc_packages(package_dir: str, logger: logging.Logger) -> None:
+    """Verifica a integridade criptográfica SHA-256 dos pacotes RPM antes da instalação.
+
+    Args:
+        package_dir: Diretório contendo os arquivos RPM a serem verificados.
+        logger: Logger para registro das operações.
+
+    Raises:
+        SetupError: Se qualquer pacote reconhecido apresentar hash divergente.
+    """
+    from .packages import verify_directory
+
+    logger.info(f"Verificando integridade SHA-256 dos pacotes em '{package_dir}'...")
+    try:
+        results = verify_directory(package_dir)
+    except Exception as e:
+        raise SetupError(f"Falha ao validar diretório de pacotes '{package_dir}': {e}")
+
+    if results["failed"]:
+        failed_files = [item["file"] for item in results["failed"]]
+        logger.error(f"Pacotes com checksum divergente detectados: {failed_files}")
+        raise SetupError(
+            f"Falha de integridade criptográfica nos pacotes: {', '.join(failed_files)}. "
+            "Possível corrupção ou adulteração de binários."
+        )
+
+    logger.info(f"Integridade validada com sucesso: {len(results['verified'])} pacotes certificados.")
+
+
 def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
     """Instala o KSC Server e Web Console via RPM silencioso (mock).
 
@@ -62,6 +91,12 @@ def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
         config: Configuração do KSC.
         logger: Logger para registro das operações.
     """
+    import os
+
+    packages_dir = getattr(config, "packages_dir", None) or os.environ.get("KSC_PACKAGES_DIR")
+    if packages_dir and os.path.isdir(packages_dir):
+        verify_ksc_packages(packages_dir, logger)
+
     logger.info("Instalando KSC Server e Web Console...")
     # Wrapper real de instalação silenciosa
     logger.info("[Mock] KSC Server RPM instalado.")

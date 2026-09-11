@@ -8,9 +8,11 @@ Preparar o terreno antes de iniciar qualquer script de instalação.
 - [ ] **DNS**: Resolução direta e reversa configurada.
 - [ ] **Internet**: Acesso aos repositórios Rocky/Oracle e Kaspersky.
 - [ ] **Repositórios**: `epel-release` instalado.
+- [ ] **Pacotes Oficiais e Checksums**: Pacotes RPM oficiais obtidos e validados via `sha256sum -c configs/ksc/checksums.sha256` ou `kscctl packages --verify-dir`.
 
 > [!IMPORTANT]
 > A resolução DNS é o ponto onde 80% das falhas de instalação ocorrem. Certifique-se de que o comando `hostname -f` retorna o FQDN correto.
+> Binários não homologados ou com divergência de checksum SHA-256 serão rejeitados pela automação de deploy.
 
 ## Liberação de Portas (Firewall Interno)
 | Porta | Protocolo | Origem | Destino | Descrição |

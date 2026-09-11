@@ -33,6 +33,23 @@ Script para efetuar a instalação e provisionamento do Kaspersky Security Cente
 - `1`: Falhas críticas detectadas durante o `--check`.
 - `2`: Erro durante a instalação ou erro de uso/configuração.
 
+## kscctl packages
+
+Subcomando unificado para consulta do catálogo oficial de downloads da Kaspersky e verificação criptográfica de pacotes RPM.
+
+### Argumentos
+
+- `--list`: Lista todos os pacotes oficiais, versões, idiomas, plataformas e prefixos dos hashes SHA-256.
+- `--verify-dir <PATH>`: Valida se todos os pacotes RPM e archives presentes no diretório correspondem aos hashes oficiais do catálogo.
+- `--download <PACKAGE_ID>`: Efetua o download seguro via streaming do pacote solicitado e valida imediatamente o checksum SHA-256 pós-download, descartando arquivos divergentes.
+- `--output-dir <DIR>`: Diretório de destino para o download (padrão: diretório atual).
+
+### Códigos de Saída
+
+- `0`: Operação concluída com sucesso (listagem exibida, diretório validado sem falhas ou download concluído com integridade confirmada).
+- `1`: Falha de integridade detectada (pacotes corrompidos/adulterados) ou diretório inacessível.
+- `2`: Erro de sintaxe ou parâmetros inválidos.
+
 ## Idempotência
 
 Nossos scripts são planejados para serem idempotentes. Rodar `--apply` em um ambiente que já possui o KSC não deve quebrar a instalação, mas sim validar ou pular etapas já concluídas de forma segura.
