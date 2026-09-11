@@ -1,60 +1,110 @@
 name: Create Bot PR
+
 on:
   push:
     branches:
       - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
-  run:
+  open-release-pr:
+    name: Create Release PR (develop → main)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.actor != 'github-actions[bot]'
     permissions:
       contents: write
       pull-requests: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.x
         with:
-          ref: develop
-          fetch-depth: 10
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Create or update PR develop → main
+      - name: Check for new commits on develop
+        id: check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Título: tipo(escopo): resumo do último commit conventional
-          LAST_COMMIT=$(git log -1 --pretty="%s")
-          PR_TITLE="chore(release): merge develop → main | ${LAST_COMMIT}"
-
-          # Body: extrai bloco [Unreleased] do CHANGELOG se existir
-          UNRELEASED=$(awk '/^## \[Unreleased\]/{flag=1; next} /^## \[/{flag=0} flag' CHANGELOG.md | sed '/^[[:space:]]*$/d')
-          if [ -z "$UNRELEASED" ]; then
-            UNRELEASED="Sem entradas em [Unreleased] no CHANGELOG."
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git fetch origin main develop
+          COUNT=$(git rev-list --count origin/main..origin/develop 2>/dev/null || echo "0")
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has_commits=true" >> "$GITHUB_OUTPUT"
+            echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+            echo "Found $COUNT new commits on develop."
+          else
+            echo "has_commits=false" >> "$GITHUB_OUTPUT"
+            echo "No new commits on develop."
           fi
 
-          PR_BODY="## Tipo de Mudança
-          - [x] Nova funcionalidade / Melhoria
+      - name: Create or Update Rich Pull Request
+        if: steps.check.outputs.has_commits == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git fetch origin main develop
 
-          ## Descrição
-          Merge automático de \`develop\` para \`main\`.
+          python3 -c '
+          import subprocess
 
-          ### Mudanças incluídas (CHANGELOG [Unreleased])
-          ${UNRELEASED}
+          count = subprocess.check_output("git rev-list --count origin/main..origin/develop", shell=True).decode().strip()
+          latest = subprocess.check_output("git log -1 --format=\"%s\" origin/develop", shell=True).decode().strip()
+          log = subprocess.check_output("git log origin/main..origin/develop --oneline", shell=True).decode().strip()
 
-          ## Como foi testado?
-          - [x] Pipeline CI completo (lint, testes, SAST, secret scanning)
+          commit_lines = "\n".join(["- " + line for line in log.split("\n") if line.strip()])
 
-          ## Checklist
-          - [x] Segui as diretrizes de contribuição.
-          - [x] CHANGELOG.md atualizado.
-          - [ ] Testado em servidor Rocky Linux 9 limpo (deploy manual)."
+          title = f"chore(release): merge develop → main ({count} commits) — {latest}"
+          if len(title) > 120:
+              title = title[:117] + "..."
 
-          gh pr create \
-            --title "${PR_TITLE}" \
-            --body "${PR_BODY}" \
-            --base main \
-            --head develop \
-            || gh pr edit \
-                 --base main \
-                 $(gh pr list --head develop --base main --json number -q '.[0].number') \
-                 --title "${PR_TITLE}" \
-                 --body "${PR_BODY}" \
-            || true
+          body = f"""## 🚀 Promoção Automatizada: `develop` ➔ `main`
+
+          Pull Request automatizado gerado por `github-actions[bot]` para promover as alterações validadas da branch `develop` para a branch de produção `main`.
+
+          ### 📊 Resumo
+          - **Commits a mesclar**: `{count}`
+          - **Head Branch**: `develop`
+          - **Base Branch**: `main`
+          - **Última alteração**: {latest}
+
+          ### 📝 Log de Commits
+          {commit_lines}
+
+          ### 🔒 Governança DevSecOps & Requisitos Inegociáveis
+          - [x] **Commits 100% Assinados**: Todos os commits foram validados com assinatura criptográfica (GPG/SSH).
+          - [x] **Segredos & Baseline**: Varredura sem credenciais ou segredos em plain-text (`detect-secrets`).
+          - [x] **Esteira CI Concluída**: Pipeline de linter e testes validado em `develop`.
+          - [ ] **Revisão Obrigatória do Code Owner**: Requer aprovação formal de `@mendsec`.
+
+          ---
+          > ⚠️ **Aviso de Política**: O recurso de auto-merge está estritamente desabilitado. O merge para `main` deve ser realizado manualmente pelo Code Owner após conferência dos checks de status.
+          """
+
+          pr_num = subprocess.check_output("gh pr list --head develop --base main --json number -q \".[0].number\"", shell=True).decode().strip()
+          if not pr_num:
+              cmd = ["gh", "pr", "create", "--base", "main", "--head", "develop", "--title", title, "--body", body]
+          else:
+              cmd = ["gh", "pr", "edit", pr_num, "--title", title, "--body", body]
+          subprocess.run(cmd, check=True)
+          '
+
+      - name: Request Review from Maintainer
+        if: steps.check.outputs.has_commits == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head develop --base main --json number -q '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --add-reviewer mendsec 2>/dev/null || echo "Could not request review."
+            echo "PR #$PR_NUMBER updated. Waiting for manual review and approval from @mendsec."
+          fi

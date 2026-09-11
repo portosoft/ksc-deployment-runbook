@@ -9,21 +9,37 @@ Obrigado por seu interesse em contribuir com este projeto open-source!
 - Seja descritivo e inclua detalhes do ambiente (versão do OS, versão do KSC, etc.).
 
 ### Propondo Pull Requests
-1. Faça um fork do repositório (ou crie uma branch se tiver acesso).
-2. Implemente suas alterações seguindo o padrão de diretórios.
-3. Garanta que scripts Bash e Python tenham comentários claros.
-4. Envie o PR com uma descrição clara do que foi alterado.
+1. Faça um fork do repositório (ou crie uma branch se tiver permissão).
+2. **Branch de Origem e Destino**: Todas as branches de trabalho DEVEM ser criadas a partir da branch **`develop`** (branch padrão do repositório).
+   - **NUNCA direcione Pull Requests diretamente para a branch `main`**. A branch `main` é estritamente restrita a releases e promoções automatizadas vindas de `develop`.
+   - Todo PR de desenvolvimento ou documentação deve ter como base (`base ref`) a branch **`develop`**.
+3. **Padrão de Nomenclatura de Branches**:
+   - `feat/<nome>` ou `feature/<nome>`: Novas funcionalidades ou automações.
+   - `fix/<nome>` ou `bugfix/<nome>`: Correção de bugs.
+   - `docs/<nome>`: Manuais, runbooks ou atualizações de documentação.
+   - `ci/<nome>` ou `chore/<nome>`: Ajustes de CI/CD, linters ou tarefas operacionais.
+   - `security/<nome>`: Correções e remediações de segurança.
+4. Implemente suas alterações seguindo o padrão de diretórios e boas práticas de código seguro.
+5. Garanta que scripts Bash e Python tenham comentários claros, tratamento de erros e idempotência.
+6. Envie o PR direcionado para `develop` com o checklist DevSecOps preenchido no template.
 
-## Padrões de Commit
-- Utilize mensagens curtas e descritivas (ex.: `docs: adiciona caso de erro no postgres`, `feat: novo script de validação`).
-- Prefira o uso de Conventional Commits.
-- **Commits obrigatoriamente assinados (GPG ou SSH)**. Configure sua chave no GitHub ([docs](https://docs.github.com/authentication/managing-commit-signature-verification)) e ative o signing no Git local:
-  ```bash
-  git config --global commit.gpgsign true
-  # ou para SSH:
-  git config --global gpg.format ssh
-  git config --global user.signingkey ~/.ssh/id_ed25519.pub
-  ```
+## Padrões de Commit e Assinatura Criptográfica
+- **Conventional Commits**: Utilize a convenção de commits (`<tipo>(<escopo>): <descrição>`).
+  - Tipos permitidos: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `security`, `perf`, `ci`.
+  - Exemplos: `feat(infra): add proxmox local test environment (#204)`, `fix(ops): harden psql connection string`.
+- **Commits obrigatoriamente assinados (GPG ou SSH)**:
+  - 100% dos commits enviados ao repositório devem ser assinados criptograficamente.
+  - Commits não assinados são rejeitados pelo check `Enforce Main Branch Rules` e pelas proteções de branch.
+  - Configure sua chave SSH ou GPG no GitHub e habilite o signing local:
+    ```bash
+    git config --global gpg.format ssh
+    git config --global user.signingkey ~/.ssh/id_ed25519.pub
+    git config --global commit.gpgsign true
+    ```
+
+## Estratégia de Merge
+- **NUNCA use `Squash and merge`** entre branches de integração (`develop`) e produção (`main`). O squash quebra a linearidade de auditoria e a rastreabilidade das assinaturas criptográficas individuais.
+- Utilize **Merge Commit padrão** (`--no-ff` / `--merge`) ou **Rebase** para preservar o grafo de histórico do Git.
 
 ## Segurança e Privacidade
 - **MUITO IMPORTANTE**: Nunca inclua segredos nos seus commits. Isso inclui:
