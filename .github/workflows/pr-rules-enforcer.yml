@@ -1,0 +1,122 @@
+name: PR Rules Enforcer
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.gitignore'
+      - '.pre-commit-config.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  enforce-rules:
+    name: Enforce Main Branch Rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.x
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate PR Source and Author
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_USER: ${{ github.event.pull_request.user.login }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$BASE_REF" = "main" ]; then
+            echo "PR HEAD ref: $HEAD_REF"
+            echo "PR creator: $PR_USER"
+
+            if [ "$HEAD_REF" != "develop" ]; then
+              echo "::error::PRs to main must only come from the 'develop' branch. Found: '$HEAD_REF'."
+              exit 1
+            fi
+
+            if [ "$PR_USER" != "github-actions[bot]" ] && [ "$PR_USER" != "app/github-actions" ] && [ "$PR_USER" != "mendsec" ]; then
+              echo "::error::PRs from 'develop' to 'main' must be created by 'github-actions[bot]' or maintainer. Manual PRs from unauthorized users are not allowed. Found: '$PR_USER'."
+              exit 1
+            fi
+            echo "✓ Source branch and author validation passed."
+          else
+            echo "Skipping PR source and author validation (event: '$EVENT_NAME', target: '$BASE_REF')."
+          fi
+
+      - name: Validate Commit Signatures
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$BASE_REF" = "main" ]; then
+            git fetch origin main
+
+            HAS_UNSIGNED=0
+            while read -r sha || [ -n "$sha" ]; do
+              if [ -z "$sha" ]; then
+                continue
+              fi
+              if ! git cat-file -p "$sha" | grep -qE "^(gpgsig|gpgsig-sha256)"; then
+                echo "::error::Commit $sha is NOT signed. All commits must be signed (SSH or GPG). Rule bypass is strictly forbidden."
+                HAS_UNSIGNED=1
+              else
+                echo "✓ Commit $sha has a valid cryptographic signature."
+              fi
+            done < <(git log origin/main..${HEAD_SHA:-HEAD} --pretty=format:"%H")
+
+            if [ "$HAS_UNSIGNED" -eq 1 ]; then
+              echo "::error::Signature validation failed. All commits to main must be cryptographically signed."
+              exit 1
+            fi
+            echo "✓ All commits are properly signed."
+          else
+            echo "Skipping commit signature validation (event: '$EVENT_NAME', target: '$BASE_REF')."
+          fi
+
+      - name: Validate No Unauthorized Dependency Downgrades
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref || 'develop' }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git fetch origin "$BASE_REF" --depth=1 || true
+
+            if echo "$PR_TITLE $PR_BODY" | grep -qi "\[allow-downgrade\]"; then
+              echo "✓ Explicit dependency downgrade authorization flag found ([allow-downgrade])."
+              exit 0
+            fi
+
+            DOWNGRADES_FOUND=0
+            DIFF_OUTPUT=$(git diff "origin/$BASE_REF"...HEAD -- requirements.txt .github/workflows/ 2>/dev/null || true)
+
+            if [ -n "$DIFF_OUTPUT" ]; then
+              if echo "$DIFF_OUTPUT" | grep -E '^\-.*@v[0-9]+' | grep -qE '@v(7|8|9|10)'; then
+                if echo "$DIFF_OUTPUT" | grep -E '^\+.*@v[0-9]+' | grep -qE '@v(1|2|3|4|5|6)'; then
+                  echo "::error::Detected GitHub Action version downgrade in diff compared to $BASE_REF!"
+                  DOWNGRADES_FOUND=1
+                fi
+              fi
+            fi
+
+            if [ "$DOWNGRADES_FOUND" -eq 1 ]; then
+              echo "::error::Unauthorized dependency downgrade detected! Version downgrades are strictly prohibited under AGENTS.md policy unless explicitly authorized with '[allow-downgrade]' in PR title or body."
+              exit 1
+            fi
+            echo "✓ Dependency anti-downgrade validation passed."
+          else
+            echo "Skipping dependency anti-downgrade validation (event: '$EVENT_NAME')."
+          fi
