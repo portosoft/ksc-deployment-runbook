@@ -19,6 +19,7 @@ Bem-vindo ao guia oficial de implantação do KSC 16. Siga as etapas na ordem nu
 | | [11-Rollback](11-rollback.md) | Plano de emergência. | 🔄 |
 | | [12-FAQ](12-faq.md) | Dúvidas comuns. | ❓ |
 | | [13-Contrato Operacional](13-contrato-operacional.md) | Variáveis e Scripts. | 📝 |
+| **P5: Lab & Testes** | [14-Ambiente Proxmox](14-ambiente-testes-proxmox.md) | Laboratório Local VM. | 🧪 |
 
 ---
 [Próximo Passo: Visão Geral >>](01-visao-geral.md)
