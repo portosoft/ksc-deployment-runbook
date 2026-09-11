@@ -78,3 +78,8 @@
 **Vulnerability:** Shell command injection vulnerability identified when passing user-controlled or configured data directly into string-interpolated shell commands (e.g. `f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'`). Even when nested in double quotes within the python f-string, double-quotes in the substituted parameter break out of the shell quotes.
 **Learning:** Whenever parameters (such as configuration variables, database names, users) are injected into a string that will be evaluated by a shell (like `sudo -S {cmd}` or `-c "{query}"`), they must be properly escaped to ensure the shell treats them as a single literal argument.
 **Prevention:** Always use `shlex.quote()` on the full query string before interpolating it into the shell command string (e.g., `query = f"CREATE DATABASE {db} OWNER {config.db_user};"; cmd = f"-u postgres psql -c {shlex.quote(query)}"`) or use argument arrays where supported.
+
+## 2024-05-24 - [CRITICAL] Prevent Predictable Temporary File Vulnerabilities (CWE-377/CWE-379)
+**Vulnerability:** The script `automation/ops/reconfigure_ksc_service.py` was generating a temporary file with a hardcoded, predictable name (`/tmp/reconfig_ans.txt`). This file contained sensitive information (passwords). This is vulnerable to symlink attacks, race conditions, or local privilege escalation since `/tmp` is world-writable.
+**Learning:** Any predictable file name in a world-writable directory is a security risk. Attackers can pre-create the file as a symlink to a sensitive location, or attempt to read it before it is properly secured.
+**Prevention:** Always append random strings such as `uuid.uuid4().hex` to temporary file names in shared directories, or use secure temporary file creation APIs.
