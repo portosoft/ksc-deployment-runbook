@@ -80,6 +80,7 @@ Siga esta trilha para um deploy seguro e auditável:
 - [11-rollback.md](docs/11-rollback.md)
 - [12-faq.md](docs/12-faq.md)
 - [13-contrato-operacional.md](docs/13-contrato-operacional.md)
+- [14-ambiente-testes-proxmox.md](docs/14-ambiente-testes-proxmox.md) (Laboratório Local Proxmox)
 
 ## 🤝 Contratos de Automação
 Este projeto utiliza uma convenção rigorosa de argumentos CLI:
