@@ -10,7 +10,7 @@ Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidec
 
 ### Mapa de Portas Encaminhadas
 
-| Porta no Host (127.0.0.1) | Porta na VM (${KSC_VM_IP:-172.30.5.10}) | Serviço / Finalidade |
+| Porta no Host (127.0.0.1) | Porta na VM (${KSC_VM_IP}) | Serviço / Finalidade |
 | :--- | :--- | :--- |
 | `8006` | — | Interface Web do Proxmox VE (`https://127.0.0.1:8006/`) |
 | `2222` | `22` | SSH para a VM de teste |
@@ -25,15 +25,18 @@ Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidec
 
 ## 🚀 Como Subir o Ambiente
 
-### 1. Criar o arquivo de segredos do Proxmox (fora do Git)
+### 1. Criar o arquivo de variáveis do Proxmox (fora do Git)
+
+Gere a senha do Proxmox e configure o IP inicial da VM de testes:
 
 ```bash
 mkdir -p ~/.secrets
 install -m 600 /dev/null ~/.secrets/ksc-proxmox.env
-printf 'PROXMOX_PASSWORD=%s\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
-# Opcional: caso o Proxmox aloque uma sub-rede diferente da bridge padrão (172.30.5.0/24):
-# echo "KSC_VM_IP=172.30.5.10" >> ~/.secrets/ksc-proxmox.env
+printf 'PROXMOX_PASSWORD=%s\nKSC_VM_IP=172.30.5.10\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
 ```
+
+> [!TIP]
+> Caso o container `ksc-proxmox` aloque uma sub-rede diferente para a bridge `vmbr0` (ex: `172.31.0.0/24`), configure a VM com um IP nessa sub-rede e atualize `KSC_VM_IP` em `~/.secrets/ksc-proxmox.env` (ex: `KSC_VM_IP=172.31.0.10`). Em seguida, reinicie os sidecars com `podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml up -d`.
 
 ### 2. Inicializar os Containers
 

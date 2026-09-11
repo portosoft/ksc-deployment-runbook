@@ -19,7 +19,7 @@ services:
     ports:
       # Interface Web do Proxmox VE
       - "127.0.0.1:8006:8006"
-      # Portas publicadas no host e repassadas para a VM de testes (${KSC_VM_IP:-172.30.5.10}):
+      # Portas publicadas no host e repassadas para a VM de testes (${KSC_VM_IP}):
       - "127.0.0.1:2222:2222"     # -> VM:22 (SSH para automação e terminal)
       - "127.0.0.1:8443:8443"     # -> VM:443 (Web Console HTTPS do KSC)
       - "127.0.0.1:8080:8080"     # -> VM:8080 (Web Console HTTP/Alternative)
@@ -40,7 +40,7 @@ services:
 
   # ---------------------------------------------------------------------------
   # Sidecars socat para repasse de portas para a VM Rocky Linux 9
-  # IP da VM parametrizável via ${KSC_VM_IP:-172.30.5.10}
+  # IP da VM deve ser fornecido via KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env
   # Compartilham o network_mode com o container do proxmox.
   # ---------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:2222,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:22"]
+    command: ["TCP-LISTEN:2222,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:22"]
 
   forward-ksc-web-ssl:
     image: alpine/socat:1.8.0.0
@@ -58,7 +58,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:8443,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:443"]
+    command: ["TCP-LISTEN:8443,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:443"]
 
   forward-ksc-web-http:
     image: alpine/socat:1.8.0.0
@@ -66,7 +66,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:8080,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:8080"]
+    command: ["TCP-LISTEN:8080,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:8080"]
 
   forward-ksc-admin-api:
     image: alpine/socat:1.8.0.0
@@ -74,7 +74,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:13291,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:13291"]
+    command: ["TCP-LISTEN:13291,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:13291"]
 
   forward-ksc-agent-ssl:
     image: alpine/socat:1.8.0.0
@@ -82,7 +82,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:13000,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:13000"]
+    command: ["TCP-LISTEN:13000,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:13000"]
 
   forward-ksc-agent-plain:
     image: alpine/socat:1.8.0.0
@@ -90,7 +90,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:14000,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:14000"]
+    command: ["TCP-LISTEN:14000,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:14000"]
 
   forward-ksc-postgres:
     image: alpine/socat:1.8.0.0
@@ -98,7 +98,7 @@ services:
     network_mode: "service:proxmox"
     depends_on: [proxmox]
     restart: unless-stopped
-    command: ["TCP-LISTEN:5432,fork,reuseaddr", "TCP:${KSC_VM_IP:-172.30.5.10}:5432"]
+    command: ["TCP-LISTEN:5432,fork,reuseaddr", "TCP:${KSC_VM_IP:?Defina KSC_VM_IP no arquivo ~/.secrets/ksc-proxmox.env}:5432"]
 
 volumes:
   ksc_proxmox_data:

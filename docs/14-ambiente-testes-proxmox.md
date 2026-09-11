@@ -48,9 +48,12 @@ graph TD
    ls -la /dev/kvm
    # Deve ter permissão de leitura/escrita para o seu usuário (ex: grupo kvm)
    sudo usermod -aG kvm $USER
+
+   # Atualize a sessão ativa no shell para carregar o novo grupo (ou faça logout e login novamente):
+   newgrp kvm
    ```
    > [!NOTE]
-   > O container `proxmox` utiliza `group_add: ["keep-groups"]` no `compose.yml` para repassar os grupos suplementares do usuário (incluindo `kvm`) para dentro do container rootless. Isso requer o runtime `crun` (`podman info --format '{{.Host.OCIRuntime.Name}}'`).
+   > O container `proxmox` utiliza `group_add: ["keep-groups"]` no `compose.yml` para repassar os grupos suplementares do processo chamador (incluindo `kvm`) para dentro do container rootless. Por isso, a sessão ativa do shell que executa o `podman compose` deve conter o grupo `kvm` carregado e o Podman deve utilizar o runtime `crun` (`podman info --format '{{.Host.OCIRuntime.Name}}'`).
 3. Suporte a virtualização aninhada no kernel:
    ```bash
    cat /sys/module/kvm_intel/parameters/nested # ou kvm_amd
@@ -64,13 +67,13 @@ graph TD
 
 ## 🚀 Passo a Passo: Subindo o Proxmox
 
-### 1. Criar o arquivo de segredos fora do repositório
-A senha de root do Proxmox fica isolada em `~/.secrets/ksc-proxmox.env`:
+### 1. Criar o arquivo de variáveis fora do repositório
+A senha de root do Proxmox e o IP alvo da VM ficam isolados em `~/.secrets/ksc-proxmox.env`:
 
 ```bash
 mkdir -p ~/.secrets
 install -m 600 /dev/null ~/.secrets/ksc-proxmox.env
-printf 'PROXMOX_PASSWORD=%s\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
+printf 'PROXMOX_PASSWORD=%s\nKSC_VM_IP=172.30.5.10\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
 ```
 
 Para visualizar a senha gerada quando precisar logar na Web UI:
@@ -125,7 +128,10 @@ Dentro da interface do Proxmox VE:
      - **Gateway**: `172.30.5.1` (sempre o endereço `.1` da bridge `vmbr0`)
      - **DNS**: `8.8.8.8`, `1.1.1.1`
    - > [!TIP]
-     > Se a sub-rede selecionada pelo Proxmox diferir de `172.30.5.0/24`, basta definir `KSC_VM_IP=<IP_DA_VM>` em `~/.secrets/ksc-proxmox.env` para que os sidecars `socat` encaminhem as conexões para o endereço correto.
+     > Se a sub-rede selecionada dinamicamente pelo Proxmox diferir de `172.30.5.0/24` (ex: `172.31.0.0/24`), configure a VM com o IP correspondente (ex: `172.31.0.10`, gateway `172.31.0.1`) e atualize `KSC_VM_IP=172.31.0.10` em `~/.secrets/ksc-proxmox.env`. Em seguida, reinicie os sidecars:
+     > ```bash
+     > podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml up -d
+     > ```
 4. **Criar Usuário de Operação:**
    - Usuário: `suporte`
    - Configurar privilégios de `sudo` sem senha ou com senha conhecida.
