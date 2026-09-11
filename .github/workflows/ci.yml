@@ -21,7 +21,7 @@ jobs:
 
       - name: Import GPG key for signed commits
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         if: ${{ github.event_name == 'push' && env.HAS_GPG_KEY == 'true' }}
         continue-on-error: true
         with:
@@ -42,8 +42,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
+
           python-version: "3.10"
           cache: "pip"
 
