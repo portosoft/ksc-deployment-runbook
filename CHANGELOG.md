@@ -7,6 +7,10 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 ### Added
+- Catálogo oficial de pacotes Kaspersky e hashes criptográficos SHA-256 (`configs/ksc/packages.json` e `configs/ksc/checksums.sha256`) extraídos do portal oficial
+- Módulo `automation/python/packages.py` e subcomando `kscctl packages` (`--list`, `--verify-dir`, `--download`) com validação de integridade em blocos de 64 KB e proteção contra timing attacks
+- Verificação obrigatória de integridade de pacotes RPM antes da instalação em `setup_steps.py` (Zero Trust Gate)
+- Testes unitários em `tests/test_packages.py` e testes de contrato CLI em `tests/test_cli_contracts.py`
 - Geração sintética de credenciais para testes (`credentials.py` + fixtures pytest)
 - `init_config.py` para configuração interativa segura de variáveis de ambiente de produção
 - `automation/bash/validate-harden.sh` para validação pós-hardening em Rocky Linux 9 / KSC 16.x
