@@ -10,7 +10,7 @@ Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidec
 
 ### Mapa de Portas Encaminhadas
 
-| Porta no Host (127.0.0.1) | Porta na VM (172.30.5.10) | Serviço / Finalidade |
+| Porta no Host (127.0.0.1) | Porta na VM (${KSC_VM_IP:-172.30.5.10}) | Serviço / Finalidade |
 | :--- | :--- | :--- |
 | `8006` | — | Interface Web do Proxmox VE (`https://127.0.0.1:8006/`) |
 | `2222` | `22` | SSH para a VM de teste |
@@ -18,7 +18,7 @@ Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidec
 | `8080` | `8080` | Web Console HTTP / Alternativa |
 | `13291` | `13291` | KSC Administration Server (Console API) |
 | `13000` | `13000` | Kaspersky Network Agent (SSL) |
-| `14000` | `14000` | Kaspersky Network Agent (Plain/SSL) |
+| `14000` | `14000` | Kaspersky Network Agent (Plain/Non-SSL) |
 | `5432` | `5432` | PostgreSQL 16 |
 
 ---
@@ -31,6 +31,8 @@ Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidec
 mkdir -p ~/.secrets
 install -m 600 /dev/null ~/.secrets/ksc-proxmox.env
 printf 'PROXMOX_PASSWORD=%s\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
+# Opcional: caso o Proxmox aloque uma sub-rede diferente da bridge padrão (172.30.5.0/24):
+# echo "KSC_VM_IP=172.30.5.10" >> ~/.secrets/ksc-proxmox.env
 ```
 
 ### 2. Inicializar os Containers
@@ -46,6 +48,18 @@ podman compose --env-file ~/.secrets/ksc-proxmox.env \
 podman ps --filter name=ksc-proxmox
 curl -sk -o /dev/null -w '%{http_code}\n' https://127.0.0.1:8006/
 # Código HTTP esperado: 200
+```
+
+### 4. Parar ou Destruir o Ambiente
+
+```bash
+# Para pausar/parar a execução
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml stop
+
+# Para destruir os containers mantendo os dados dos volumes
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml down
 ```
 
 Para detalhes completos de provisionamento da VM Rocky Linux 9, configuração de IP e ciclo de testes, consulte o documento oficial:

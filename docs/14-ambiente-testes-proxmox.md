@@ -42,12 +42,15 @@ graph TD
 
 ## 📋 Pré-requisitos no Host
 
-1. **Podman** 4.x ou 5.x configurado em modo rootless.
+1. **Podman** 4.x ou 5.x configurado em modo rootless com runtime OCI `crun` (padrão no RHEL/Rocky/Debian/Ubuntu).
 2. Suporte a **KVM** habilitado e permissões no dispositivo:
    ```bash
    ls -la /dev/kvm
-   # Deve ter permissão de leitura/escrita para o seu usuário (ex: grupo kvm ou ACLs)
+   # Deve ter permissão de leitura/escrita para o seu usuário (ex: grupo kvm)
+   sudo usermod -aG kvm $USER
    ```
+   > [!NOTE]
+   > O container `proxmox` utiliza `group_add: ["keep-groups"]` no `compose.yml` para repassar os grupos suplementares do usuário (incluindo `kvm`) para dentro do container rootless. Isso requer o runtime `crun` (`podman info --format '{{.Host.OCIRuntime.Name}}'`).
 3. Suporte a virtualização aninhada no kernel:
    ```bash
    cat /sys/module/kvm_intel/parameters/nested # ou kvm_amd
@@ -110,12 +113,19 @@ Dentro da interface do Proxmox VE:
    - **Memória**: `8192` MB (8 GB para passar nos checks obrigatórios do `checks.py`)
    - **Disco**: `100` GB (alocado em `/var/lib/vz`)
    - **Rede**: Bridge interna `vmbr0`
-3. **Configuração de Rede Estática na VM:**
-   - Para que os sidecars `socat` encontrem a VM, configure o IP estático na instalação ou via NetworkManager:
-     - **IP**: `172.30.5.10`
+3. **Configuração de Rede na VM:**
+   - O container `dockurr/proxmox` cria dinamicamente a bridge interna `vmbr0` atribuindo o IP `.1` da sub-rede detectada (por padrão `172.30.5.1/24`).
+   - Para verificar o IP exato e a sub-rede ativa na bridge `vmbr0`:
+     ```bash
+     podman exec -it ksc-proxmox ip -4 addr show vmbr0
+     ```
+   - Configure a rede estática na instalação da VM (ou via NetworkManager):
+     - **IP**: `172.30.5.10` (ou IP dentro da sub-rede detectada)
      - **Máscara**: `255.255.255.0` (`/24`)
-     - **Gateway**: `172.30.5.2` (gateway da bridge do container Proxmox)
+     - **Gateway**: `172.30.5.1` (sempre o endereço `.1` da bridge `vmbr0`)
      - **DNS**: `8.8.8.8`, `1.1.1.1`
+   - > [!TIP]
+     > Se a sub-rede selecionada pelo Proxmox diferir de `172.30.5.0/24`, basta definir `KSC_VM_IP=<IP_DA_VM>` em `~/.secrets/ksc-proxmox.env` para que os sidecars `socat` encaminhem as conexões para o endereço correto.
 4. **Criar Usuário de Operação:**
    - Usuário: `suporte`
    - Configurar privilégios de `sudo` sem senha ou com senha conhecida.
@@ -185,12 +195,12 @@ python3 -m automation.python.kscctl audit --report
 
 Para parar todos os containers:
 ```bash
-podman compose -f infra/proxmox/compose.yml stop
+podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml stop
 ```
 
 Para destruir completamente o ambiente (mantendo os dados nos volumes):
 ```bash
-podman compose -f infra/proxmox/compose.yml down
+podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml down
 ```
 
 ---

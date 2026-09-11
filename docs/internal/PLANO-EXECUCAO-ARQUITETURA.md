@@ -49,7 +49,7 @@ graph TD
 - **Artefatos:** `docs/08-hardening.md`, `docs/11-rollback.md`.
 - **Escopo:**
   - Corrigir regras de firewall nftables em `docs/08-hardening.md` (portas 13291, 443, 8080, 13000, 14000 em vez das portas erradas 1329 e 3000).
-  - Incluir `DROP DATABASE ksciam;` e padronizar usuário `kluser`/`ksc_admin` em `docs/11-rollback.md`.
+  - Atualizar o procedimento em `docs/11-rollback.md` antes de incluir `DROP DATABASE ksciam;`, documentando a sequência segura: 1) interromper os serviços que utilizam o PostgreSQL (`klnagent_srv`, `kladminserver_srv`, console web), 2) conectar-se à base administrativa `postgres`, 3) encerrar conexões restantes com `ksciam` via `pg_terminate_backend`, 4) executar a remoção do banco (`DROP DATABASE ksciam;`, usando `IF EXISTS` para idempotência e restringindo `WITH (FORCE)` ao ambiente de testes com salvaguarda explícita), 5) e só então remover o usuário padronizado (`kluser`/`ksc_admin`).
 
 ### Etapa 3: Harmonização de CLI e Paths Dinâmicos
 - **Artefatos:** `automation/python/kscctl.py`, `automation/python/config.py`, `automation/lib/vault.py`.
@@ -61,7 +61,7 @@ graph TD
 - **Artefatos:** `automation/ops/fix_web_console_config.py`, `automation/ops/ksc_harden_db.py`.
 - **Escopo:**
   - Substituir comandos regex `sed -i` por parsing e serialização JSON estruturados via módulo `json` do Python em `fix_web_console_config.py`.
-  - Configurar PostgreSQL via `ALTER SYSTEM SET max_connections = 1000;` e `ALTER SYSTEM SET shared_preload_libraries = 'pg_stat_statements';` seguido de `SELECT pg_reload_conf();` em `ksc_harden_db.py`.
+  - Configurar PostgreSQL via `ALTER SYSTEM SET max_connections = 1000;` e `ALTER SYSTEM SET shared_preload_libraries = 'pg_stat_statements';` em `ksc_harden_db.py`, documentando e aplicando o reinício obrigatório via `systemctl restart postgresql-16` (pois são parâmetros de contexto *postmaster* que exigem restart e não são aplicados por `pg_reload_conf()`), validar `pg_settings.pending_restart` como falso confirmando os valores em runtime e executar `CREATE EXTENSION IF NOT EXISTS pg_stat_statements;` no banco-alvo.
 
 ### Etapa 5: Desmockagem do Setup
 - **Artefatos:** `automation/python/setup_steps.py`, `automation/python/ksc_setup.py`.
@@ -74,6 +74,6 @@ graph TD
   - Executar na VM Rocky Linux 9:
     1. `python3 -m automation.python.kscctl audit --check` -> Retorno 0 (sem falhas críticas).
     2. `python3 -m automation.python.kscctl setup --apply` -> Instalação concluída com sucesso.
-    3. `python3 -m automation.python.kscctl audit --postcheck` -> Serviços ativos (`klserver`, `klnagent`, `ksc-web-console`, `postgresql-16`).
-    4. `python3 -m automation.python.kscctl audit --report` -> Relatório em PDF gerado em `evidence/reports/report.pdf`.
+    3. `python3 -m automation.python.kscctl audit --postcheck` -> Serviços e checks ativos (`postgresql`/`postgresql-16`, `klnagent_srv`, `kladminserver_srv`, query `db_query` e porta do Web Console em LISTEN).
+    4. `python3 -m automation.python.kscctl audit --report` -> Relatório PDF gerado em `evidence/reports/<timestamp>/report.pdf` (validando a existência física do arquivo `.pdf`, além do retorno 0 da execução).
   - Validação externa pelo navegador em `https://127.0.0.1:8443`.
