@@ -197,11 +197,21 @@ python3 -m automation.python.kscctl audit --report
 
 ---
 
-## 🛑 Parando e Limpando o Ambiente
+## 🛑 Parando, Reiniciando e Limpando o Ambiente
 
-Para parar todos os containers:
+> [!WARNING]
+> **Reinício do Ambiente e Compartilhamento de Rede (`network_mode: "service:proxmox"`)**:
+> Os sidecars `socat` compartilham o namespace de rede do container `proxmox`. Se o container `ksc-proxmox` for reiniciado isoladamente (por exemplo, via `podman restart ksc-proxmox`), os sidecars podem perder a conectividade de rede enquanto permanecem em estado *running*.
+> **Sempre gerencie o ciclo de vida da stack inteira** via `podman compose`, utilizando `stop` seguido de `up -d` (ou `podman compose restart`), evitando reiniciar containers individuais diretamente pelo Podman.
+
+Para pausar/parar todos os containers:
 ```bash
 podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml stop
+```
+
+Para reiniciar a stack completa de forma segura:
+```bash
+podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml restart
 ```
 
 Para destruir completamente o ambiente (mantendo os dados nos volumes):

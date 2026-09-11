@@ -53,9 +53,16 @@ curl -sk -o /dev/null -w '%{http_code}\n' https://127.0.0.1:8006/
 # Código HTTP esperado: 200
 ```
 
-### 4. Parar ou Destruir o Ambiente
+### 4. Parar, Reiniciar ou Destruir o Ambiente
+
+> [!WARNING]
+> Como os sidecars `socat` compartilham o namespace de rede do container `proxmox` (`network_mode: "service:proxmox"`), **nunca reinicie o container `ksc-proxmox` individualmente** (ex: `podman restart ksc-proxmox`). Sempre reinicie a stack completa via `podman compose` para evitar perda de interface nos sidecars.
 
 ```bash
+# Para reiniciar a stack completa de forma segura
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml restart
+
 # Para pausar/parar a execução
 podman compose --env-file ~/.secrets/ksc-proxmox.env \
   -f infra/proxmox/compose.yml stop
