@@ -4,6 +4,7 @@ Script Operacional para reconfiguração dos serviços do KSC.
 """
 
 import logging
+import uuid
 from automation.python.config import KscConfig
 from automation.python.remote import connect_ksc_host, run_remote_sudo
 from automation.python.logging_utils import (
@@ -21,6 +22,7 @@ def reconfigure_ksc_service(config: KscConfig, apply: bool = False) -> None:
     Gera um arquivo de resposta temporário seguro e executa o postinstall.pl do KSC.
     Se apply for False, apenas simula (--check).
     """
+    ans_file = f"/tmp/reconfig_ans_{uuid.uuid4().hex}.txt"
     evidence_dir = init_evidence_dir("reconfigure_service")
     run_logger = configure_logger(evidence_dir)
     log_json(
@@ -59,13 +61,13 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
 
     if not apply:
         run_logger.info(
-            "[CHECK] Seria gerado um arquivo de respostas KLAUTOANSWERS em '/tmp/reconfig_ans.txt' via SFTP (modo 0600)."
+            f"[CHECK] Seria gerado um arquivo de respostas KLAUTOANSWERS em '{ans_file}' via SFTP (modo 0600)."
         )
         run_logger.info(
-            "[CHECK] Seria executado: KLAUTOANSWERS=/tmp/reconfig_ans.txt /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl"
+            f"[CHECK] Seria executado: KLAUTOANSWERS={ans_file} /opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl"
         )
         run_logger.info(
-            "[CHECK] O arquivo temporário '/tmp/reconfig_ans.txt' seria removido do servidor remoto."
+            f"[CHECK] O arquivo temporário '{ans_file}' seria removido do servidor remoto."
         )
         run_logger.info(
             "[CHECK] Os serviços (kladminserver_srv.service e ksc-web-console.service) seriam reiniciados."
@@ -74,39 +76,38 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
         return
 
     client = None
+    remote_file_created = False
     try:
         client = connect_ksc_host(config.ksc_host, config.ksc_user, config.ksc_pass)
 
         # Upload do arquivo de respostas via SFTP de forma isolada e segura
         run_logger.info(
-            "Gerando arquivo de respostas em /tmp/reconfig_ans.txt via SFTP..."
+            f"Gerando arquivo de respostas em {ans_file} via SFTP..."
         )
         sftp = client.open_sftp()
-        f = sftp.file("/tmp/reconfig_ans.txt", "w")
+        f = sftp.file(ans_file, "w")
         # Força permissão apenas de leitura/escrita pelo owner para evitar vazamento local
         f.chmod(0o600)
         f.write(ans_content)
         f.close()
         sftp.close()
+        remote_file_created = True
 
         # Executa postinstall.pl
         postinstall_cmd = (
-            "KLAUTOANSWERS=/tmp/reconfig_ans.txt "
+            f"KLAUTOANSWERS={ans_file} "
             "/opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl"
         )
         run_cmd = f"-E bash -c '{postinstall_cmd}'"
         log_json(run_logger, "run_command_start", cmd="postinstall.pl (silencioso)")
 
         out, err, status = run_remote_sudo(
-            client, f"-E bash -c '{postinstall_cmd}'", config.ksc_pass
+            client, run_cmd, config.ksc_pass
         )
         if out:
             for line in out.splitlines():
                 run_logger.info(line.strip())
         log_json(run_logger, "run_command_end", status=status, stderr=err)
-
-        # Limpeza do arquivo temporário
-        client.exec_command("rm -f /tmp/reconfig_ans.txt")
 
         if status != 0:
             raise OpsError(f"Erro na execução do postinstall.pl: {err}")
@@ -129,4 +130,9 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
         raise OpsError(f"Falha ao reconfigurar os serviços: {e}")
     finally:
         if client:
+            if remote_file_created:
+                try:
+                    client.exec_command(f"rm -f {ans_file}")
+                except Exception:
+                    pass
             client.close()

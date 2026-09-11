@@ -1,3 +1,6 @@
+import uuid
+
+
 def patch_nats_js(client, filepath):
     # Read the file
     sftp = client.open_sftp()
@@ -31,5 +34,9 @@ def patch_nats_js(client, filepath):
             cyr_bytes_str = cyr.encode("utf-8").decode("latin1", errors="ignore")
             new_content = new_content.replace(cyr_bytes_str, lat)
 
-    with sftp.file("/tmp/connection-creator.js", "w") as f:
+    # Use a non-predictable filename to prevent predictable temporary file vulnerabilities (CWE-377)
+    tmp_filename = f"/tmp/connection-creator_{uuid.uuid4().hex}.js"
+    with sftp.file(tmp_filename, "w") as f:
         f.write(new_content)
+
+    return tmp_filename

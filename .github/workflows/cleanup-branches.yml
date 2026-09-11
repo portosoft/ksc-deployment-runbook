@@ -1,0 +1,27 @@
+name: Cleanup Non-DevSecOps Branches
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Run weekly on Sunday at 00:00
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.x
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Cleanup invalid branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+          ./scripts/cleanup-branches.sh

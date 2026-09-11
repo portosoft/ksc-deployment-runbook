@@ -78,3 +78,13 @@
 **Vulnerability:** Shell command injection vulnerability identified when passing user-controlled or configured data directly into string-interpolated shell commands (e.g. `f'-u postgres psql -c "CREATE DATABASE {db} OWNER {config.db_user};"'`). Even when nested in double quotes within the python f-string, double-quotes in the substituted parameter break out of the shell quotes.
 **Learning:** Whenever parameters (such as configuration variables, database names, users) are injected into a string that will be evaluated by a shell (like `sudo -S {cmd}` or `-c "{query}"`), they must be properly escaped to ensure the shell treats them as a single literal argument.
 **Prevention:** Always use `shlex.quote()` on the full query string before interpolating it into the shell command string (e.g., `query = f"CREATE DATABASE {db} OWNER {config.db_user};"; cmd = f"-u postgres psql -c {shlex.quote(query)}"`) or use argument arrays where supported.
+
+## 2026-06-04 - [CRITICAL] Predictable Temporary File Vulnerabilities (CWE-377 / CWE-379)
+**Vulnerability:** Automation scripts (`automation/ops/reconfigure_ksc_service.py` and `automation/troubleshooting/ARCHIVED/patch_nats_js.py`) were creating temporary files with predictable names (`/tmp/reconfig_ans.txt` and `/tmp/connection-creator.js`) in world-writable directories like `/tmp`.
+**Learning:** Hardcoded or predictable file names in shared directories allow local attackers to pre-create symlinks or race conditions, potentially overwriting sensitive system files or hijacking credentials written by privileged processes.
+**Prevention:** Always append a random string (e.g., `uuid.uuid4().hex`) to temporary filenames, enforce strict `0o600` permissions upon creation via SFTP, and guarantee remote cleanup in a `finally` block.
+
+## 2026-06-04 - [CRITICAL] Prevent Command Injection via Unescaped sed Delimiters and Variables
+**Vulnerability:** In `automation/ops/fix_web_console_config.py`, configuration values like `config.ksc_fqdn` were interpolated directly into a `sed` command string. If the value contains single quotes or slashes, it can break out of shell quoting or terminate the `sed` expression prematurely.
+**Learning:** Commands with inner replacement syntaxes like `sed` require escaping delimiters (such as `/`) as well as shell-quoting each expression argument with `shlex.quote()`.
+**Prevention:** Always escape `/` with `\/` in substituted values and wrap each `-e` expression in `shlex.quote()` before assembling the shell command.
