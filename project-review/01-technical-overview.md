@@ -66,7 +66,7 @@ que dois servidores foram configurados de forma idêntica.
 | Log estruturado em JSON por comando executado, gravado em `evidence/` | Implementado `[FATO]` |
 | Relatório de auditoria em Markdown/PDF (`kscctl audit --report`) | Implementado `[FATO]` · conteúdo não conferido contra servidor real `[NÃO VALIDADO]` |
 | Contrato CLI uniforme `--check` / `--apply` / `--report` em todos os subcomandos | Implementado e verificado por `tests/test_cli_contracts.py` `[FATO]` |
-| Instalação e hardening efetivos | **Mock** em `setup_steps.py` `[LIMITAÇÃO]` — ver §1.5 |
+| Instalação e hardening efetivos | Implementado de fato em `setup_steps.py` e coberto por 16 testes unitários `[FATO]` · nunca executado em servidor real `[NÃO VALIDADO]` |
 
 ### Valor potencial para a Kaspersky
 
@@ -88,9 +88,9 @@ Classificação: **MVP / Beta inicial**.
 
 | Área | Estado atual | Evidência | Limitação | Próximo passo |
 |---|---|---|---|---|
-| Funcionalidade | Auditoria, pré-check e verificação de pacotes completos; instalação em mock | `automation/python/`, `setup_steps.py:35,47,90,116` | 4 funções centrais não implementadas | R-01 |
+| Funcionalidade | Auditoria, pré-check, verificação de pacotes e instalação implementados | `automation/python/setup_steps.py`, `tests/test_setup_steps.py` | Nunca executada em servidor real | R-01 (E2E) |
 | Integração | Interfaces mapeadas; parte não documentada oficialmente | [03](03-integration-with-main-tool.md) | Dependência de comportamento observado | R-02, Q1–Q3 |
-| Qualidade | 108 testes passam; 2 erros de coleta em arquivos fora de `tests/` | `pytest -q`, 2026-09-12 | Cobertura não publicada; `automation/ops/test_sudo.py` e `automation/smoke-tests/test_api_login.py` quebram a coleta | R-03 |
+| Qualidade | 124 testes passam; 2 erros de coleta em arquivos fora de `tests/` | `pytest -q`, 2026-09-12 | Cobertura não publicada; `automation/ops/test_sudo.py` e `automation/smoke-tests/test_api_login.py` quebram a coleta | R-03 |
 | Segurança | Vault com chave 0600, geração sintética de credenciais, CodeQL/Semgrep/baseline de segredos ativos | `.github/workflows/`, `automation/lib/vault.py` | `.env` em texto claro permanece suportado | R-04 |
 | Documentação | Trilha de 14 etapas completa em pt-BR | `docs/` | Sem versão em inglês | R-05 |
 | Operação | Rollback e troubleshooting documentados | `docs/11-rollback.md`, `docs/10-troubleshooting.md` | Rollback não exercitado em ambiente real | R-06 |
@@ -102,9 +102,10 @@ Classificação: **MVP / Beta inicial**.
 
 Para evitar leitura otimista deste pacote, registramos de forma destacada:
 
-1. `setup_steps.py` contém quatro funções documentadas no próprio código como
-   *mock*: preparação do SO, configuração do PostgreSQL, instalação do KSC via
-   RPM silencioso e hardening pós-instalação. `[FATO]`
+1. `setup_steps.py` executa comandos reais desde R-01 (dnf, initdb, psql,
+   instalação dos RPMs, `postinstall.pl`, drop-in systemd, systemctl), com
+   suporte a `dry_run` e cobertura unitária. Nenhum desses comandos foi
+   executado contra um servidor KSC real. `[NÃO VALIDADO]`
 2. Os 16 arquivos em `evidence/` foram produzidos por execução de testes com
    transporte SSH simulado — contêm `"stdout": "stdout"` e hosts fictícios.
    **Não são evidência de deploy em servidor real.** `[FATO]`

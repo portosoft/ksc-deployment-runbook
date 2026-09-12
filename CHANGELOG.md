@@ -7,6 +7,18 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 ### Added
+- **R-01a — desmockagem de `setup_steps.py`**: os quatro passos de instalação passam a executar
+  comandos reais no servidor alvo — pré-requisitos de SO via `dnf`, PostgreSQL 16 (repositório PGDG,
+  `initdb` idempotente, role e bases `ksc`/`ksciam` criadas via `psql` com SQL vindo do stdin),
+  instalação dos RPMs do KSC seguida de `postinstall.pl` em modo silencioso, e hardening com
+  drop-in systemd de `LD_LIBRARY_PATH`, `restorecon` e verificação de que os serviços ficaram ativos
+- Suporte a `dry_run` em todos os passos de instalação; `ksc_setup --check` passa a simular a
+  sequência completa e registrar cada comando que seria executado, sem alterar o sistema
+- `build_response_file()` como fonte única do formato KLAUTOANSWERS, compartilhada entre a
+  instalação inicial e `automation/ops/reconfigure_ksc_service.py`
+- `tests/test_setup_steps.py` com 16 testes: recusa de SO não suportado, idempotência do cluster
+  PostgreSQL, ausência da senha do banco em argv, remoção do arquivo de respostas mesmo quando o
+  `postinstall.pl` falha, e falha explícita quando os serviços não sobem
 - Catálogo oficial de pacotes Kaspersky e hashes criptográficos SHA-256 (`configs/ksc/packages.json` e `configs/ksc/checksums.sha256`) extraídos do portal oficial
 - Módulo `automation/python/packages.py` e subcomando `kscctl packages` (`--list`, `--verify-dir`, `--download`) com validação de integridade em blocos de 64 KB e proteção contra timing attacks
 - Verificação obrigatória de integridade de pacotes RPM antes da instalação em `setup_steps.py` (Zero Trust Gate)
@@ -18,6 +30,13 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `configs/postgres/postgresql.conf.template` com parâmetros mínimos de hardening do PostgreSQL
 
 ### Changed
+- `automation/python/shell_utils.py`: `run_command` aceita `input_data` para enviar dados sensíveis
+  via stdin, mantendo senhas e SQL fora da lista de processos do servidor
+- `automation/ops/reconfigure_ksc_service.py`: arquivo de respostas deixa de ser duplicado no script
+  e passa a usar `build_response_file()`, com os valores reais de `db_host`, `db_port` e `db_user`
+  em vez dos literais `127.0.0.1`/`5432`/`kluser`
+- `tests/test_packages.py`: o caso que validava sucesso da instalação com diretório vazio passa a
+  exigir falha explícita por ausência dos RPMs oficiais
 - Arquivos `.example` agora usam marcadores `<PREENCHER>` ao invés de valores com aparência realista
 - `kscctl.py`, `ksc_audit.py`, `ksc_setup.py`: eliminado anti-pattern `sys.argv` — subcomandos
   agora chamam funções diretamente (`run_audit_check`, `run_setup_check`, etc.)

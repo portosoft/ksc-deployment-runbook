@@ -4,7 +4,7 @@
 
 | # | Limitação | Categoria | Impacto | Quando ocorre | Mitigação atual | Solução planejada |
 |---|---|---|---|---|---|---|
-| L-01 | Quatro funções centrais de `setup_steps.py` são mocks (SO, PostgreSQL, instalação KSC, hardening) | Funcional | `setup --apply` não instala de fato | Sempre | Documentado aqui e no código | R-01 |
+| L-01 | Passos de instalação implementados, porém nunca executados contra um KSC real | Funcional | Comportamento real desconhecido | Sempre | `dry_run` em `--check`; 16 testes unitários; gate SHA-256 obrigatório | R-01 (execução E2E) |
 | L-02 | Nenhuma validação end-to-end em servidor real registrada | Testes | Compatibilidade é declarada, não comprovada | Sempre | Declaração explícita em todos os documentos | R-01 |
 | L-03 | Artefatos em `evidence/` provêm de testes com SSH simulado | Testes | Risco de leitura equivocada como prova de deploy | Sempre | Aviso explícito em §5.4 | R-01 |
 | L-04 | Dependência do esquema de `config.json` e `web-server.js` do Web Console | Compatibilidade | Quebra silenciosa em atualização do produto | Mudança de versão do KSC | Parsing JSON nativo em vez de regex | Q2 + R-02 |

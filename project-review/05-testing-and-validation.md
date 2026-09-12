@@ -7,7 +7,7 @@
 | Comando | `python3 -m pytest -q` |
 | Data | 2026-09-12 |
 | Ambiente | Linux, Python 3, branch `develop`, commit `704a9bd` |
-| Resultado | **108 testes aprovados**, 66 warnings, **2 erros de coleta** |
+| Resultado | **124 testes aprovados**, 66 warnings, **2 erros de coleta** |
 | Erros de coleta | `automation/ops/test_sudo.py::test_sudo` e `automation/smoke-tests/test_api_login.py::test_login` — arquivos fora de `tests/` que exigem ambiente real e são coletados indevidamente pelo pytest |
 | Cobertura | `pytest-cov` disponível; **percentual não publicado** `[LIMITAÇÃO]` |
 
@@ -27,6 +27,7 @@
 | Arquivos seguros e utilitários de shell | `tests/test_secure_file.py`, `tests/test_shell_utils.py` | Unitário |
 | Conversão env → Ansible | `tests/test_env_to_ansible.py` | Unitário |
 | Relatórios | `tests/test_report_utils.py` | Unitário |
+| Passos de instalação (SO, PostgreSQL, RPM, hardening) | `tests/test_setup_steps.py` | Unitário com `run_command` interceptado |
 | Operações (`automation/ops`) | `tests/ops/` | Unitário |
 
 ## 5.3 O que os testes **não** cobrem

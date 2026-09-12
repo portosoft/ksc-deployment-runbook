@@ -45,13 +45,14 @@ integração — é exatamente sobre ela que buscamos orientação.
 
 ## Estado atual
 
-Maturidade classificada como **MVP / Beta inicial**: 108 testes unitários
+Maturidade classificada como **MVP / Beta inicial**: 124 testes unitários
 passam localmente, 11 workflows de CI (incluindo CodeQL, Semgrep e verificação
 de baseline de segredos) estão ativos, e a documentação operacional está
-completa. Contudo, quatro funções centrais de `setup_steps.py` ainda são mocks
-declarados no código, não existe validação end-to-end em servidor real
-registrada, e os artefatos em `evidence/` são saídas de execução de testes com
-transporte SSH simulado — **não são evidências de deploy real**. `[FATO]`
+completa. Os passos de instalação em `setup_steps.py` deixaram de ser mocks e
+executam comandos reais, mas **nunca foram exercitados contra um KSC real**:
+não existe validação end-to-end registrada, e os artefatos em `evidence/` são
+saídas de execução de testes com transporte SSH simulado — **não são evidências
+de deploy real**. `[FATO]`
 
 ## O que pedimos à equipe Kaspersky
 
