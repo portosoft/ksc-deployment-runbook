@@ -277,3 +277,29 @@ def test_os_prereqs_are_valid_on_el9():
     assert "libidn2" in setup_steps.OS_PREREQ_PACKAGES
     # perl é exigido pelo postinstall.pl, que é o instalador silencioso do KSC.
     assert "perl" in setup_steps.OS_PREREQ_PACKAGES
+
+
+def test_accounts_created_before_installer(monkeypatch, recorded, logger):
+    """O postinstall.pl aborta se o grupo administrativo não existir previamente."""
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: False)
+    setup_steps._ensure_ksc_accounts(logger)
+
+    cmds = _cmds(recorded)
+    assert any(c.startswith(f"groupadd --system {setup_steps.KSC_ADMINS_GROUP}") for c in cmds)
+    assert any("useradd" in c and setup_steps.KSC_SERVICE_USER in c for c in cmds)
+
+
+def test_existing_accounts_are_preserved(monkeypatch, recorded, logger):
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+    setup_steps._ensure_ksc_accounts(logger)
+
+    assert recorded == [], "contas existentes não devem ser recriadas"
+
+
+def test_response_file_matches_account_constants(ksc_test_config):
+    """As contas criadas e as declaradas no arquivo de respostas têm de coincidir."""
+    content = build_response_file(ksc_test_config)
+
+    assert f"KLSRV_UNATT_KLADMINSGROUP={setup_steps.KSC_ADMINS_GROUP}" in content
+    assert f"KLSRV_UNATT_KLSVCUSER={setup_steps.KSC_SERVICE_USER}" in content
+    assert f"KLSRV_UNATT_KLSRVUSER={setup_steps.KSC_SERVICE_USER}" in content

@@ -60,6 +60,12 @@ KSC_SERVICES = [
     "ksc-web-console.service",
 ]
 
+# Contas de sistema exigidas pelo instalador silencioso. O postinstall.pl NÃO
+# as cria: se o grupo informado em KLSRV_UNATT_KLADMINSGROUP não existir, ele
+# aborta com "But the kladmins group does not exist".
+KSC_ADMINS_GROUP = "kladmins"
+KSC_SERVICE_USER = "ksc"
+
 # Prefixos dos RPMs instalados pelo passo de instalação, em ordem de dependência.
 KSC_RPM_PREFIXES = ["ksc64-", "klnagent64-", "ksc-web-console-"]
 
@@ -182,6 +188,56 @@ def ensure_os_prereqs(
     # dnf install é idempotente: pacotes já presentes são reportados e ignorados.
     _run(["dnf", "install", "-y"] + OS_PREREQ_PACKAGES, logger, dry_run)
     logger.info("Pré-requisitos do SO instalados.")
+
+
+def _account_exists(kind: str, name: str) -> bool:
+    """True se o usuário ('passwd') ou grupo ('group') já existir no sistema."""
+    try:
+        _, _, rc = run_command(["getent", kind, name], check=False)
+        return rc == 0
+    except Exception:
+        return False
+
+
+def _ensure_ksc_accounts(logger: logging.Logger, dry_run: bool = False) -> None:
+    """Cria o grupo administrativo e a conta de serviço exigidos pelo instalador.
+
+    O postinstall.pl valida a existência do grupo informado em
+    KLSRV_UNATT_KLADMINSGROUP e da conta de serviço, mas não os cria. Sem este
+    passo a instalação silenciosa aborta antes de qualquer alteração.
+
+    Idempotente: contas já existentes são preservadas como estão.
+    """
+    if dry_run:
+        logger.info(
+            f"[CHECK] Seriam garantidos o grupo '{KSC_ADMINS_GROUP}' e a conta de "
+            f"serviço '{KSC_SERVICE_USER}' antes do instalador."
+        )
+        return
+
+    if _account_exists("group", KSC_ADMINS_GROUP):
+        logger.info(f"Grupo '{KSC_ADMINS_GROUP}' já existe.")
+    else:
+        _run(["groupadd", "--system", KSC_ADMINS_GROUP], logger)
+
+    if _account_exists("passwd", KSC_SERVICE_USER):
+        logger.info(f"Conta de serviço '{KSC_SERVICE_USER}' já existe.")
+    else:
+        _run(
+            [
+                "useradd",
+                "--system",
+                "--gid",
+                KSC_ADMINS_GROUP,
+                "--home-dir",
+                KSC_DATA_DIR,
+                "--no-create-home",
+                "--shell",
+                "/sbin/nologin",
+                KSC_SERVICE_USER,
+            ],
+            logger,
+        )
 
 
 def _psql(
@@ -334,10 +390,10 @@ KLSRV_UNATT_DBMS_IAM_PASSWORD={config.db_password}
 KLSRV_UNATT_DB_IAM_NAME={config.db_name}
 KLSRV_UNATT_SERVERADDRESS={config.ksc_fqdn}
 KLSRV_UNATT_IAM_ADDRESS=127.0.0.1
-KLSRV_UNATT_KLSVCUSER=ksc
-KLSRV_UNATT_KLADMINSGROUP=kladmins
-KLSRV_UNATT_KLIAMUSER=ksc
-KLSRV_UNATT_KLSRVUSER=ksc
+KLSRV_UNATT_KLSVCUSER={KSC_SERVICE_USER}
+KLSRV_UNATT_KLADMINSGROUP={KSC_ADMINS_GROUP}
+KLSRV_UNATT_KLIAMUSER={KSC_SERVICE_USER}
+KLSRV_UNATT_KLSRVUSER={KSC_SERVICE_USER}
 KLSRV_UNATT_KLADMINS_USER={config.ksc_admin_user}
 KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
 """
@@ -427,6 +483,8 @@ def install_ksc_server(
         rpms = _resolve_rpms(packages_dir)
     logger.info(f"Pacotes a instalar: {[Path(p).name for p in rpms]}")
     _run(["dnf", "install", "-y"] + rpms, logger, dry_run)
+
+    _ensure_ksc_accounts(logger, dry_run)
 
     if dry_run:
         logger.info(
