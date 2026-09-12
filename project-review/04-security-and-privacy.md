@@ -70,8 +70,8 @@ em relação ao servidor KSC**. Consequências que o revisor deve considerar:
 ## 4.6 Recomendações que aplicaremos independentemente da revisão
 
 1. Tornar o vault o caminho padrão e sinalizar o uso de `.env` em texto claro
-   como modo degradado. (R-04)
+   como modo degradado. ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101))
 2. Implementar sanitização explícita de segredos na camada de log antes de
-   qualquer promoção a piloto. (R-04)
-3. Auditar a política de host key do SSH e documentar o comportamento. (R-04)
-4. Documentar o conjunto mínimo de privilégios `sudo` por operação. (R-04)
+   qualquer promoção a piloto. ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101))
+3. Auditar a política de host key do SSH e documentar o comportamento. ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101))
+4. Documentar o conjunto mínimo de privilégios `sudo` por operação. ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101))

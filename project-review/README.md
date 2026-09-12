@@ -32,7 +32,7 @@ solicitado à equipe da Kaspersky.
 | [06-known-limitations.md](06-known-limitations.md) | Limitações e riscos para a ferramenta principal |
 | [07-collaboration-proposal.md](07-collaboration-proposal.md) | Pedidos específicos à equipe Kaspersky |
 | [08-maintainer-questions.md](08-maintainer-questions.md) | Perguntas técnicas objetivas |
-| [09-roadmap.md](09-roadmap.md) | **Backlog canônico único** (fonte da verdade do desenvolvimento) |
+| [09-roadmap.md](09-roadmap.md) | Visão do backlog — a fonte da verdade é o [board](https://github.com/orgs/portosoft/projects/1) |
 | [10-submission-checklist.md](10-submission-checklist.md) | Checklist de revisão e de submissão |
 | [11-outreach-message.md](11-outreach-message.md) | Mensagem de encaminhamento pronta para envio |
 

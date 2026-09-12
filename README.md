@@ -50,8 +50,12 @@ Limitações completas: [project-review/06-known-limitations.md](project-review/
 
 ## 🗺️ Onde o desenvolvimento é planejado
 
-O **único backlog válido** do projeto é
-[project-review/09-roadmap.md](project-review/09-roadmap.md). Documentos em
+A fonte única do backlog é o GitHub:
+[board](https://github.com/orgs/portosoft/projects/1) e
+[issues](https://github.com/portosoft/ksc-deployment-runbook/issues), com o
+épico corrente em [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203).
+[project-review/09-roadmap.md](project-review/09-roadmap.md) é uma visão desse
+backlog para o leitor externo; se divergir, o board vence. Documentos em
 `docs/internal/` são registro histórico e não definem trabalho pendente.
 Fluxo de branches: `feature/*` → `develop` → `main`.
 
