@@ -9,6 +9,9 @@ simulados descritos em `project-review/05-testing-and-validation.md` §5.4.
 | `00-ambiente.txt` | Versões do SO, kernel e Python da VM | — |
 | `01-audit-check.log` | `kscctl audit --check` | exit 0, sem falhas críticas |
 | `02-setup-check-dryrun.log` | `kscctl setup --check` (dry-run da sequência completa) | exit 0 |
+| `03-packages-verify.log` | `kscctl packages --verify-dir` sobre os RPMs oficiais | 3 pacotes íntegros |
+| `04-setup-apply.log` | **`kscctl setup --apply` — deploy real e limpo** | **exit 0** |
+| `05-estado-final.log` | Serviços e portas após o deploy | 6 serviços `active` |
 
 ## Ambiente
 
@@ -28,17 +31,39 @@ simulados descritos em `project-review/05-testing-and-validation.md` §5.4.
 
 - As pré-checagens funcionam contra um Rocky Linux 9 real, com SELinux em
   modo `enforcing`, e retornam código 0.
-- O dry-run da sequência completa executa os quatro passos desmockados e
-  imprime cada comando que seria executado, sem alterar o sistema.
-- O aviso de pacotes ausentes em modo `--check` se comporta como projetado:
-  registra a indisponibilidade e não aborta.
+- O gate de integridade SHA-256 valida os RPMs oficiais baixados dos
+  servidores da Kaspersky.
+- **`setup --apply` executa um deploy real de ponta a ponta, a partir de uma VM
+  restaurada ao snapshot limpo, e retorna 0.** PostgreSQL 16 instalado e
+  configurado, bases `ksc` e `ksciam` criadas, os três RPMs do KSC 16.3
+  instalados, `postinstall.pl` concluído e hardening aplicado com o SELinux
+  restaurado a `enforcing`.
+- O Administration Server 16.3.0.1207 entra em execução e seis serviços ficam
+  `active`: `kladminserver_srv`, `klnagent_srv`, `kliam_srv`, `klwebsrv_srv`,
+  `klactprx_srv` e `klcssnmp_srv`.
 
 ## O que estas evidências **não** comprovam
 
-- Nenhuma instalação real do KSC foi executada: `setup --apply` ainda não
-  rodou, porque depende dos RPMs oficiais da Kaspersky.
-- Portanto **nada aqui valida compatibilidade com o KSC 16.x**. As limitações
-  L-02 e L-03 permanecem abertas.
+- **O Web Console não está acessível.** O RPM instala os arquivos, mas a
+  configuração depende de uma etapa própria, parametrizada por
+  `configs/ksc/ksc-web-console-setup.json.example`, que a automação ainda não
+  executa. A porta 443 não está em escuta.
+- O deploy não foi exercitado em Oracle Linux 9 nem em outra versão menor do
+  KSC 16.x.
+- O rollback não foi exercitado sobre uma instalação parcial.
+
+## Divergências de porta observadas
+
+| Porta | Documentação do projeto | Observado na instalação real |
+|---|---|---|
+| 13000 | Network Agent SSL | Em escuta (`klserver`) |
+| 13291 | API do Administration Server | **Não está em escuta**; a porta OpenAPI ativa é a **13299** |
+| 14000 | Network Agent plain | **Não está em escuta** |
+| 443 | Web Console HTTPS | Não está em escuta (Web Console não configurado) |
+
+`configs/ksc/ksc-web-console-setup.json.example` já referencia `openApiPort:
+13299`, enquanto `automation/python/checks.py` e a documentação verificam a
+13291 — as duas fontes do próprio repositório divergem entre si.
 
 ## Achado: Python do sistema no SO alvo
 
