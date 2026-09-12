@@ -81,7 +81,9 @@ def verify_ksc_packages(package_dir: str, logger: logging.Logger) -> None:
             "Possível corrupção ou adulteração de binários."
         )
 
-    logger.info(f"Integridade validada com sucesso: {len(results['verified'])} pacotes certificados.")
+    logger.info(
+        f"Integridade validada com sucesso: {len(results['verified'])} pacotes certificados."
+    )
 
 
 def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
@@ -93,7 +95,9 @@ def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
     """
     import os
 
-    packages_dir = getattr(config, "packages_dir", None) or os.environ.get("KSC_PACKAGES_DIR")
+    packages_dir = getattr(config, "packages_dir", None) or os.environ.get(
+        "KSC_PACKAGES_DIR"
+    )
     if packages_dir and os.path.isdir(packages_dir):
         verify_ksc_packages(packages_dir, logger)
 

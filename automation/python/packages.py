@@ -19,7 +19,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-DEFAULT_CATALOG_PATH = Path(__file__).resolve().parent.parent.parent / "configs" / "ksc" / "packages.json"
+DEFAULT_CATALOG_PATH = (
+    Path(__file__).resolve().parent.parent.parent / "configs" / "ksc" / "packages.json"
+)
 CHUNK_SIZE = 65536  # 64 KB
 
 logger = logging.getLogger("ksc.packages")
@@ -27,20 +29,25 @@ logger = logging.getLogger("ksc.packages")
 
 class PackageError(Exception):
     """Exceção base para erros no gerenciamento de pacotes."""
+
     pass
 
 
 class PackageNotFoundError(PackageError):
     """Lançada quando um ID de pacote não é encontrado no catálogo."""
+
     pass
 
 
 class ChecksumVerificationError(PackageError):
     """Lançada quando a verificação do checksum SHA-256 falha."""
+
     pass
 
 
-def load_package_catalog(catalog_path: Optional[Union[str, Path]] = None) -> Dict[str, Any]:
+def load_package_catalog(
+    catalog_path: Optional[Union[str, Path]] = None,
+) -> Dict[str, Any]:
     """Carrega o catálogo oficial de pacotes a partir do arquivo JSON.
 
     Args:
@@ -55,13 +62,17 @@ def load_package_catalog(catalog_path: Optional[Union[str, Path]] = None) -> Dic
     """
     path = Path(catalog_path) if catalog_path else DEFAULT_CATALOG_PATH
     if not path.is_file():
-        raise FileNotFoundError(f"Arquivo de catálogo de pacotes não encontrado: {path}")
+        raise FileNotFoundError(
+            f"Arquivo de catálogo de pacotes não encontrado: {path}"
+        )
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     if not isinstance(data, dict) or "packages" not in data:
-        raise ValueError(f"Formato de catálogo inválido em {path}: chave 'packages' ausente.")
+        raise ValueError(
+            f"Formato de catálogo inválido em {path}: chave 'packages' ausente."
+        )
 
     return data
 
@@ -94,9 +105,7 @@ def compute_sha256(file_path: Union[str, Path], chunk_size: int = CHUNK_SIZE) ->
 
 
 def verify_file_checksum(
-    file_path: Union[str, Path],
-    expected_sha256: str,
-    raise_on_error: bool = False
+    file_path: Union[str, Path], expected_sha256: str, raise_on_error: bool = False
 ) -> bool:
     """Verifica se o arquivo corresponde ao checksum SHA-256 esperado.
 
@@ -127,8 +136,7 @@ def verify_file_checksum(
 
 
 def verify_directory(
-    directory_path: Union[str, Path],
-    catalog: Optional[Dict[str, Any]] = None
+    directory_path: Union[str, Path], catalog: Optional[Dict[str, Any]] = None
 ) -> Dict[str, List[Dict[str, Any]]]:
     """Varre um diretório e valida os pacotes encontrados contra o catálogo oficial.
 
@@ -157,7 +165,7 @@ def verify_directory(
     results: Dict[str, List[Dict[str, Any]]] = {
         "verified": [],
         "failed": [],
-        "untracked": []
+        "untracked": [],
     }
 
     for item in sorted(dir_path.iterdir()):
@@ -171,28 +179,29 @@ def verify_directory(
             for pkg_id, pkg_info in packages_by_filename[fname]:
                 expected_sha = pkg_info["sha256"].lower()
                 if hmac.compare_digest(actual_sha, expected_sha):
-                    results["verified"].append({
-                        "file": fname,
-                        "path": str(item),
-                        "package_id": pkg_id,
-                        "product": pkg_info["product"],
-                        "version": pkg_info["version"],
-                        "sha256": actual_sha
-                    })
+                    results["verified"].append(
+                        {
+                            "file": fname,
+                            "path": str(item),
+                            "package_id": pkg_id,
+                            "product": pkg_info["product"],
+                            "version": pkg_info["version"],
+                            "sha256": actual_sha,
+                        }
+                    )
                     matched = True
                     break
             if not matched:
-                results["failed"].append({
-                    "file": fname,
-                    "path": str(item),
-                    "candidates": [pid for pid, _ in packages_by_filename[fname]],
-                    "actual_sha256": actual_sha
-                })
+                results["failed"].append(
+                    {
+                        "file": fname,
+                        "path": str(item),
+                        "candidates": [pid for pid, _ in packages_by_filename[fname]],
+                        "actual_sha256": actual_sha,
+                    }
+                )
         else:
-            results["untracked"].append({
-                "file": fname,
-                "path": str(item)
-            })
+            results["untracked"].append({"file": fname, "path": str(item)})
 
     return results
 
@@ -201,7 +210,7 @@ def download_package(
     package_id: str,
     target_dir: Union[str, Path],
     catalog: Optional[Dict[str, Any]] = None,
-    verify: bool = True
+    verify: bool = True,
 ) -> Path:
     """Faz o download seguro de um pacote do portal oficial e valida seu hash SHA-256.
 
@@ -246,7 +255,9 @@ def download_package(
 
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "KSC-Deployment-Runbook/1.0 (+https://github.com/portosoft/ksc-deployment-runbook)"}
+        headers={
+            "User-Agent": "KSC-Deployment-Runbook/1.0 (+https://github.com/portosoft/ksc-deployment-runbook)"
+        },
     )
 
     try:
@@ -290,13 +301,19 @@ def print_packages_table(catalog: Optional[Dict[str, Any]] = None) -> None:
     print(f" Fonte: {metadata.get('source_url')}")
     print(f" Atualizado em: {metadata.get('updated_at')}")
     print("=" * 105)
-    print(f"{'ID do Pacote':<32} {'Versão':<14} {'Idioma':<8} {'Arquivo':<35} {'SHA-256 (Prefixo)':<16}")
+    print(
+        f"{'ID do Pacote':<32} {'Versão':<14} {'Idioma':<8} {'Arquivo':<35} {'SHA-256 (Prefixo)':<16}"
+    )
     print("-" * 105)
 
     for pkg_id, info in sorted(packages.items()):
         sha_prefix = info["sha256"][:12] + "..."
-        print(f"{pkg_id:<32} {info['version']:<14} {info['language']:<8} {info['filename']:<35} {sha_prefix:<16}")
+        print(
+            f"{pkg_id:<32} {info['version']:<14} {info['language']:<8} {info['filename']:<35} {sha_prefix:<16}"
+        )
 
     print("-" * 105)
     print("Para verificar pacotes locais: kscctl packages --verify-dir <diretorio>")
-    print("Para baixar e validar:        kscctl packages --download <id_do_pacote> [--output-dir <dir>]\n")
+    print(
+        "Para baixar e validar:        kscctl packages --download <id_do_pacote> [--output-dir <dir>]\n"
+    )
