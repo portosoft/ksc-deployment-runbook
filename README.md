@@ -38,7 +38,7 @@ para diretrizes. Para reportar vulnerabilidades de segurança, veja [SECURITY.md
 **Estágio atual: MVP / Beta inicial.** Antes de usar em produção, leia:
 
 - Os passos de instalação em `automation/python/setup_steps.py` são **reais**
-  desde R-01 (preparação do SO, PostgreSQL 16, RPMs do KSC com `postinstall.pl`
+  desde a desmockagem (preparação do SO, PostgreSQL 16, RPMs do KSC com `postinstall.pl`
   e hardening), mas **ainda não foram exercitados em um servidor real**.
 - **Nenhuma validação end-to-end em servidor real foi registrada.** A
   compatibilidade com KSC 16.x / Rocky 9 / Oracle 9 / PostgreSQL 16 é
