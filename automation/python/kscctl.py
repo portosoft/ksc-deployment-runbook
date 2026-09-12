@@ -8,16 +8,6 @@ com auditoria e tokens de confirmação para ações destrutivas.
 import argparse
 import sys
 
-from automation.ops.fix_web_console_config import fix_web_console_config
-# Importa as operações refatoradas
-from automation.ops.ksc_harden_db import apply_hardening
-from automation.ops.purge_iam_mfa import purge_iam_mfa
-from automation.ops.reset_ksc_databases import reset_ksc_databases
-from automation.python.config import ConfigError, load_config
-from automation.python.ksc_audit import (run_audit_check, run_audit_postcheck,
-                                         run_audit_report)
-from automation.python.ksc_setup import run_setup_apply, run_setup_check
-
 
 def main():
     """Ponto de entrada do CLI unificado kscctl. Parseia subcomandos e delega para
@@ -141,10 +131,87 @@ def main():
         help="Aplica correções no config.json e reinicia console.",
     )
 
+    # Subcomando: packages
+    packages_parser = subparsers.add_parser(
+        "packages",
+        help="Gerenciamento e verificação de integridade dos pacotes oficiais Kaspersky.",
+    )
+    packages_group = packages_parser.add_mutually_exclusive_group(required=True)
+    packages_group.add_argument(
+        "--list",
+        action="store_true",
+        help="Lista todos os pacotes oficiais, versões e checksums SHA-256.",
+    )
+    packages_group.add_argument(
+        "--verify-dir",
+        type=str,
+        metavar="PATH",
+        help="Verifica a integridade dos pacotes presentes no diretório informado.",
+    )
+    packages_group.add_argument(
+        "--download",
+        type=str,
+        metavar="PACKAGE_ID",
+        help="Baixa e verifica o checksum SHA-256 do pacote informado.",
+    )
+    packages_parser.add_argument(
+        "--output-dir",
+        type=str,
+        default=".",
+        help="Diretório de destino para download (padrão: diretório atual).",
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
-    # Carrega a configuração padrão
+    # Execução do subcomando packages (não requer variáveis de ambiente pré-configuradas)
+    if args.command == "packages":
+        from automation.python import packages
+
+        if args.list:
+            packages.print_packages_table()
+            return 0
+        elif args.verify_dir:
+            try:
+                res = packages.verify_directory(args.verify_dir)
+            except Exception as e:
+                print(f"[ERROR] Falha ao verificar diretório: {e}", file=sys.stderr)
+                return 1
+            print(f"\nVerificação de integridade em: {args.verify_dir}")
+            print(f"Pacotes verificados com sucesso: {len(res['verified'])}")
+            for item in res["verified"]:
+                print(f"  [OK] {item['file']} ({item['product']} {item['version']})")
+            if res["failed"]:
+                print(f"\n[FALHA] Pacotes com hash divergente: {len(res['failed'])}")
+                for item in res["failed"]:
+                    print(
+                        f"  [CRITICAL] {item['file']} (SHA-256 obtido: {item['actual_sha256']})"
+                    )
+                return 1
+            if res["untracked"]:
+                print(f"\nArquivos não rastreados no catálogo: {len(res['untracked'])}")
+                for item in res["untracked"]:
+                    print(f"  [AVISO] {item['file']}")
+            return 0
+        elif args.download:
+            try:
+                final_path = packages.download_package(
+                    args.download,
+                    target_dir=args.output_dir,
+                    verify=True,
+                )
+                print(f"[SUCCESS] Pacote baixado e validado com sucesso: {final_path}")
+                return 0
+            except Exception as e:
+                print(
+                    f"[ERROR] Falha no download/verificação do pacote: {e}",
+                    file=sys.stderr,
+                )
+                return 1
+
+    # Carrega a configuração padrão para comandos operacionais
+    from automation.python.config import ConfigError, load_config
+
     try:
         config = load_config()
     except ConfigError as e:
@@ -153,20 +220,26 @@ def main():
 
     # Execução baseada no comando — chama diretamente as funções específicas
     if args.command == "audit":
+        from automation.python import ksc_audit
+
         if args.check:
-            return run_audit_check(config)
+            return ksc_audit.run_audit_check(config)
         elif args.postcheck:
-            return run_audit_postcheck(config)
+            return ksc_audit.run_audit_postcheck(config)
         elif args.report:
-            return run_audit_report(config)
+            return ksc_audit.run_audit_report(config)
 
     elif args.command == "setup":
+        from automation.python import ksc_setup
+
         if args.check:
-            return run_setup_check(config)
+            return ksc_setup.run_setup_check(config)
         elif args.apply:
-            return run_setup_apply(config)
+            return ksc_setup.run_setup_apply(config)
 
     elif args.command == "db" and args.subcommand == "harden":
+        from automation.ops.ksc_harden_db import apply_hardening
+
         apply = args.apply
         try:
             apply_hardening(config, apply=apply)
@@ -176,6 +249,8 @@ def main():
             return 1
 
     elif args.command == "db" and args.subcommand == "reset":
+        from automation.ops.reset_ksc_databases import reset_ksc_databases
+
         if args.apply:
             if args.confirm_token != "RESET-CONFIRM":
                 print(
@@ -194,6 +269,8 @@ def main():
             return 1
 
     elif args.command == "iam" and args.subcommand == "purge-mfa":
+        from automation.ops.purge_iam_mfa import purge_iam_mfa
+
         if args.apply:
             if args.confirm_token != "PURGE-CONFIRM":
                 print(
@@ -212,9 +289,11 @@ def main():
             return 1
 
     elif args.command == "web" and args.subcommand == "fix-config":
+        from automation.ops import fix_web_console_config
+
         apply = args.apply
         try:
-            fix_web_console_config(config, apply=apply)
+            fix_web_console_config.fix_web_console_config(config, apply=apply)
             return 0
         except Exception as e:
             print(f"[ERROR] Correção do console web falhou: {e}", file=sys.stderr)

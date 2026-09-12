@@ -17,6 +17,7 @@ class KscConfig(BaseModel):
     )
     ksc_admin_password: str
     ksc_license_path: Optional[str] = None
+    packages_dir: Optional[str] = None
     web_port: int = Field(default=443, ge=1, le=65535)
     selinux_expected_mode: str = "enforcing"
 
@@ -138,6 +139,7 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
         ksc_pass = os.getenv("KSC_PASS")
         ksc_fqdn = os.getenv("KSC_FQDN", "ksc-placeholder.test")
         ksc_admin_user = os.getenv("KSC_ADMIN_USER", "KLAdmins")
+        packages_dir = os.getenv("KSC_PACKAGES_DIR")
 
         if not db_password:
             raise ConfigError("KSC_DB_PASS é obrigatória")
@@ -153,6 +155,7 @@ def load_config(env_path: str = "configs/env/ksc_vars.env") -> KscConfig:
             db_sslmode=db_sslmode,
             ksc_admin_password=ksc_admin_password,
             ksc_license_path=ksc_license_path,
+            packages_dir=packages_dir,
             web_port=web_port,
             selinux_expected_mode=selinux_expected_mode,
             ksc_host=ksc_host,

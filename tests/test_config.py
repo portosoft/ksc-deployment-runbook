@@ -150,5 +150,23 @@ def test_load_config_vault_decrypt_failure_uses_env(mock_load_dotenv, mock_exist
     with caplog.at_level(logging.WARNING):
         config = load_config(_MOCK_ENV_PATH)
     assert config.db_password == _DB_PASS
-    assert any("vault" in record.message.lower() or "vault" in record.getMessage().lower()
-               for record in caplog.records)
+    assert any(
+        "vault" in record.message.lower() or "vault" in record.getMessage().lower()
+        for record in caplog.records
+    )
+
+
+@patch("automation.python.config.os.path.exists", side_effect=_exists_env_only)
+@patch("automation.python.config._load_dotenv")
+@patch.dict(
+    os.environ,
+    {
+        "KSC_DB_PASS": _DB_PASS,
+        "KSC_ADMIN_PASS": _ADMIN_PASS,
+        "KSC_PACKAGES_DIR": "/var/tmp/ksc_packages",
+    },
+)
+def test_load_config_packages_dir(mock_load_dotenv, mock_exists):
+    """KSC_PACKAGES_DIR is properly parsed into KscConfig.packages_dir."""
+    config = load_config(_MOCK_ENV_PATH)
+    assert config.packages_dir == "/var/tmp/ksc_packages"

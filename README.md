@@ -54,7 +54,11 @@ vi configs/env/ksc_vars.env
 # 3. Execute o Pre-check
 python3 -m automation.python.kscctl audit --check
 
-# 4. Inicie a Instalação
+# 4. Obtenha ou valide os pacotes oficiais com checksums SHA-256
+python3 -m automation.python.kscctl packages --list
+python3 -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
+
+# 5. Inicie a Instalação
 python3 -m automation.python.kscctl setup --apply
 ```
 
