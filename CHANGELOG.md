@@ -36,6 +36,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `docs/06-instalacao-ksc.md`: template de respostas documentado como artefato-base para geração dinâmica
 
 ### Fixed
+- `.github/workflows/sync-develop.yml`: loop de retry com espera condicional para push em `develop` após releases em `main`
 - `tests/test_remote.py`: migrado para fixture `ksc_test_config` (removia pragma hardcoded)
 - `.github/workflows/ci-integration.yml`: substituídas credenciais hardcoded por
   `generate_password()`; removidos subcomandos que exigiam SSH real no dry-run
