@@ -248,3 +248,24 @@ def test_hardening_fails_when_services_inactive(tmp_path, monkeypatch, recorded,
 
     with pytest.raises(SetupError, match="não ficaram ativos"):
         post_install_hardening(ksc_test_config, logger)
+
+
+def test_dry_run_without_packages_dir_warns_instead_of_failing(
+    monkeypatch, recorded, logger, ksc_test_config
+):
+    """Em --check, a ausência dos pacotes é condição de ambiente, não erro fatal."""
+    monkeypatch.delenv("KSC_PACKAGES_DIR", raising=False)
+    config = ksc_test_config.model_copy(update={"packages_dir": None})
+
+    install_ksc_server(config, logger, dry_run=True)
+
+    assert recorded == []
+
+
+def test_apply_without_packages_dir_still_fails(monkeypatch, recorded, logger, ksc_test_config):
+    """O gate permanece fatal fora da simulação."""
+    monkeypatch.delenv("KSC_PACKAGES_DIR", raising=False)
+    config = ksc_test_config.model_copy(update={"packages_dir": None})
+
+    with pytest.raises(SetupError, match="KSC_PACKAGES_DIR"):
+        install_ksc_server(config, logger, dry_run=False)

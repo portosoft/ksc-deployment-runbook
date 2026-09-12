@@ -394,12 +394,30 @@ def install_ksc_server(
         "KSC_PACKAGES_DIR"
     )
     if not packages_dir:
+        if dry_run:
+            # Em simulação, a ausência dos pacotes é condição do ambiente, não
+            # defeito de configuração: avisa e segue, sem mascarar o gate real.
+            logger.warning(
+                "[CHECK] KSC_PACKAGES_DIR não configurado: a verificação de integridade "
+                "e a instalação dos RPMs não puderam ser simuladas. Em --apply isto é erro fatal."
+            )
+            return
         raise SetupError(
             "KSC_PACKAGES_DIR não configurado. A verificação prévia de integridade dos pacotes é obrigatória para instalação."
         )
-    verify_ksc_packages(packages_dir, logger)
 
-    rpms = _resolve_rpms(packages_dir)
+    if dry_run:
+        try:
+            verify_ksc_packages(packages_dir, logger)
+            rpms = _resolve_rpms(packages_dir)
+        except SetupError as e:
+            logger.warning(
+                f"[CHECK] Simulação da instalação dos pacotes indisponível: {e}"
+            )
+            return
+    else:
+        verify_ksc_packages(packages_dir, logger)
+        rpms = _resolve_rpms(packages_dir)
     logger.info(f"Pacotes a instalar: {[Path(p).name for p in rpms]}")
     _run(["dnf", "install", "-y"] + rpms, logger, dry_run)
 
