@@ -7,6 +7,10 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 ### Added
+- Catálogo oficial de pacotes Kaspersky e hashes criptográficos SHA-256 (`configs/ksc/packages.json` e `configs/ksc/checksums.sha256`) extraídos do portal oficial
+- Módulo `automation/python/packages.py` e subcomando `kscctl packages` (`--list`, `--verify-dir`, `--download`) com validação de integridade em blocos de 64 KB e proteção contra timing attacks
+- Verificação obrigatória de integridade de pacotes RPM antes da instalação em `setup_steps.py` (Zero Trust Gate)
+- Testes unitários em `tests/test_packages.py` e testes de contrato CLI em `tests/test_cli_contracts.py`
 - Geração sintética de credenciais para testes (`credentials.py` + fixtures pytest)
 - `init_config.py` para configuração interativa segura de variáveis de ambiente de produção
 - `automation/bash/validate-harden.sh` para validação pós-hardening em Rocky Linux 9 / KSC 16.x
@@ -32,11 +36,13 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `docs/06-instalacao-ksc.md`: template de respostas documentado como artefato-base para geração dinâmica
 
 ### Fixed
+- `.github/workflows/sync-develop.yml`: loop de retry com espera condicional para push em `develop` após releases em `main`
 - `tests/test_remote.py`: migrado para fixture `ksc_test_config` (removia pragma hardcoded)
 - `.github/workflows/ci-integration.yml`: substituídas credenciais hardcoded por
   `generate_password()`; removidos subcomandos que exigiam SSH real no dry-run
 - `.github/workflows/codeql.yml` e `recreate-prs.yml`: hash do `actions/checkout` atualizado
   para Node.js 24
+- `.secrets.baseline`: ordenação de chaves (`sort_keys=True`) sincronizada com a esteira de CI
 - `.secrets.baseline`: entradas marcadas como `is_verified: true`
 - `tests/ops/ksc_harden_db_test.py`: check mode agora valida ausência de conexão SSH
 - `tests/test_report_utils.py`: mocks e asserções ajustados para estabilidade local e compatibilidade com Windows

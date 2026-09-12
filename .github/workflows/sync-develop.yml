@@ -27,4 +27,18 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
           git checkout develop
           git merge origin/main --no-edit
-          git push origin develop
+
+          # Retry push to develop in case required status checks on main are still running
+          MAX_RETRIES=12
+          for i in $(seq 1 $MAX_RETRIES); do
+            if git push origin develop; then
+              echo "Successfully synced develop with main."
+              exit 0
+            fi
+            echo "Push to protected branch 'develop' rejected (status checks may still be running). Waiting 15s before retry ($i/$MAX_RETRIES)..."
+            if [ "$i" -lt "$MAX_RETRIES" ]; then
+              sleep 15
+            fi
+          done
+          echo "Error: Failed to push to develop after $MAX_RETRIES attempts."
+          exit 1
