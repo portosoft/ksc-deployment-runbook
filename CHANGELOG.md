@@ -42,6 +42,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   `generate_password()`; removidos subcomandos que exigiam SSH real no dry-run
 - `.github/workflows/codeql.yml` e `recreate-prs.yml`: hash do `actions/checkout` atualizado
   para Node.js 24
+- `.secrets.baseline`: ordenação de chaves (`sort_keys=True`) sincronizada com a esteira de CI
 - `.secrets.baseline`: entradas marcadas como `is_verified: true`
 - `tests/ops/ksc_harden_db_test.py`: check mode agora valida ausência de conexão SSH
 - `tests/test_report_utils.py`: mocks e asserções ajustados para estabilidade local e compatibilidade com Windows
