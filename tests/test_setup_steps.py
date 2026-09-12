@@ -191,6 +191,7 @@ def test_install_runs_postinstall_and_removes_answers(
         return path
 
     monkeypatch.setattr(setup_steps, "_write_response_file", spy)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
     install_ksc_server(config, logger)
 
     cmds = _cmds(recorded)
@@ -212,6 +213,8 @@ def test_answers_removed_even_when_postinstall_fails(
         return ("", "", 0)
 
     monkeypatch.setattr(setup_steps, "run_command", failing)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
+    monkeypatch.setattr(setup_steps, "_ensure_ksc_accounts", lambda *a, **k: None)
 
     written = {}
     original = setup_steps._write_response_file
@@ -221,7 +224,7 @@ def test_answers_removed_even_when_postinstall_fails(
         lambda content: written.setdefault("path", original(content)),
     )
 
-    with pytest.raises(SetupError, match="Comando falhou"):
+    with pytest.raises(SetupError, match="postinstall.pl falhou"):
         install_ksc_server(config, logger)
 
     assert not os.path.exists(written["path"])
@@ -330,3 +333,21 @@ def test_web_console_is_not_treated_as_a_systemd_unit():
     """O RPM do Web Console não cria ksc-web-console.service."""
     assert "ksc-web-console.service" not in setup_steps.KSC_SERVICES
     assert "kladminserver_srv.service" in setup_steps.KSC_SERVICES
+
+
+def test_postinstall_skipped_when_already_configured(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """postinstall.pl recusa reexecução: 'Do not run the postinstall.pl script again'.
+
+    Reexecutar setup --apply em um host já configurado não pode falhar.
+    """
+    monkeypatch.setattr(setup_steps, "verify_ksc_packages", lambda *a, **k: None)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: True)
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+    _stage_rpms(tmp_path)
+    config = ksc_test_config.model_copy(update={"packages_dir": str(tmp_path)})
+
+    install_ksc_server(config, logger)
+
+    assert not any(setup_steps.KSC_POSTINSTALL in c for c in _cmds(recorded))

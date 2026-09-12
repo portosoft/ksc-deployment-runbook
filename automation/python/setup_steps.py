@@ -194,6 +194,27 @@ def ensure_os_prereqs(
     logger.info("Pré-requisitos do SO instalados.")
 
 
+# O postinstall.pl recusa reexecução em um servidor já configurado, saindo com
+# código 1 e a mensagem abaixo. Tratar isso como falha tornaria `setup --apply`
+# não idempotente.
+POSTINSTALL_ALREADY_CONFIGURED = "is successfully configured"
+
+
+def _ksc_is_configured() -> bool:
+    """True se o Administration Server já tiver sido configurado neste host.
+
+    A presença da unidade systemd do servidor é o indicador: ela só é criada
+    pelo postinstall.pl, não pela instalação do RPM.
+    """
+    try:
+        stdout, _, rc = run_command(
+            ["systemctl", "list-unit-files", "kladminserver_srv.service"], check=False
+        )
+        return rc == 0 and "kladminserver_srv.service" in (stdout or "")
+    except Exception:
+        return False
+
+
 def _account_exists(kind: str, name: str) -> bool:
     """True se o usuário ('passwd') ou grupo ('group') já existir no sistema."""
     try:
@@ -496,25 +517,42 @@ def install_ksc_server(
             f"e executado: {KSC_POSTINSTALL}"
         )
     else:
-        answers_path = _write_response_file(build_response_file(config))
-        try:
-            logger.info(f"Arquivo de respostas gerado em {answers_path} (modo 0600).")
-            _run(
-                [
-                    "env",
-                    f"KLAUTOANSWERS={answers_path}",
-                    "perl",
-                    KSC_POSTINSTALL,
-                ],
-                logger,
-                dry_run=False,
+        if _ksc_is_configured():
+            logger.info(
+                "Administration Server já configurado neste host; postinstall.pl ignorado. "
+                "Para reconfigurar, use 'kscctl' com o fluxo de reconfiguração."
             )
+            answers_path = None
+        else:
+            answers_path = _write_response_file(build_response_file(config))
+        try:
+            if answers_path is not None:
+                logger.info(
+                    f"Arquivo de respostas gerado em {answers_path} (modo 0600)."
+                )
+                rc = _run(
+                    [
+                        "env",
+                        f"KLAUTOANSWERS={answers_path}",
+                        "perl",
+                        KSC_POSTINSTALL,
+                    ],
+                    logger,
+                    dry_run=False,
+                    check=False,
+                )
+                if rc != 0:
+                    raise SetupError(
+                        f"postinstall.pl falhou (rc={rc}). Consulte o log desta execução "
+                        "e docs/10-troubleshooting.md."
+                    )
         finally:
-            try:
-                os.remove(answers_path)
-                logger.info("Arquivo de respostas temporário removido.")
-            except OSError as e:
-                logger.warning(f"Falha ao remover {answers_path}: {e}")
+            if answers_path is not None:
+                try:
+                    os.remove(answers_path)
+                    logger.info("Arquivo de respostas temporário removido.")
+                except OSError as e:
+                    logger.warning(f"Falha ao remover {answers_path}: {e}")
 
     logger.info(
         "Nota sobre LD_LIBRARY_PATH: O KSC no Linux muitas vezes exige bibliotecas. A recomendação DEVSECOPS é usar Environment=LD_LIBRARY_PATH=... no arquivo de serviço systemd, nunca em /etc/profile ou /etc/environment, para evitar vazamento global."
