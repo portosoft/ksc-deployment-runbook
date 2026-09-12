@@ -104,50 +104,72 @@ podman logs -f ksc-proxmox
 
 ## 💻 Provisionando a VM Rocky Linux 9 de Testes
 
-Dentro da interface do Proxmox VE:
+> [!IMPORTANT]
+> O provisionamento é **automatizado**. A sequência manual pela interface web
+> foi substituída por `infra/proxmox/provision-vm.sh`, que usa a imagem
+> genericcloud do Rocky 9 com cloud-init. Passos manuais não são reproduzíveis
+> e por isso não servem à validação E2E da issue #209.
 
-1. **Upload da Imagem ISO / Cloud-init:**
-   - Faça o download da ISO do **Rocky Linux 9 Minimal** (x86_64) no storage `local`.
-2. **Criar Máquina Virtual:**
-   - **VM ID**: `100` (ou padrão)
-   - **Nome**: `ksc-test-node01`
-   - **OS**: Linux (Kernel 5.x - 6.x)
-   - **CPU**: 2 ou 4 vCPUs (tipo: `host`)
-   - **Memória**: `8192` MB (8 GB para passar nos checks obrigatórios do `checks.py`)
-   - **Disco**: `100` GB (alocado em `/var/lib/vz`)
-   - **Rede**: Bridge interna `vmbr0`
-3. **Configuração de Rede na VM:**
-   - O container `dockurr/proxmox` cria dinamicamente a bridge interna `vmbr0` atribuindo o IP `.1` da sub-rede detectada (por padrão `172.30.5.1/24`).
-   - Para verificar o IP exato e a sub-rede ativa na bridge `vmbr0`:
-     ```bash
-     podman exec -it ksc-proxmox ip -4 addr show vmbr0
-     ```
-   - Configure a rede estática na instalação da VM (ou via NetworkManager):
-     - **IP**: `172.30.5.10` (ou IP dentro da sub-rede detectada)
-     - **Máscara**: `255.255.255.0` (`/24`)
-     - **Gateway**: `172.30.5.1` (sempre o endereço `.1` da bridge `vmbr0`)
-     - **DNS**: `8.8.8.8`, `1.1.1.1`
-   - > [!TIP]
-     > Se a sub-rede selecionada dinamicamente pelo Proxmox diferir de `172.30.5.0/24` (ex: `172.31.0.0/24`), configure a VM com o IP correspondente (ex: `172.31.0.10`, gateway `172.31.0.1`) e atualize `KSC_VM_IP=172.31.0.10` em `~/.secrets/ksc-proxmox.env`. Em seguida, reinicie os sidecars:
-     > ```bash
-     > podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml up -d
-     > ```
-4. **Criar Usuário de Operação:**
-   - Usuário: `suporte`
-   - Configurar privilégios de `sudo` sem senha ou com senha conhecida.
-   - Adicionar sua chave pública SSH em `/home/suporte/.ssh/authorized_keys`.
+```bash
+./infra/proxmox/provision-vm.sh
+```
+
+O script executa, de ponta a ponta:
+
+1. Gera o par de chaves SSH do laboratório em `~/.ssh/ksc-lab`, se ainda não existir.
+2. Lê a sub-rede real da bridge `vmbr0` e recusa prosseguir se `KSC_VM_IP` estiver fora dela.
+3. Baixa a imagem genericcloud do Rocky Linux 9 (aprox. 600 MB) para o nó.
+4. Cria a VM `100` (`ksc-rocky9`): 4 vCPU, 16 GB de RAM, 120 GB de disco.
+5. Importa o disco em **qcow2** e configura cloud-init (usuário `suporte`, IP estático, chave SSH).
+6. Inicia a VM e aguarda o SSH responder em `127.0.0.1:2222`.
+7. Cria o snapshot de linha de base `clean-baseline`.
+
+Para recriar a VM do zero: `./infra/proxmox/provision-vm.sh --recreate`.
+
+### Variáveis de ajuste
+
+| Variável | Padrão | Observação |
+| :--- | :--- | :--- |
+| `KSC_VMID` | `100` | ID da VM no Proxmox |
+| `KSC_VM_CORES` | `4` | vCPUs |
+| `KSC_VM_MEMORY_MB` | `16384` | Abaixo de 16384 o `checks.py` emite aviso de RAM |
+| `KSC_VM_DISK_GB` | `120` | O mínimo exigido pelos checks é 100 GB |
+| `KSC_PVE_STORAGE` | `local` | Storage do nó |
+| `KSC_VM_NET_MODEL` | `e1000` | Ver a nota sobre `vhost-net` abaixo |
+
+### Particularidades do ambiente containerizado
+
+Verificadas em execução real (2026-09-12, Podman rootless 5.7.0):
+
+- **Sub-rede da bridge.** A `vmbr0` recebe uma sub-rede escolhida dinamicamente
+  — neste host, `172.30.6.0/24`, e não o `172.30.5.0/24` citado como exemplo.
+  Ajuste `KSC_VM_IP` em `~/.secrets/ksc-proxmox.env` e suba a stack novamente
+  para repontar os sidecars. O script aborta se houver divergência.
+- **Formato do disco.** Em storage de diretório o padrão do `importdisk` é
+  `raw`, que **não suporta snapshot** — e o snapshot de linha de base é
+  requisito do roteiro. Por isso a importação usa `--format qcow2`.
+- **Modelo de NIC.** Com `virtio`, o QEMU abre `/dev/vhost-net`, que sob Podman
+  rootless chega ao container sem ACL e resulta em `Permission denied`, com a
+  VM falhando ao iniciar. O padrão é `e1000`; a diferença de desempenho é
+  irrelevante para o laboratório.
+- **Nome do projeto compose.** O `compose.yml` fixa `name: ksc-lab`. Sem isso,
+  o compose adota o nome do diretório (`proxmox`) e pode tentar recriar
+  containers de outro laboratório homônimo no mesmo host.
 
 ---
 
 ## 📸 Snapshot de Linha de Base (Golden Snapshot)
 
-Antes de executar qualquer automação ou instalar pacotes, tire um snapshot no Proxmox:
-1. No menu da VM `ksc-test-node01`, clique em **Snapshots -> Take Snapshot**.
-2. Nome: `clean-baseline`.
-3. Descrição: `Sistema operacional limpo, IP 172.30.5.10 configurado, pronto para testes de deploy`.
+O snapshot `clean-baseline` é criado automaticamente pelo `provision-vm.sh`
+antes de qualquer execução do runbook.
 
-> [!TIP]
-> Se um teste de deploy falhar ou você quiser re-testar o rollback, basta aplicar o rollback do snapshot `clean-baseline` em menos de 10 segundos!
+```bash
+# Conferir
+podman exec ksc-proxmox qm listsnapshot 100
+
+# Restaurar a VM ao estado limpo entre ciclos de teste
+podman exec ksc-proxmox qm rollback 100 clean-baseline
+```
 
 ---
 
@@ -157,37 +179,57 @@ Antes de executar qualquer automação ou instalar pacotes, tire um snapshot no 
 A porta `2222` do host é repassada diretamente para a porta `22` da VM:
 
 ```bash
-ssh -p 2222 suporte@127.0.0.1
+ssh -i ~/.ssh/ksc-lab -p 2222 suporte@127.0.0.1
 ```
 
+A chave é gerada pelo `provision-vm.sh` e instalada na VM via cloud-init.
+
 ### 2. Clonar e Configurar o Repositório dentro da VM
+
+> [!WARNING]
+> O `python3` do Rocky Linux 9 é a versão **3.9**, e o `requirements.txt` exige
+> 3.10 ou superior (`md2pdf`). Instale e use o interpretador do AppStream —
+> ver issue #231.
+
 ```bash
+sudo dnf install -y git python3.11 python3.11-pip
+
 git clone https://github.com/portosoft/ksc-deployment-runbook.git
 cd ksc-deployment-runbook
+python3.11 -m pip install --user -r requirements.txt
 
 # Preparar o arquivo de variáveis de teste
 cp configs/env/ksc_vars.env.example configs/env/ksc_vars.env
-# Ajuste as variáveis se necessário (ou use init_config.py)
-python3 -m automation.python.init_config
+# Ajuste as variáveis (ou use init_config.py)
+python3.11 -m automation.python.init_config
 ```
 
 ### 3. Executar o Ciclo de Testes Completo
 
 ```bash
-# 1. Auditoria prévia (Dry-run de pré-requisitos)
-python3 -m automation.python.kscctl audit --check
+# 1. Auditoria prévia de pré-requisitos
+python3.11 -m automation.python.kscctl audit --check
 
-# 2. Instalação e provisionamento
-python3 -m automation.python.kscctl setup --apply
+# 2. Obter e validar os pacotes oficiais (gate SHA-256 obrigatório)
+python3.11 -m automation.python.kscctl packages --download ksc-server-16.3-pt-BR       --output-dir /var/tmp/ksc_packages
+python3.11 -m automation.python.kscctl packages --download ksc-network-agent-16.3-pt-BR --output-dir /var/tmp/ksc_packages
+python3.11 -m automation.python.kscctl packages --download ksc-web-console-16.3-pt-BR   --output-dir /var/tmp/ksc_packages
+python3.11 -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
 
-# 3. Hardening de banco de dados
-python3 -m automation.python.kscctl db harden --apply
+# 3. Simular a instalação completa sem alterar o sistema
+python3.11 -m automation.python.kscctl setup --check
 
-# 4. Auditoria pós-instalação
-python3 -m automation.python.kscctl audit --postcheck
+# 4. Instalação e provisionamento reais
+python3.11 -m automation.python.kscctl setup --apply
 
-# 5. Geração do relatório de conformidade (Markdown + PDF)
-python3 -m automation.python.kscctl audit --report
+# 5. Hardening de banco de dados
+python3.11 -m automation.python.kscctl db harden --apply
+
+# 6. Auditoria pós-instalação
+python3.11 -m automation.python.kscctl audit --postcheck
+
+# 7. Geração do relatório de conformidade (Markdown + PDF)
+python3.11 -m automation.python.kscctl audit --report
 ```
 
 ### 4. Validação Externa (a partir do Host do Desenvolvedor)
