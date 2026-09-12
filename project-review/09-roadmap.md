@@ -118,9 +118,23 @@ flowchart LR
     I224 --> UP["upstream — condicionado"]
 ```
 
-## 5. Questões de governança ainda abertas
+## 5. Estrutura do backlog no GitHub
 
-| Questão | Encaminhamento proposto |
+Todo o trabalho está sob o épico [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203):
+
+| Frente | Issues |
 |---|---|
-| A issue [#97](https://github.com/portosoft/ksc-deployment-runbook/issues/97) `[META] Roadmap de prontidão` e o épico [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203) descrevem o mesmo papel | Manter apenas o #203 como épico corrente; encerrar o #97 referenciando-o, ou subordiná-lo explicitamente |
-| As issues #223–#228 não estão vinculadas a um épico | Referenciá-las no #203, ou criar um segundo épico de sustentabilidade após o #209 |
+| 1 — Infra e testes | [#204](https://github.com/portosoft/ksc-deployment-runbook/issues/204) |
+| 2 — Docs e hardening | [#205](https://github.com/portosoft/ksc-deployment-runbook/issues/205) |
+| 3 — Core e CLI | [#206](https://github.com/portosoft/ksc-deployment-runbook/issues/206) |
+| 4 — Ops e refactor | [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) |
+| 5 — Deploy | [#208](https://github.com/portosoft/ksc-deployment-runbook/issues/208) — implementada no PR #222 |
+| 6 — QA e E2E | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| 7 — Sustentabilidade | [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), [#224](https://github.com/portosoft/ksc-deployment-runbook/issues/224), [#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225), [#226](https://github.com/portosoft/ksc-deployment-runbook/issues/226), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) |
+| Governança | [#229](https://github.com/portosoft/ksc-deployment-runbook/issues/229) |
+| Qualidade e prontidão (herdadas) | [#99](https://github.com/portosoft/ksc-deployment-runbook/issues/99), [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101), [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102), [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) |
+
+A meta-issue [#97](https://github.com/portosoft/ksc-deployment-runbook/issues/97) foi **encerrada** em favor do [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203): as duas
+descreviam o mesmo papel, e manter ambas ativas era a própria duplicação que a
+§0 combate. Suas filhas em aberto seguem válidas e aparecem na última linha da
+tabela.
