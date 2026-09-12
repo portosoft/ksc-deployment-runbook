@@ -269,3 +269,11 @@ def test_apply_without_packages_dir_still_fails(monkeypatch, recorded, logger, k
 
     with pytest.raises(SetupError, match="KSC_PACKAGES_DIR"):
         install_ksc_server(config, logger, dry_run=False)
+
+
+def test_os_prereqs_are_valid_on_el9():
+    """libidn (v1) não existe no EL9 e abortava a instalação; o pacote é libidn2."""
+    assert "libidn" not in setup_steps.OS_PREREQ_PACKAGES
+    assert "libidn2" in setup_steps.OS_PREREQ_PACKAGES
+    # perl é exigido pelo postinstall.pl, que é o instalador silencioso do KSC.
+    assert "perl" in setup_steps.OS_PREREQ_PACKAGES

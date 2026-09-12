@@ -22,12 +22,19 @@ from .config import KscConfig
 from .shell_utils import ShellCommandError, run_command
 
 # Pré-requisitos de SO do KSC 16.x em RHEL 9 e derivados.
+#
+# Os RPMs do KSC não declaram dependências próprias (são autocontidos), então
+# esta lista é mantida à mão. `perl` é exigido pelo postinstall.pl e
+# `policycoreutils-python-utils` pelas operações de SELinux do hardening.
+#
+# Atenção ao EL9: o pacote é `libidn2`. O `libidn` v1 não existe no Rocky 9 e
+# fazia a instalação abortar com "Unable to find a match: libidn".
 OS_PREREQ_PACKAGES = [
     "tar",
     "curl",
     "wget",
     "perl",
-    "libidn",
+    "libidn2",
     "policycoreutils-python-utils",
 ]
 
