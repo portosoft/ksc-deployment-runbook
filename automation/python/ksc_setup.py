@@ -38,14 +38,26 @@ def print_summary(result) -> None:
 
 
 def run_setup_check(config) -> int:
-    """Valida apenas as variáveis e pré-requisitos locais."""
+    """Valida pré-requisitos e simula a sequência de instalação sem alterar o sistema."""
     evidence_dir = init_evidence_dir("precheck")
     logger = configure_logger(evidence_dir)
     log_json(logger, "setup_precheck_start")
     result = perform_precheck_only(config, logger)
     log_json(logger, "setup_precheck_result", has_critical=result.has_critical)
     print_summary(result)
-    return 1 if result.has_critical else 0
+
+    if result.has_critical:
+        return 1
+
+    # Dry-run da sequência completa: registra cada comando que seria executado.
+    try:
+        perform_setup(config, logger, dry_run=True)
+    except SetupError as e:
+        log_json(logger, "setup_dryrun_failed", error=str(e))
+        print(f"[ERROR] Simulação da instalação falhou: {e}", file=sys.stderr)
+        return 1
+    log_json(logger, "setup_dryrun_success")
+    return 0
 
 
 def run_setup_apply(config) -> int:

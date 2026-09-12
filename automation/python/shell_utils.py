@@ -20,12 +20,18 @@ class ShellCommandError(Exception):
 
 
 def run_command(
-    cmd: List[str], check: bool = True, capture_output: bool = True, env: dict = None
+    cmd: List[str],
+    check: bool = True,
+    capture_output: bool = True,
+    env: dict = None,
+    input_data: str = None,
 ) -> Tuple[str, str, int]:
     """
     Executa comando via subprocess.
     Retorna (stdout, stderr, returncode).
     Se check=True e retorno != 0, lança ShellCommandError.
+    input_data é enviado ao stdin do processo; use-o para dados sensíveis
+    (senhas, SQL com segredos) que não devem aparecer na lista de processos.
     """
     try:
         result = subprocess.run(
@@ -33,6 +39,7 @@ def run_command(
             capture_output=capture_output,
             text=True,
             env=env,
+            input=input_data,
         )
         stdout = result.stdout if result.stdout else ""
         stderr = result.stderr if result.stderr else ""

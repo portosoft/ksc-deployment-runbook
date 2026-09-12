@@ -273,11 +273,16 @@ class TestChecksumVerification(unittest.TestCase):
         with self.assertRaises(SetupError):
             install_ksc_server(config, logger)
 
-    def test_install_ksc_server_valid_packages_dir_succeeds(self):
-        """Valida que install_ksc_server executa com sucesso se packages_dir for válido."""
+    def test_install_ksc_server_passes_gate_but_requires_rpms(self):
+        """Um diretório vazio passa no gate de integridade e falha por ausência de RPM.
+
+        Antes da desmockagem (R-01) este caso era considerado sucesso; com a
+        instalação real, um diretório sem os pacotes oficiais não pode instalar
+        coisa alguma.
+        """
         import logging
         from automation.python.config import KscConfig
-        from automation.python.setup_steps import install_ksc_server
+        from automation.python.setup_steps import SetupError, install_ksc_server
 
         with tempfile.TemporaryDirectory() as td:
             config = KscConfig(
@@ -286,7 +291,8 @@ class TestChecksumVerification(unittest.TestCase):
                 packages_dir=td,
             )
             logger = logging.getLogger("test")
-            install_ksc_server(config, logger)
+            with self.assertRaisesRegex(SetupError, "não encontrado"):
+                install_ksc_server(config, logger)
 
 
 class TestCliPackagesIntegration(unittest.TestCase):

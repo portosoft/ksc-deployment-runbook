@@ -10,9 +10,9 @@
 | Compatibilidade foi testada | ❌ | — | **Declarada e inferida, nunca testada** (L-02) |
 | Dependências estão identificadas | ✅ | `requirements.txt`, [01 §1.1](01-technical-overview.md) | Sem lockfile de árvore completa |
 | Riscos de segurança foram avaliados | ⚠️ | [04](04-security-and-privacy.md) | Controles existem; auditoria externa nunca realizada |
-| Testes principais existem | ⚠️ | 108 testes, 2026-09-12 | Somente unitários; nenhum E2E (L-02) |
+| Testes principais existem | ⚠️ | 124 testes, 2026-09-12 | Somente unitários; nenhum E2E (L-02) |
 | Limitações estão documentadas | ✅ | [06](06-known-limitations.md) | 15 limitações registradas |
-| Processo de instalação está documentado | ✅ | `README.md`, `docs/03`–`docs/08` | Instalação efetiva ainda em mock (L-01) |
+| Processo de instalação está documentado | ✅ | `README.md`, `docs/03`–`docs/08` | Instalação implementada; nunca exercitada em servidor real (L-01) |
 | Processo de contribuição está documentado | ✅ | `CONTRIBUTING.md`, `CODEOFCONDUCT.md` | — |
 | Licença está definida | ✅ | Apache 2.0 | Sem redistribuição de artefatos Kaspersky |
 | Rollback ou remoção estão documentados | ⚠️ | `docs/11-rollback.md` | Manual e nunca exercitado (L-06) |
@@ -49,8 +49,10 @@ pedidos aos mantenedores são específicos e de baixo custo para eles. Há
 material suficiente para uma conversa técnica produtiva.
 
 Impede a classificação seguinte: nenhuma execução end-to-end em servidor real
-foi realizada, quatro funções centrais de instalação permanecem como mocks, os
-artefatos de evidência são de origem simulada, o rollback nunca foi exercitado
+foi realizada — os passos de instalação são reais desde a desmockagem
+(PR #222), mas nunca
+rodaram contra um KSC real —, os artefatos de evidência são de origem
+simulada, o rollback nunca foi exercitado
 e não há nenhuma métrica de desempenho. Sem isso, qualquer afirmação de
 compatibilidade seria especulação, e um piloto exporia usuários a um caminho
 não comprovado.
