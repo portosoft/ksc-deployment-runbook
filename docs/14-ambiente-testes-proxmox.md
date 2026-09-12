@@ -169,7 +169,20 @@ podman exec ksc-proxmox qm listsnapshot 100
 
 # Restaurar a VM ao estado limpo entre ciclos de teste
 podman exec ksc-proxmox qm rollback 100 clean-baseline
+podman exec ksc-proxmox qm start 100
 ```
+
+> [!TIP]
+> O `clean-baseline` é anterior ao download dos pacotes, então restaurá-lo
+> descarta os RPMs (aprox. 420 MB, cerca de 25 minutos de download). Depois de
+> preparar a VM com o repositório, as dependências e os pacotes já baixados e
+> verificados, tire um segundo snapshot e use-o como ponto de partida dos
+> ciclos de deploy:
+>
+> ```bash
+> podman exec ksc-proxmox qm snapshot 100 packages-ready \
+>   --description "Repositório, dependências e RPMs verificados; antes do setup --apply"
+> ```
 
 ---
 
