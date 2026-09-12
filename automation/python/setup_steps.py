@@ -591,9 +591,14 @@ def post_install_hardening(
     )
     _run(["chmod", "-R", "g+rX,o-rwx", "/opt/kaspersky"], logger, dry_run, check=False)
 
-    # O diretório de dados já pertence à conta de serviço; aqui basta fechar
-    # o acesso de "outros".
+    # No diretório de dados o tratamento é diferente: os subdiretórios já vêm do
+    # instalador com dono e grupo corretos (alguns deliberadamente privados),
+    # então nada é alterado recursivamente além de fechar o acesso de "outros".
+    # O que precisa de ajuste é apenas a travessia do diretório-raiz, que é
+    # root:root — sem ela o klserver não alcança o próprio estado.
     _run(["chmod", "-R", "o-rwx", KSC_DATA_DIR], logger, dry_run, check=False)
+    _run(["chgrp", KSC_ADMINS_GROUP, KSC_DATA_DIR], logger, dry_run, check=False)
+    _run(["chmod", "g+rx", KSC_DATA_DIR], logger, dry_run, check=False)
 
     dropin_file = str(Path(SYSTEMD_DROPIN_DIR) / SYSTEMD_DROPIN_NAME)
     dropin_content = f"[Service]\nEnvironment=LD_LIBRARY_PATH={KSC_LIB_DIR}\n"
@@ -617,6 +622,9 @@ def post_install_hardening(
 
     _run(["systemctl", "daemon-reload"], logger, dry_run)
     for unit in KSC_SERVICES:
+        # Uma unidade que estourou o limite de reinícios permanece em 'failed' e
+        # ignora o enable --now seguinte; o reset-failed limpa esse estado.
+        _run(["systemctl", "reset-failed", unit], logger, dry_run, check=False)
         _run(["systemctl", "enable", "--now", unit], logger, dry_run, check=False)
 
     if not dry_run:

@@ -351,3 +351,35 @@ def test_postinstall_skipped_when_already_configured(
     install_ksc_server(config, logger)
 
     assert not any(setup_steps.KSC_POSTINSTALL in c for c in _cmds(recorded))
+
+
+def test_hardening_restores_traversal_of_data_dir(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """O diretório de dados é root:root; sem travessia o klserver não sobe."""
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    assert f"chgrp {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" in cmds
+    assert f"chmod g+rx {setup_steps.KSC_DATA_DIR}" in cmds
+    # O tratamento do diretório de dados não é recursivo além do fechamento
+    # de "outros": subdiretórios privados do instalador são preservados.
+    assert f"chgrp -R {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" not in cmds
+
+
+def test_failed_units_are_reset_before_enabling(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "_unit_is_active", lambda unit: True)
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    for unit in setup_steps.KSC_SERVICES:
+        reset = cmds.index(f"systemctl reset-failed {unit}")
+        enable = cmds.index(f"systemctl enable --now {unit}")
+        assert reset < enable
