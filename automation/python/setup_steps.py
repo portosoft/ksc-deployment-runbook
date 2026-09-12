@@ -225,7 +225,9 @@ def setup_postgres(
     logger.info("Configurando PostgreSQL 16 local...")
 
     _run(["dnf", "install", "-y", PGDG_REPO_RPM], logger, dry_run)
-    _run(["dnf", "-qy", "module", "disable", "postgresql"], logger, dry_run, check=False)
+    _run(
+        ["dnf", "-qy", "module", "disable", "postgresql"], logger, dry_run, check=False
+    )
     _run(["dnf", "install", "-y", "postgresql16-server"], logger, dry_run)
 
     if Path(PG_DATA_DIR, "PG_VERSION").exists():
@@ -249,7 +251,7 @@ def setup_postgres(
         # CREATE DATABASE não roda dentro de bloco DO; o \gexec do psql executa
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
         create_sql = (
-            f"SELECT 'CREATE DATABASE \"{db_name}\" OWNER \"{config.db_user}\"' "
+            f'SELECT \'CREATE DATABASE "{db_name}" OWNER "{config.db_user}"\' '
             f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{db_name}')\n"
             "\\gexec\n"
         )
@@ -458,8 +460,10 @@ def post_install_hardening(
     dropin_content = f"[Service]\nEnvironment=LD_LIBRARY_PATH={KSC_LIB_DIR}\n"
 
     if dry_run:
-        logger.info(f"[CHECK] Seria criado o drop-in systemd {dropin_file} com "
-                    f"Environment=LD_LIBRARY_PATH={KSC_LIB_DIR}")
+        logger.info(
+            f"[CHECK] Seria criado o drop-in systemd {dropin_file} com "
+            f"Environment=LD_LIBRARY_PATH={KSC_LIB_DIR}"
+        )
     else:
         try:
             Path(SYSTEMD_DROPIN_DIR).mkdir(parents=True, exist_ok=True)
