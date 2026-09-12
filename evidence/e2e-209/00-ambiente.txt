@@ -1,0 +1,3 @@
+Python 3.11.13
+Rocky Linux 9.8 (Blue Onyx)
+5.14.0-687.10.1.el9_8.0.1.x86_64
