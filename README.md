@@ -31,6 +31,51 @@ para diretrizes. Para reportar vulnerabilidades de segurança, veja [SECURITY.md
 
 ---
 
+---
+
+## 📌 Status, maturidade e limitações
+
+**Estágio atual: MVP / Beta inicial.** Antes de usar em produção, leia:
+
+- Os passos de instalação em `automation/python/setup_steps.py` são **reais**
+  desde a desmockagem (preparação do SO, PostgreSQL 16, RPMs do KSC com `postinstall.pl`
+  e hardening), mas **ainda não foram exercitados em um servidor real**.
+- **Nenhuma validação end-to-end em servidor real foi registrada.** A
+  compatibilidade com KSC 16.x / Rocky 9 / Oracle 9 / PostgreSQL 16 é
+  **declarada, não comprovada**.
+- Os arquivos em `evidence/` provêm de execuções de teste com SSH simulado e
+  **não são evidência de deploy real**.
+
+Limitações completas: [project-review/06-known-limitations.md](project-review/06-known-limitations.md).
+
+## 🗺️ Onde o desenvolvimento é planejado
+
+A fonte única do backlog é o GitHub:
+[board](https://github.com/orgs/portosoft/projects/1) e
+[issues](https://github.com/portosoft/ksc-deployment-runbook/issues), com o
+épico corrente em [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203).
+[project-review/09-roadmap.md](project-review/09-roadmap.md) é uma visão desse
+backlog para o leitor externo; se divergir, o board vence. Documentos em
+`docs/internal/` são registro histórico e não definem trabalho pendente.
+Fluxo de branches: `feature/*` → `develop` → `main`.
+
+## 🧭 Pacote de revisão técnica
+
+O diretório [`project-review/`](project-review/README.md) contém o material
+preparado para avaliação por desenvolvedores e mantenedores do Kaspersky
+Security Center: arquitetura, mapa de integração, segurança, evidências,
+limitações e perguntas técnicas.
+
+## ⚖️ Aviso de independência
+
+Projeto independente, licenciado sob Apache 2.0, **sem vínculo, patrocínio ou
+endosso da AO Kaspersky Lab**. "Kaspersky" e "Kaspersky Security Center" são
+marcas de seus respectivos titulares, citadas aqui apenas para identificar a
+ferramenta com a qual o projeto se integra. Nenhum artefato do produto é
+redistribuído por este repositório.
+
+---
+
 ## 🏗️ Escopo
 - **In-Scope**: Setup do SO, Preparação do Postgres 16, Instalação do KSC Server, Web Console, Hardening de Segurança.
 - **Out-of-Scope**: Configuração de firewalls de borda, licenciamento do Kaspersky, configuração de políticas de endpoint (pós-deploy).

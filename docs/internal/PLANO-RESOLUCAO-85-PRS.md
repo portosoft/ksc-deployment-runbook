@@ -1,3 +1,8 @@
+> **REGISTRO HISTÓRICO — NÃO É BACKLOG.**
+> Este documento é preservado como registro. O backlog válido do projeto está no
+> [board](https://github.com/orgs/portosoft/projects/1) e nas
+> [issues](https://github.com/portosoft/ksc-deployment-runbook/issues) do GitHub.
+
 # Plano de Resolução e Saneamento das 85 Pull Requests Abertas
 
 Este plano estabelece a estratégia completa para resolver, consolidar e higienizar as **85 Pull Requests em aberto** no repositório `portosoft/ksc-deployment-runbook` antes de prosseguir com a execução do planejamento arquitetural.

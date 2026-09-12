@@ -1,3 +1,8 @@
+> **REGISTRO HISTÓRICO — NÃO É BACKLOG.**
+> Este documento é preservado como registro. O backlog válido do projeto está no
+> [board](https://github.com/orgs/portosoft/projects/1) e nas
+> [issues](https://github.com/portosoft/ksc-deployment-runbook/issues) do GitHub.
+
 # Plano Executivo de Arquitetura e Validação E2E
 
 **Data:** 2026-09-11
