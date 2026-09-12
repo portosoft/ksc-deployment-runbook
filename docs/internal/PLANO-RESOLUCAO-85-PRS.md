@@ -1,3 +1,7 @@
+> **REGISTRO HISTÓRICO — NÃO É BACKLOG.**
+> Este documento é preservado como registro. O único backlog válido do projeto é
+> [project-review/09-roadmap.md](../../project-review/09-roadmap.md).
+
 # Plano de Resolução e Saneamento das 85 Pull Requests Abertas
 
 Este plano estabelece a estratégia completa para resolver, consolidar e higienizar as **85 Pull Requests em aberto** no repositório `portosoft/ksc-deployment-runbook` antes de prosseguir com a execução do planejamento arquitetural.

@@ -31,6 +31,47 @@ para diretrizes. Para reportar vulnerabilidades de segurança, veja [SECURITY.md
 
 ---
 
+---
+
+## 📌 Status, maturidade e limitações
+
+**Estágio atual: MVP / Beta inicial.** Antes de usar em produção, leia:
+
+- Quatro funções centrais de `automation/python/setup_steps.py` (preparação do
+  SO, PostgreSQL, instalação do KSC e hardening) ainda são **mocks declarados
+  no código** — `kscctl setup --apply` não instala de fato.
+- **Nenhuma validação end-to-end em servidor real foi registrada.** A
+  compatibilidade com KSC 16.x / Rocky 9 / Oracle 9 / PostgreSQL 16 é
+  **declarada, não comprovada**.
+- Os arquivos em `evidence/` provêm de execuções de teste com SSH simulado e
+  **não são evidência de deploy real**.
+
+Limitações completas: [project-review/06-known-limitations.md](project-review/06-known-limitations.md).
+
+## 🗺️ Onde o desenvolvimento é planejado
+
+O **único backlog válido** do projeto é
+[project-review/09-roadmap.md](project-review/09-roadmap.md). Documentos em
+`docs/internal/` são registro histórico e não definem trabalho pendente.
+Fluxo de branches: `feature/*` → `develop` → `main`.
+
+## 🧭 Pacote de revisão técnica
+
+O diretório [`project-review/`](project-review/README.md) contém o material
+preparado para avaliação por desenvolvedores e mantenedores do Kaspersky
+Security Center: arquitetura, mapa de integração, segurança, evidências,
+limitações e perguntas técnicas.
+
+## ⚖️ Aviso de independência
+
+Projeto independente, licenciado sob Apache 2.0, **sem vínculo, patrocínio ou
+endosso da AO Kaspersky Lab**. "Kaspersky" e "Kaspersky Security Center" são
+marcas de seus respectivos titulares, citadas aqui apenas para identificar a
+ferramenta com a qual o projeto se integra. Nenhum artefato do produto é
+redistribuído por este repositório.
+
+---
+
 ## 🏗️ Escopo
 - **In-Scope**: Setup do SO, Preparação do Postgres 16, Instalação do KSC Server, Web Console, Hardening de Segurança.
 - **Out-of-Scope**: Configuração de firewalls de borda, licenciamento do Kaspersky, configuração de políticas de endpoint (pós-deploy).

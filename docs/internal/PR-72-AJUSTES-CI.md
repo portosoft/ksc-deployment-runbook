@@ -1,3 +1,7 @@
+> **REGISTRO HISTÓRICO — NÃO É BACKLOG.**
+> Este documento é preservado como registro. O único backlog válido do projeto é
+> [project-review/09-roadmap.md](../../project-review/09-roadmap.md).
+
 # PR 72 - Ajustes Minimos para CI
 
 ## Objetivo
