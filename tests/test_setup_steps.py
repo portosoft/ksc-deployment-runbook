@@ -303,3 +303,30 @@ def test_response_file_matches_account_constants(ksc_test_config):
     assert f"KLSRV_UNATT_KLADMINSGROUP={setup_steps.KSC_ADMINS_GROUP}" in content
     assert f"KLSRV_UNATT_KLSVCUSER={setup_steps.KSC_SERVICE_USER}" in content
     assert f"KLSRV_UNATT_KLSRVUSER={setup_steps.KSC_SERVICE_USER}" in content
+
+
+def test_hardening_grants_group_access_before_removing_world_access(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """chmod -R o-rwx isolado tirava do serviço a travessia de /opt/kaspersky.
+
+    Os binários pertencem a root e o klserver roda como a conta de serviço, que
+    dependia da permissão de "outros" — removê-la sem conceder acesso ao grupo
+    fazia o serviço falhar com 203/EXEC.
+    """
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    chgrp_idx = next(i for i, c in enumerate(cmds) if c.startswith("chgrp"))
+    chmod_idx = next(i for i, c in enumerate(cmds) if "o-rwx" in c and "/opt/kaspersky" in c)
+    assert chgrp_idx < chmod_idx, "o grupo precisa ser ajustado antes de fechar 'outros'"
+    assert "g+rX" in cmds[chmod_idx]
+
+
+def test_web_console_is_not_treated_as_a_systemd_unit():
+    """O RPM do Web Console não cria ksc-web-console.service."""
+    assert "ksc-web-console.service" not in setup_steps.KSC_SERVICES
+    assert "kladminserver_srv.service" in setup_steps.KSC_SERVICES

@@ -54,10 +54,14 @@ KSC_POSTINSTALL = f"{KSC_ROOT}/lib/bin/setup/postinstall.pl"
 KSC_DATA_DIR = "/var/opt/kaspersky"
 SYSTEMD_DROPIN_DIR = "/etc/systemd/system/kladminserver_srv.service.d"
 SYSTEMD_DROPIN_NAME = "10-ld-library-path.conf"
+# Unidades systemd criadas pelo instalador, verificadas em instalação real do
+# KSC 16.3 em Rocky Linux 9. Não existe `ksc-web-console.service`: o RPM do Web
+# Console instala arquivos, mas o serviço depende de configuração própria.
 KSC_SERVICES = [
     "kladminserver_srv.service",
     "klnagent_srv.service",
-    "ksc-web-console.service",
+    "kliam_srv.service",
+    "klwebsrv_srv.service",
 ]
 
 # Contas de sistema exigidas pelo instalador silencioso. O postinstall.pl NÃO
@@ -536,8 +540,22 @@ def post_install_hardening(
     """
     logger.info("Aplicando hardening pós-instalação...")
 
-    for path in ("/opt/kaspersky", KSC_DATA_DIR):
-        _run(["chmod", "-R", "o-rwx", path], logger, dry_run, check=False)
+    # Remover o acesso de "outros" exige antes garantir o acesso do grupo de
+    # serviço: os binários em /opt/kaspersky pertencem a root e os serviços
+    # rodam como o usuário `ksc`. Um `chmod -R o-rwx` isolado tira do serviço
+    # até a travessia do diretório e o klserver passa a falhar com
+    # "Permission denied" (status 203/EXEC).
+    _run(
+        ["chgrp", "-R", KSC_ADMINS_GROUP, "/opt/kaspersky"],
+        logger,
+        dry_run,
+        check=False,
+    )
+    _run(["chmod", "-R", "g+rX,o-rwx", "/opt/kaspersky"], logger, dry_run, check=False)
+
+    # O diretório de dados já pertence à conta de serviço; aqui basta fechar
+    # o acesso de "outros".
+    _run(["chmod", "-R", "o-rwx", KSC_DATA_DIR], logger, dry_run, check=False)
 
     dropin_file = str(Path(SYSTEMD_DROPIN_DIR) / SYSTEMD_DROPIN_NAME)
     dropin_content = f"[Service]\nEnvironment=LD_LIBRARY_PATH={KSC_LIB_DIR}\n"
