@@ -63,7 +63,7 @@ produto? Há algum estado fora do PostgreSQL (arquivos, certificados, chaves em
 
 **Por que importa.** Um rollback incompleto deixa o servidor em estado que impede reinstalação limpa.
 
-**Decisão que depende.** Escopo do procedimento de rollback e se ele pode ser automatizado com segurança (R-06).
+**Decisão que depende.** Escopo do procedimento de rollback e se ele pode ser automatizado com segurança ([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)).
 
 ---
 
@@ -92,7 +92,7 @@ podem ser delegadas por regras `sudo` específicas?
 
 **Por que importa.** É a principal recomendação de segurança pendente do projeto.
 
-**Decisão que depende.** Documentar e restringir o modelo de privilégio exigido do operador (R-04).
+**Decisão que depende.** Documentar e restringir o modelo de privilégio exigido do operador ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)).
 
 ---
 

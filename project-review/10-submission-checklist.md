@@ -23,9 +23,9 @@ Legenda: ✅ atendido · ⚠️ parcial · ❌ não atendido.
 
 ## 10.2 Checklist de submissão — a executar antes do envio
 
-- [ ] R-03 concluído: `pytest -q` sem erros de coleta e cobertura publicada
-- [ ] R-05 concluído: versão em inglês de `00`, `03` e do README
-- [ ] R-10 iniciado: PRs duplicadas fechadas e agentes automatizados contidos
+- [ ] [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) concluído: `pytest -q` sem erros de coleta e cobertura publicada
+- [ ] [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) concluído: versão em inglês de `00`, `03` e do README
+- [ ] [#229](https://github.com/portosoft/ksc-deployment-runbook/issues/229) iniciado: PRs duplicadas fechadas e agentes automatizados contidos
 - [ ] Aviso de não afiliação presente no README do repositório, não apenas neste pacote
 - [ ] Revisão final de que nenhum segredo real consta do repositório (`detect-secrets` verde)
 - [ ] Confirmação de que nenhum artefato Kaspersky está versionado no repositório
@@ -55,6 +55,7 @@ e não há nenhuma métrica de desempenho. Sem isso, qualquer afirmação de
 compatibilidade seria especulação, e um piloto exporia usuários a um caminho
 não comprovado.
 
-**Gatilho para reclassificar como "pronto para piloto":** conclusão de R-01,
-R-03, R-04 e R-06 do [backlog canônico](09-roadmap.md), com os logs reais
-substituindo os artefatos simulados em `evidence/`.
+**Gatilho para reclassificar como "pronto para piloto":** conclusão das issues
+[#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209), [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102), [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) e [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), com os logs reais
+substituindo os artefatos simulados em `evidence/`. Acompanhamento no
+[board](https://github.com/orgs/portosoft/projects/1).

@@ -88,15 +88,15 @@ Classificação: **MVP / Beta inicial**.
 
 | Área | Estado atual | Evidência | Limitação | Próximo passo |
 |---|---|---|---|---|
-| Funcionalidade | Auditoria, pré-check e verificação de pacotes completos; instalação em mock | `automation/python/`, `setup_steps.py:35,47,90,116` | 4 funções centrais não implementadas | R-01 |
-| Integração | Interfaces mapeadas; parte não documentada oficialmente | [03](03-integration-with-main-tool.md) | Dependência de comportamento observado | R-02, Q1–Q3 |
-| Qualidade | 108 testes passam; 2 erros de coleta em arquivos fora de `tests/` | `pytest -q`, 2026-09-12 | Cobertura não publicada; `automation/ops/test_sudo.py` e `automation/smoke-tests/test_api_login.py` quebram a coleta | R-03 |
-| Segurança | Vault com chave 0600, geração sintética de credenciais, CodeQL/Semgrep/baseline de segredos ativos | `.github/workflows/`, `automation/lib/vault.py` | `.env` em texto claro permanece suportado | R-04 |
-| Documentação | Trilha de 14 etapas completa em pt-BR | `docs/` | Sem versão em inglês | R-05 |
-| Operação | Rollback e troubleshooting documentados | `docs/11-rollback.md`, `docs/10-troubleshooting.md` | Rollback não exercitado em ambiente real | R-06 |
-| Compatibilidade | Declarada para KSC 16.x / PG 16 / RL9 · OL9 | `README.md`, `docs/02-matriz-compatibilidade.md` | Nenhuma combinação testada em servidor real | R-01 |
+| Funcionalidade | Auditoria, pré-check e verificação de pacotes completos; instalação em mock | `automation/python/`, `setup_steps.py:35,47,90,116` | 4 funções centrais não implementadas | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| Integração | Interfaces mapeadas; parte não documentada oficialmente | [03](03-integration-with-main-tool.md) | Dependência de comportamento observado | [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207), Q1–Q3 |
+| Qualidade | 108 testes passam; 2 erros de coleta em arquivos fora de `tests/` | `pytest -q`, 2026-09-12 | Cobertura não publicada; `automation/ops/test_sudo.py` e `automation/smoke-tests/test_api_login.py` quebram a coleta | [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) |
+| Segurança | Vault com chave 0600, geração sintética de credenciais, CodeQL/Semgrep/baseline de segredos ativos | `.github/workflows/`, `automation/lib/vault.py` | `.env` em texto claro permanece suportado | [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) |
+| Documentação | Trilha de 14 etapas completa em pt-BR | `docs/` | Sem versão em inglês | [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) |
+| Operação | Rollback e troubleshooting documentados | `docs/11-rollback.md`, `docs/10-troubleshooting.md` | Rollback não exercitado em ambiente real | [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) |
+| Compatibilidade | Declarada para KSC 16.x / PG 16 / RL9 · OL9 | `README.md`, `docs/02-matriz-compatibilidade.md` | Nenhuma combinação testada em servidor real | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
 
-`R-nn` remete aos itens do backlog canônico em [09-roadmap.md](09-roadmap.md).
+Os números `#nnn` remetem às issues do GitHub; ver [09-roadmap.md](09-roadmap.md).
 
 ## 1.5 Declaração explícita sobre o que ainda não é real
 

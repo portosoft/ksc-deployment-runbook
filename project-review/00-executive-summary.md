@@ -74,5 +74,6 @@ detalhados em [07-collaboration-proposal.md](07-collaboration-proposal.md):
 **Pronto para discussão inicial e revisão técnica de arquitetura; não pronto
 para piloto, submissão formal ou upstream.** A lacuna que impede os estágios
 seguintes é única e conhecida: ausência de validação end-to-end em ambiente
-real. O plano para fechá-la está em [09-roadmap.md](09-roadmap.md), que passa a
-ser o **único backlog válido do projeto**.
+real — issue [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209).
+O backlog completo está no [board do projeto](https://github.com/orgs/portosoft/projects/1);
+[09-roadmap.md](09-roadmap.md) apresenta a visão dele para o leitor externo.

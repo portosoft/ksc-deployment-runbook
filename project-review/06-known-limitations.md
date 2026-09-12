@@ -4,21 +4,21 @@
 
 | # | Limitação | Categoria | Impacto | Quando ocorre | Mitigação atual | Solução planejada |
 |---|---|---|---|---|---|---|
-| L-01 | Quatro funções centrais de `setup_steps.py` são mocks (SO, PostgreSQL, instalação KSC, hardening) | Funcional | `setup --apply` não instala de fato | Sempre | Documentado aqui e no código | R-01 |
-| L-02 | Nenhuma validação end-to-end em servidor real registrada | Testes | Compatibilidade é declarada, não comprovada | Sempre | Declaração explícita em todos os documentos | R-01 |
-| L-03 | Artefatos em `evidence/` provêm de testes com SSH simulado | Testes | Risco de leitura equivocada como prova de deploy | Sempre | Aviso explícito em §5.4 | R-01 |
-| L-04 | Dependência do esquema de `config.json` e `web-server.js` do Web Console | Compatibilidade | Quebra silenciosa em atualização do produto | Mudança de versão do KSC | Parsing JSON nativo em vez de regex | Q2 + R-02 |
-| L-05 | Uso de `postinstall.pl` para reconfiguração pode não ser suportado | Compatibilidade | Comportamento indefinido | Reconfiguração de servidor instalado | Verificação de código de retorno | Q1 + R-02 |
-| L-06 | Sem rollback automático após falha parcial | Operação | Estado intermediário exige intervenção manual | Falha no meio do `--apply` | Procedimento manual em `docs/11-rollback.md` | R-06 |
-| L-07 | `.env` em texto claro continua sendo caminho suportado | Segurança | Segredos em disco sem cifragem | Operador não usa o vault | Vault disponível; aviso em `docs/03-pre-requisitos.md` | R-04 |
-| L-08 | Sanitização de segredos nos logs não auditada | Segurança | Possível vazamento em `evidence/` | Não determinado | Nenhuma | R-04 |
-| L-09 | Nenhuma métrica de desempenho coletada | Desempenho | Impossível dimensionar ou comparar | Sempre | Nenhuma afirmação de desempenho é feita | R-08 |
-| L-10 | Documentação exclusivamente em pt-BR | Documentação | Barreira para revisão internacional | Contato com equipe global | Este pacote identifica a lacuna | R-05 |
-| L-11 | Sem release tagueada, sem pacote distribuível, sem artefato assinado | Adoção | Instalação apenas por clone do repositório | Sempre | — | R-07 |
-| L-12 | Duas pilhas de automação em paralelo (Python e Ansible) | Manutenção | Divergência de comportamento entre caminhos | Sempre | Ansible é auxiliar | R-09 |
-| L-13 | Dois arquivos de teste fora de `tests/` quebram a coleta do pytest | Qualidade | Ruído na suíte; falso sinal de falha | Sempre | Conhecido e isolado | R-03 |
+| L-01 | Quatro funções centrais de `setup_steps.py` são mocks (SO, PostgreSQL, instalação KSC, hardening) | Funcional | `setup --apply` não instala de fato | Sempre | Documentado aqui e no código | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| L-02 | Nenhuma validação end-to-end em servidor real registrada | Testes | Compatibilidade é declarada, não comprovada | Sempre | Declaração explícita em todos os documentos | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| L-03 | Artefatos em `evidence/` provêm de testes com SSH simulado | Testes | Risco de leitura equivocada como prova de deploy | Sempre | Aviso explícito em §5.4 | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| L-04 | Dependência do esquema de `config.json` e `web-server.js` do Web Console | Compatibilidade | Quebra silenciosa em atualização do produto | Mudança de versão do KSC | Parsing JSON nativo em vez de regex | Q2 + [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) |
+| L-05 | Uso de `postinstall.pl` para reconfiguração pode não ser suportado | Compatibilidade | Comportamento indefinido | Reconfiguração de servidor instalado | Verificação de código de retorno | Q1 + [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) |
+| L-06 | Sem rollback automático após falha parcial | Operação | Estado intermediário exige intervenção manual | Falha no meio do `--apply` | Procedimento manual em `docs/11-rollback.md` | [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) |
+| L-07 | `.env` em texto claro continua sendo caminho suportado | Segurança | Segredos em disco sem cifragem | Operador não usa o vault | Vault disponível; aviso em `docs/03-pre-requisitos.md` | [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) |
+| L-08 | Sanitização de segredos nos logs não auditada | Segurança | Possível vazamento em `evidence/` | Não determinado | Nenhuma | [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) |
+| L-09 | Nenhuma métrica de desempenho coletada | Desempenho | Impossível dimensionar ou comparar | Sempre | Nenhuma afirmação de desempenho é feita | [#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225) |
+| L-10 | Documentação exclusivamente em pt-BR | Documentação | Barreira para revisão internacional | Contato com equipe global | Este pacote identifica a lacuna | [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) |
+| L-11 | Sem release tagueada, sem pacote distribuível, sem artefato assinado | Adoção | Instalação apenas por clone do repositório | Sempre | — | [#224](https://github.com/portosoft/ksc-deployment-runbook/issues/224) |
+| L-12 | Duas pilhas de automação em paralelo (Python e Ansible) | Manutenção | Divergência de comportamento entre caminhos | Sempre | Ansible é auxiliar | [#226](https://github.com/portosoft/ksc-deployment-runbook/issues/226) |
+| L-13 | Dois arquivos de teste fora de `tests/` quebram a coleta do pytest | Qualidade | Ruído na suíte; falso sinal de falha | Sempre | Conhecido e isolado | [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) |
 | L-14 | Sem suporte a alta disponibilidade, cluster ou múltiplos servidores | Escalabilidade | Escopo de servidor único | Sempre | Escopo declarado | Longo prazo |
-| L-15 | Sem canal de suporte formal ou SLA | Suporte | Uso em produção por conta e risco do adotante | Sempre | `SECURITY.md` e issues do GitHub | R-07 |
+| L-15 | Sem canal de suporte formal ou SLA | Suporte | Uso em produção por conta e risco do adotante | Sempre | `SECURITY.md` e issues do GitHub | [#224](https://github.com/portosoft/ksc-deployment-runbook/issues/224) |
 
 ## 6.2 Riscos que o projeto pode introduzir para a ferramenta principal
 
