@@ -247,7 +247,11 @@ def download_package(
     out_dir = Path(target_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     final_path = out_dir / filename
-    part_path = out_dir / f"{filename}.download.part"
+
+    fd, tmp_file_path = tempfile.mkstemp(
+        prefix=f"{filename}.", suffix=".download.part", dir=out_dir
+    )
+    part_path = Path(tmp_file_path)
 
     logger.info(f"Iniciando download de {pkg['product']} ({package_id})...")
     logger.info(f"URL: {url}")
@@ -261,7 +265,9 @@ def download_package(
     )
 
     try:
-        with urllib.request.urlopen(req) as resp, open(part_path, "wb") as out_file:
+        with os.fdopen(fd, "wb") as out_file, urllib.request.urlopen(
+            req, timeout=60
+        ) as resp:
             shutil.copyfileobj(resp, out_file, length=CHUNK_SIZE)
 
         if verify:

@@ -11,6 +11,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from automation.python.packages import (
     DEFAULT_CATALOG_PATH,
@@ -168,7 +169,68 @@ class TestChecksumVerification(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             with self.assertRaises(PackageNotFoundError):
                 from automation.python.packages import download_package
+
                 download_package("non-existent-package-id", target_dir=td)
+
+    @patch("automation.python.packages.urllib.request.urlopen")
+    def test_download_package_success_and_timeout(self, mock_urlopen):
+        """Valida que download_package usa timeout finito e grava arquivo via mkstemp."""
+        import io
+        from automation.python.packages import download_package
+
+        payload = b"Mock RPM Content"
+        mock_resp = io.BytesIO(payload)
+        mock_urlopen.return_value.__enter__.return_value = mock_resp
+
+        mock_catalog = {
+            "packages": {
+                "test-pkg": {
+                    "product": "Test Package",
+                    "filename": "test-pkg.rpm",
+                    "url": "https://example.com/test-pkg.rpm",
+                    "sha256": hashlib.sha256(payload).hexdigest(),
+                }
+            }
+        }
+
+        with tempfile.TemporaryDirectory() as td:
+            out_file = download_package(
+                "test-pkg", target_dir=td, catalog=mock_catalog, verify=True
+            )
+            self.assertTrue(out_file.is_file())
+            self.assertEqual(out_file.read_bytes(), payload)
+            mock_urlopen.assert_called_once()
+            _, kwargs = mock_urlopen.call_args
+            self.assertEqual(kwargs.get("timeout"), 60)
+
+    def test_install_ksc_server_invalid_packages_dir_raises(self):
+        """Valida que install_ksc_server falha com SetupError se packages_dir apontar para diretório inexistente."""
+        import logging
+        from automation.python.config import KscConfig
+        from automation.python.setup_steps import SetupError, install_ksc_server
+
+        config = KscConfig(
+            db_password="dummy",
+            ksc_admin_password="dummy",
+            packages_dir="/non/existent/path/for/ksc/packages",
+        )
+        logger = logging.getLogger("test")
+        with self.assertRaises(SetupError):
+            install_ksc_server(config, logger)
+
+    def test_install_ksc_server_none_packages_dir_succeeds(self):
+        """Valida que install_ksc_server prossegue normalmente quando packages_dir não é configurado."""
+        import logging
+        from automation.python.config import KscConfig
+        from automation.python.setup_steps import install_ksc_server
+
+        config = KscConfig(
+            db_password="dummy",
+            ksc_admin_password="dummy",
+            packages_dir=None,
+        )
+        logger = logging.getLogger("test")
+        install_ksc_server(config, logger)
 
 
 class TestCliPackagesIntegration(unittest.TestCase):
