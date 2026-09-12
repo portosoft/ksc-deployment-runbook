@@ -157,10 +157,13 @@ def verify_directory(
     if catalog is None:
         catalog = load_package_catalog()
 
+    packages_by_rel_path: Dict[str, Tuple[str, Dict[str, Any]]] = {}
     packages_by_filename: Dict[str, List[Tuple[str, Dict[str, Any]]]] = {}
     for pkg_id, pkg_info in catalog["packages"].items():
         fname = pkg_info["filename"]
         packages_by_filename.setdefault(fname, []).append((pkg_id, pkg_info))
+        if "path" in pkg_info:
+            packages_by_rel_path[pkg_info["path"]] = (pkg_id, pkg_info)
 
     results: Dict[str, List[Dict[str, Any]]] = {
         "verified": [],
@@ -168,20 +171,30 @@ def verify_directory(
         "untracked": [],
     }
 
-    for item in sorted(dir_path.iterdir()):
+    for item in sorted(dir_path.rglob("*")):
         if not item.is_file():
             continue
+        if item.name.endswith(".download.part"):
+            continue
 
+        rel_str = str(item.relative_to(dir_path)).replace("\\", "/")
         fname = item.name
-        if fname in packages_by_filename:
+
+        candidates = []
+        if rel_str in packages_by_rel_path:
+            candidates.append(packages_by_rel_path[rel_str])
+        elif fname in packages_by_filename:
+            candidates.extend(packages_by_filename[fname])
+
+        if candidates:
             actual_sha = compute_sha256(item)
             matched = False
-            for pkg_id, pkg_info in packages_by_filename[fname]:
+            for pkg_id, pkg_info in candidates:
                 expected_sha = pkg_info["sha256"].lower()
                 if hmac.compare_digest(actual_sha, expected_sha):
                     results["verified"].append(
                         {
-                            "file": fname,
+                            "file": rel_str,
                             "path": str(item),
                             "package_id": pkg_id,
                             "product": pkg_info["product"],
@@ -194,14 +207,14 @@ def verify_directory(
             if not matched:
                 results["failed"].append(
                     {
-                        "file": fname,
+                        "file": rel_str,
                         "path": str(item),
-                        "candidates": [pid for pid, _ in packages_by_filename[fname]],
+                        "candidates": [pid for pid, _ in candidates],
                         "actual_sha256": actual_sha,
                     }
                 )
         else:
-            results["untracked"].append({"file": fname, "path": str(item)})
+            results["untracked"].append({"file": rel_str, "path": str(item)})
 
     return results
 
@@ -242,14 +255,15 @@ def download_package(
     pkg = packages[package_id]
     url = pkg["url"]
     filename = pkg["filename"]
+    rel_path = Path(pkg.get("path") or filename)
     expected_sha256 = pkg["sha256"]
 
     out_dir = Path(target_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    final_path = out_dir / filename
+    final_path = out_dir / rel_path
+    final_path.parent.mkdir(parents=True, exist_ok=True)
 
     fd, tmp_file_path = tempfile.mkstemp(
-        prefix=f"{filename}.", suffix=".download.part", dir=out_dir
+        prefix=f"{final_path.name}.", suffix=".download.part", dir=final_path.parent
     )
     part_path = Path(tmp_file_path)
 

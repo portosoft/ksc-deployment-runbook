@@ -15,6 +15,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/portuguese-BR-31399840-pt-BR/ccd060d705d54aef9416046a4801fefb/ksc64-16.3.0-1207.x86_64.rpm",
       "filename": "ksc64-16.3.0-1207.x86_64.rpm",
+      "path": "pt-BR/ksc64-16.3.0-1207.x86_64.rpm",
       "sha256": "32401411366de1ceb7fdfe79a233c49031d31a8f0e11270e14e8c21ded545abb"
     },
     "ksc-server-16.3-en": {
@@ -25,6 +26,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/english-INT-16301207-en/9bddad07ca944e2da43c4e7fbf0c6161/ksc64-16.3.0-1207.x86_64.rpm",
       "filename": "ksc64-16.3.0-1207.x86_64.rpm",
+      "path": "en-INT/ksc64-16.3.0-1207.x86_64.rpm",
       "sha256": "dab517df732a0e12bc34c379b101b8e02e9c33e320443e6494817e0872889a75"
     },
     "ksc-web-console-16.3-pt-BR": {
@@ -35,6 +37,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/portuguese-BR-31399840-pt-BR/ba1de3496bd540f8bfadfb1f02c9e14f/ksc-web-console-16.3.12907.x86_64.rpm",
       "filename": "ksc-web-console-16.3.12907.x86_64.rpm",
+      "path": "pt-BR/ksc-web-console-16.3.12907.x86_64.rpm",
       "sha256": "a55b91fb45a523daf7b5b477671ab84624d184a8e295946e3698c19b27e747d2"
     },
     "ksc-web-console-16.3-en": {
@@ -45,6 +48,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/english-INT-16301207-en/3d5f9c015f9d49ada6dc2c61c173ceea/ksc-web-console-16.3.12907.x86_64.rpm",
       "filename": "ksc-web-console-16.3.12907.x86_64.rpm",
+      "path": "en-INT/ksc-web-console-16.3.12907.x86_64.rpm",
       "sha256": "a55b91fb45a523daf7b5b477671ab84624d184a8e295946e3698c19b27e747d2"
     },
     "ksc-network-agent-16.3-pt-BR": {
@@ -55,6 +59,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/portuguese-BR-31399840-pt-BR/7e56b4aba3fb4ff6868ed906326d8614/klnagent64-16.3.0-1207.x86_64.rpm",
       "filename": "klnagent64-16.3.0-1207.x86_64.rpm",
+      "path": "pt-BR/klnagent64-16.3.0-1207.x86_64.rpm",
       "sha256": "eef05713088fa9db44ca91ebe77ace0d5e9999f4ff1ef15601fb60d68d00d28f"
     },
     "ksc-network-agent-16.3-en": {
@@ -65,6 +70,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/english-INT-16301207-en/4a948d5c455141bda3c98935682b7c5c/klnagent64-16.3.0-1207.x86_64.rpm",
       "filename": "klnagent64-16.3.0-1207.x86_64.rpm",
+      "path": "en-INT/klnagent64-16.3.0-1207.x86_64.rpm",
       "sha256": "dc71fe6bf6c69079ca5c7b1f2403ee2a6fbd1dffb2cf2ee6010d94b1469e7f58"
     },
     "ksc-remote-agent-files-16.3-pt-BR": {
@@ -75,6 +81,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/portuguese-BR-31399840-pt-BR/51eb20b8b8454d3f9dbae9af3dc45e56/klnagent-x86_64-16.3.0.1207-rpm_pt-BR.tar.gz",
       "filename": "klnagent-x86_64-16.3.0.1207-rpm_pt-BR.tar.gz",
+      "path": "pt-BR/klnagent-x86_64-16.3.0.1207-rpm_pt-BR.tar.gz",
       "sha256": "7d766275b0a45f9cf95bf0d13c8ba526c852123c7d1396039978c0ad99e4d06c"
     },
     "ksc-remote-agent-files-16.3-en": {
@@ -85,6 +92,7 @@
       "version": "16.3.0.1207",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.3.0.1207/english-INT-16301207-en/ac574f3c2f04470ea33dc4478e458d8b/klnagent-x86_64-16.3.0.1207-rpm_en.tar.gz",
       "filename": "klnagent-x86_64-16.3.0.1207-rpm_en.tar.gz",
+      "path": "en-INT/klnagent-x86_64-16.3.0.1207-rpm_en.tar.gz",
       "sha256": "f5459a7d1996db840300d03f5acb466e1b515b252974f8cf25834b5626b791f6"
     },
     "ksc-server-16.2-pt-BR": {
@@ -95,6 +103,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/portuguese-BR-29665499-pt-BR/d6248707009747578c41d091641b1fab/ksc64-16.2.0-1023.x86_64.rpm",
       "filename": "ksc64-16.2.0-1023.x86_64.rpm",
+      "path": "16.2/pt-BR/ksc64-16.2.0-1023.x86_64.rpm",
       "sha256": "ff7f171ec5aee62e6803676c153993faebf369f42ae73ac9936e4258c1077b47"
     },
     "ksc-server-16.2-en": {
@@ -105,6 +114,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/english-INT-29662357-en/e4dea2f52778463fa96943723f37831c/ksc64-16.2.0-1023.x86_64.rpm",
       "filename": "ksc64-16.2.0-1023.x86_64.rpm",
+      "path": "16.2/en-INT/ksc64-16.2.0-1023.x86_64.rpm",
       "sha256": "6c4aab4a47b1c179047710ac760ccf365298643f4a4769ed482a994141ef3a64"
     },
     "ksc-web-console-16.2-pt-BR": {
@@ -115,6 +125,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/portuguese-BR-29665499-pt-BR/f07fe95f3a4a4d9ca1af337d2aeffd1a/ksc-web-console-16.2.11309.x86_64.rpm",
       "filename": "ksc-web-console-16.2.11309.x86_64.rpm",
+      "path": "16.2/pt-BR/ksc-web-console-16.2.11309.x86_64.rpm",
       "sha256": "881c91cce052546e3338521654370a5181fc9b838e03d95c883ab259d2c3ca70"
     },
     "ksc-web-console-16.2-en": {
@@ -125,6 +136,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/english-INT-29662357-en/dfab5502552d478aaa4856078bf71758/ksc-web-console-16.2.11309.x86_64.rpm",
       "filename": "ksc-web-console-16.2.11309.x86_64.rpm",
+      "path": "16.2/en-INT/ksc-web-console-16.2.11309.x86_64.rpm",
       "sha256": "881c91cce052546e3338521654370a5181fc9b838e03d95c883ab259d2c3ca70"
     },
     "ksc-network-agent-16.2-pt-BR": {
@@ -135,6 +147,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/portuguese-BR-29665499-pt-BR/d98c7361838b447c97ec6bd847b9103d/klnagent64-16.2.0-1023.x86_64.rpm",
       "filename": "klnagent64-16.2.0-1023.x86_64.rpm",
+      "path": "16.2/pt-BR/klnagent64-16.2.0-1023.x86_64.rpm",
       "sha256": "41a58a29332e12f75d06ccd898d0e524fce8340367b01c28a8af089129c629a1"
     },
     "ksc-network-agent-16.2-en": {
@@ -145,6 +158,7 @@
       "version": "16.2.0.1023",
       "url": "https://products.s.kaspersky-labs.com/administrationkit/ksc10/16.2.0.1023/english-INT-29662357-en/41318fbd52b54760bdba864a60644a8a/klnagent64-16.2.0-1023.x86_64.rpm",
       "filename": "klnagent64-16.2.0-1023.x86_64.rpm",
+      "path": "16.2/en-INT/klnagent64-16.2.0-1023.x86_64.rpm",
       "sha256": "ffefdd00719ed0a5572cf37f0de02f0afb283df48277a7f2035ecc08f68d7511"
     },
     "kesl-distributive-12.5": {
@@ -155,6 +169,7 @@
       "version": "12.5.0.1569",
       "url": "https://products.s.kaspersky-labs.com/endpoints/keslinux10/12.5.0.1569/multilanguage-INT-12.5.0.1569/59a451a3e41747c596e24b0d29534ad5/kesl-12.5.0-1569.x86_64.rpm",
       "filename": "kesl-12.5.0-1569.x86_64.rpm",
+      "path": "kesl/kesl-12.5.0-1569.x86_64.rpm",
       "sha256": "c29bb66d11e36401ab095449cf441fd8551e41267424f4d44a51e9fe45f01d41"
     },
     "kesl-gui-12.5": {
@@ -165,6 +180,7 @@
       "version": "12.5.0.1569",
       "url": "https://products.s.kaspersky-labs.com/endpoints/keslinux10/12.5.0.1569/multilanguage-INT-12.5.0.1569/f1cb4f8bb006482d835ee453900dea39/kesl-gui-12.5.0-1569.x86_64.rpm",
       "filename": "kesl-gui-12.5.0-1569.x86_64.rpm",
+      "path": "kesl/kesl-gui-12.5.0-1569.x86_64.rpm",
       "sha256": "164e5bff0c8006c12bd445416da21425d98e7f0c0e67912164ac8420a61306c9"
     },
     "kesl-distributive-12.4": {
@@ -175,6 +191,7 @@
       "version": "12.4.0.1225",
       "url": "https://products.s.kaspersky-labs.com/endpoints/keslinux10/12.4.0.1225/multilanguage-INT-12.4.0.1225/30787959ae754bf08494abac7df3389c/kesl-12.4.0-1225.x86_64.rpm",
       "filename": "kesl-12.4.0-1225.x86_64.rpm",
+      "path": "kesl/kesl-12.4.0-1225.x86_64.rpm",
       "sha256": "6c545e7ef9abd9f80a6e5f10ac4ed2206a3124345144b54d7d24e603197e3020"
     },
     "kesl-gui-12.4": {
@@ -185,6 +202,7 @@
       "version": "12.4.0.1225",
       "url": "https://products.s.kaspersky-labs.com/endpoints/keslinux10/12.4.0.1225/multilanguage-INT-12.4.0.1225/8ce250a1e94d4c7396a4b15ab9970f18/kesl-gui-12.4.0-1225.x86_64.rpm",
       "filename": "kesl-gui-12.4.0-1225.x86_64.rpm",
+      "path": "kesl/kesl-gui-12.4.0-1225.x86_64.rpm",
       "sha256": "ebc3c7e1a44f5d35e8befc8f7f2c1354fb5c8815c1fcea05649af6c490773f7f"
     }
   }

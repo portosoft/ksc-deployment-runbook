@@ -63,6 +63,7 @@ class TestPackagesCatalog(unittest.TestCase):
             self.assertIn(key, packages, f"Chave obrigatória ausente no catálogo: {key}")
             self.assertTrue(packages[key]["url"].startswith("https://"))
             self.assertTrue(packages[key]["filename"].endswith((".rpm", ".tar.gz")))
+            self.assertIn("path", packages[key])
 
     def test_checksums_sha256_file_consistency(self):
         """Valida que o arquivo configs/ksc/checksums.sha256 reflete o catálogo."""
@@ -71,6 +72,7 @@ class TestPackagesCatalog(unittest.TestCase):
 
         catalog = load_package_catalog()
         catalog_hashes = {pkg["sha256"].lower() for pkg in catalog["packages"].values()}
+        file_hashes = set()
 
         with open(checksum_file, "r", encoding="utf-8") as f:
             for line in f:
@@ -80,11 +82,17 @@ class TestPackagesCatalog(unittest.TestCase):
                 parts = line.split()
                 if len(parts) >= 2:
                     sha = parts[0].lstrip("#").lower()
+                    file_hashes.add(sha)
                     self.assertIn(
                         sha,
                         catalog_hashes,
                         f"Hash no checksums.sha256 ({sha}) não encontrado no catálogo.",
                     )
+        self.assertEqual(
+            file_hashes,
+            catalog_hashes,
+            "Todos os hashes do catálogo devem estar ativos no checksums.sha256",
+        )
 
 
 class TestChecksumVerification(unittest.TestCase):
@@ -164,6 +172,36 @@ class TestChecksumVerification(unittest.TestCase):
             self.assertEqual(len(res["untracked"]), 1)
             self.assertEqual(res["untracked"][0]["file"], "extra_script.sh")
 
+    def test_verify_directory_nested_subdirectories(self):
+        """Valida a verificação recursiva de pacotes em subdiretórios com caminhos relativos."""
+        catalog = load_package_catalog()
+        pkg = catalog["packages"]["ksc-server-16.3-pt-BR"]
+        rel_path = pkg["path"]
+        expected_sha = pkg["sha256"]
+
+        with tempfile.TemporaryDirectory() as td:
+            full_path = os.path.join(td, rel_path)
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            with open(full_path, "wb") as f:
+                f.write(b"mock ksc payload")
+
+            # Hash simulado
+            import hashlib
+            actual_sha = hashlib.sha256(b"mock ksc payload").hexdigest()
+            catalog_copy = {
+                "packages": {
+                    "ksc-server-16.3-pt-BR": {
+                        **pkg,
+                        "sha256": actual_sha,
+                    }
+                }
+            }
+
+            res = verify_directory(td, catalog=catalog_copy)
+            self.assertEqual(len(res["verified"]), 1)
+            self.assertEqual(res["verified"][0]["file"], rel_path)
+            self.assertEqual(res["verified"][0]["package_id"], "ksc-server-16.3-pt-BR")
+
     def test_download_package_not_found(self):
         """Garante erro explicativo para ID de pacote inexistente."""
         with tempfile.TemporaryDirectory() as td:
@@ -187,6 +225,7 @@ class TestChecksumVerification(unittest.TestCase):
                 "test-pkg": {
                     "product": "Test Package",
                     "filename": "test-pkg.rpm",
+                    "path": "test-sub/test-pkg.rpm",
                     "url": "https://example.com/test-pkg.rpm",
                     "sha256": hashlib.sha256(payload).hexdigest(),
                 }
@@ -199,6 +238,7 @@ class TestChecksumVerification(unittest.TestCase):
             )
             self.assertTrue(out_file.is_file())
             self.assertEqual(out_file.read_bytes(), payload)
+            self.assertTrue(str(out_file).endswith("test-sub/test-pkg.rpm"))
             mock_urlopen.assert_called_once()
             _, kwargs = mock_urlopen.call_args
             self.assertEqual(kwargs.get("timeout"), 60)
@@ -218,11 +258,11 @@ class TestChecksumVerification(unittest.TestCase):
         with self.assertRaises(SetupError):
             install_ksc_server(config, logger)
 
-    def test_install_ksc_server_none_packages_dir_succeeds(self):
-        """Valida que install_ksc_server prossegue normalmente quando packages_dir não é configurado."""
+    def test_install_ksc_server_missing_packages_dir_raises(self):
+        """Valida que install_ksc_server falha com SetupError se packages_dir não for configurado (fail-closed)."""
         import logging
         from automation.python.config import KscConfig
-        from automation.python.setup_steps import install_ksc_server
+        from automation.python.setup_steps import SetupError, install_ksc_server
 
         config = KscConfig(
             db_password="dummy",
@@ -230,7 +270,23 @@ class TestChecksumVerification(unittest.TestCase):
             packages_dir=None,
         )
         logger = logging.getLogger("test")
-        install_ksc_server(config, logger)
+        with self.assertRaises(SetupError):
+            install_ksc_server(config, logger)
+
+    def test_install_ksc_server_valid_packages_dir_succeeds(self):
+        """Valida que install_ksc_server executa com sucesso se packages_dir for válido."""
+        import logging
+        from automation.python.config import KscConfig
+        from automation.python.setup_steps import install_ksc_server
+
+        with tempfile.TemporaryDirectory() as td:
+            config = KscConfig(
+                db_password="dummy",
+                ksc_admin_password="dummy",
+                packages_dir=td,
+            )
+            logger = logging.getLogger("test")
+            install_ksc_server(config, logger)
 
 
 class TestCliPackagesIntegration(unittest.TestCase):

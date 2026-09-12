@@ -98,12 +98,11 @@ def install_ksc_server(config: KscConfig, logger: logging.Logger) -> None:
     packages_dir = getattr(config, "packages_dir", None) or os.environ.get(
         "KSC_PACKAGES_DIR"
     )
-    if packages_dir:
-        verify_ksc_packages(packages_dir, logger)
-    else:
-        logger.info(
-            "KSC_PACKAGES_DIR não configurado. Prosseguindo sem validação prévia de pacotes locais."
+    if not packages_dir:
+        raise SetupError(
+            "KSC_PACKAGES_DIR não configurado. A verificação prévia de integridade dos pacotes é obrigatória para instalação."
         )
+    verify_ksc_packages(packages_dir, logger)
 
     logger.info("Instalando KSC Server e Web Console...")
     # Wrapper real de instalação silenciosa
