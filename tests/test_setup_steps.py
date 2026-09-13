@@ -579,3 +579,17 @@ def test_web_console_configured_when_unit_absent(
     configure_web_console(ksc_test_config, logger)
 
     assert any("setup.js" in " ".join(c["cmd"]) for c in recorded)
+
+
+def test_group_check_failure_aborts_instead_of_assuming_ok(monkeypatch, recorded, logger):
+    """Não ler os grupos não permite concluir que a conta está correta.
+
+    Seguir em frente deixaria o hardening retirar-lhe o acesso aos binários.
+    """
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+    monkeypatch.setattr(
+        setup_steps, "run_command", lambda cmd, **kw: ("", "usuário desconhecido", 1)
+    )
+
+    with pytest.raises(SetupError, match="verificar os grupos"):
+        setup_steps._ensure_ksc_accounts(logger)

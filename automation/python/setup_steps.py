@@ -273,9 +273,16 @@ def _ensure_ksc_accounts(logger: logging.Logger, dry_run: bool = False) -> None:
         # Uma conta preexistente pode estar fora do grupo administrativo. Como o
         # hardening fecha o acesso de "outros" e concede apenas ao grupo, deixá-la
         # de fora a trancaria para fora dos próprios binários do produto.
-        stdout, _, rc = run_command(["id", "-nG", KSC_SERVICE_USER], check=False)
-        grupos = (stdout or "").split()
-        if rc == 0 and KSC_ADMINS_GROUP not in grupos:
+        stdout, stderr, rc = run_command(["id", "-nG", KSC_SERVICE_USER], check=False)
+        if rc != 0:
+            # Não conseguir ler os grupos não permite concluir que a conta está
+            # correta: seguir assim deixaria o hardening retirar-lhe o acesso.
+            raise SetupError(
+                f"Não foi possível verificar os grupos de '{KSC_SERVICE_USER}' "
+                f"(rc={rc}): {(stderr or '').strip() or 'sem detalhe'}"
+            )
+        grupos = stdout.split()
+        if KSC_ADMINS_GROUP not in grupos:
             logger.warning(
                 f"Conta '{KSC_SERVICE_USER}' existe fora do grupo '{KSC_ADMINS_GROUP}'; "
                 "adicionando para que o hardening não lhe retire o acesso."
@@ -578,7 +585,7 @@ def configure_web_console(
             f"Porta {config.web_port} não é privilegiada; removendo o drop-in de "
             "capacidade que deixou de ser necessário."
         )
-        _run(["rm", "-rf", WEB_CONSOLE_DROPIN_DIR], logger, check=False)
+        _run(["rm", "-rf", WEB_CONSOLE_DROPIN_DIR], logger)
         _run(["systemctl", "daemon-reload"], logger)
 
     # O setup.js precisa ser executado a partir do diretório do componente.

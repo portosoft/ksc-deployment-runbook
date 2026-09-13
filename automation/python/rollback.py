@@ -63,21 +63,28 @@ class RollbackError(Exception):
 
 
 def _existing_units(candidates: List[str]) -> List[str]:
-    """Filtra as unidades que de fato existem no host."""
+    """Filtra as unidades que de fato existem no host.
+
+    Uma consulta que falha **não** é tratada como unidade ausente: isso faria o
+    rollback deixar de pará-la e a verificação deixar de reportá-la, com a CLI
+    anunciando um host limpo sem base para tanto.
+
+    Raises:
+        RollbackError: Se alguma unidade não puder ser consultada.
+    """
     presentes = []
     for unit in candidates:
         try:
             stdout, _, rc = run_command(
                 ["systemctl", "list-unit-files", unit], check=False
             )
-            if rc == 0 and unit in (stdout or ""):
-                presentes.append(unit)
-        except Exception as e:
-            # Uma unidade que não pôde ser consultada é tratada como ausente:
-            # o passo seguinte tolera ausência, e a verificação final reporta
-            # qualquer unidade que ainda exista.
-            _LOG.debug("Falha ao consultar a unidade %s: %s", unit, e)
-            continue
+        except Exception as e:  # noqa: BLE001 - qualquer falha aqui é indeterminação
+            raise RollbackError(
+                f"Não foi possível consultar a unidade {unit}: {e}. "
+                "O estado do host é indeterminado; nada foi removido."
+            )
+        if rc == 0 and unit in (stdout or ""):
+            presentes.append(unit)
     return presentes
 
 
@@ -200,7 +207,8 @@ def perform_rollback(
         elif Path(dropin).exists():
             if _run(["rm", "-rf", dropin], logger, check=False) != 0:
                 falhas.append(f"remover o drop-in {dropin}")
-    _run(["systemctl", "daemon-reload"], logger, dry_run, check=False)
+    if _run(["systemctl", "daemon-reload"], logger, dry_run, check=False) != 0:
+        falhas.append("recarregar as unidades do systemd")
 
     # 6. Contas de sistema, por último: removê-las antes faria os passos
     #    anteriores perderem o dono dos arquivos que ainda precisam apagar.
@@ -264,6 +272,23 @@ def verify_rollback(
         residuos.append(f"conta de sistema presente: {KSC_SERVICE_USER}")
     if _account_exists("group", KSC_ADMINS_GROUP):
         residuos.append(f"grupo presente: {KSC_ADMINS_GROUP}")
+
+    remoto = config is not None and config.db_host not in (
+        "127.0.0.1",
+        "localhost",
+        "::1",
+    )
+    if remoto:
+        # perform_rollback preserva deliberadamente as bases em servidor remoto.
+        # Inspecioná-las aqui reportaria como resíduo o que foi preservado de
+        # propósito, fazendo --verify falhar sempre nesse cenário.
+        logger.info(
+            f"PostgreSQL remoto em {config.db_host}: bases fora do escopo da "
+            "verificação, por terem sido preservadas deliberadamente."
+        )
+        for item in residuos:
+            logger.warning(f"Resíduo: {item}")
+        return residuos
 
     consulta = "SELECT datname FROM pg_database WHERE datname IN ('ksc', 'ksciam')"
     try:

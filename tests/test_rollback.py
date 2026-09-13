@@ -174,3 +174,29 @@ def test_rollback_raises_when_a_step_fails(monkeypatch, logger, ksc_test_config)
 
     with pytest.raises(rollback.RollbackError, match="Rollback incompleto"):
         perform_rollback(ksc_test_config, logger)
+
+
+def test_remote_database_is_out_of_verification_scope(monkeypatch, logger, ksc_test_config):
+    """As bases remotas são preservadas de propósito; reportá-las como resíduo
+    faria --verify falhar sempre nesse cenário."""
+    monkeypatch.setattr(rollback, "run_command", lambda cmd, **kw: ("", "", 1))
+    monkeypatch.setattr(rollback.Path, "exists", lambda self: False)
+    monkeypatch.setattr(rollback, "_account_exists", lambda kind, name: False)
+    monkeypatch.setattr(rollback, "_existing_units", lambda units: [])
+
+    remoto = ksc_test_config.model_copy(update={"db_host": "db.interno.test"})
+    residuos = verify_rollback(logger, remoto)
+
+    assert not any("PostgreSQL" in r or "base de dados" in r for r in residuos)
+
+
+def test_unit_query_failure_aborts_rollback(monkeypatch, logger, ksc_test_config):
+    """Consulta que falha não é unidade ausente: o estado do host é indeterminado."""
+
+    def explode(cmd, **kwargs):
+        raise OSError("systemctl indisponível")
+
+    monkeypatch.setattr(rollback, "run_command", explode)
+
+    with pytest.raises(rollback.RollbackError, match="não foi possível consultar|Não foi possível consultar"):
+        perform_rollback(ksc_test_config, logger)
