@@ -168,3 +168,22 @@ def test_postgres_check_finds_versioned_unit_when_generic_is_inactive(monkeypatc
     item = next(i for i in resultado.items if i.name == "postgresql")
     assert item.status == "ok", item.message
     assert "postgresql-16" in item.message
+
+
+def test_run_precheck_skip_ports_replaces_port_items():
+    """Com skip_ports, nenhum item de porta entra no resultado."""
+    from automation.python.checks import run_precheck
+    from automation.python.config import KscConfig
+    from automation.python.credentials import generate_password
+
+    config = KscConfig(
+        db_password=generate_password(), ksc_admin_password=generate_password()
+    )
+    resultado = run_precheck(config, skip_ports=True)
+
+    nomes = [i.name for i in resultado.items]
+    assert not any(n.startswith("port_") for n in nomes)
+    assert "ports" in nomes
+    assert not resultado.has_critical or all(
+        i.name != "ports" for i in resultado.items if i.status == "critical"
+    )

@@ -451,3 +451,102 @@ def test_data_dir_is_not_hardened_recursively(
     cmds = _cmds(recorded)
     assert f"chmod -R o-rwx {setup_steps.KSC_DATA_DIR}" not in cmds
     assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
+
+
+# --- Idempotência -----------------------------------------------------------
+
+
+def test_precheck_skips_ports_when_ksc_already_installed(monkeypatch, logger, ksc_test_config):
+    """A segunda execução de setup --apply abortava com as portas do próprio KSC.
+
+    Em um host já instalado, 'porta 443 em uso' é o estado correto — tratá-la
+    como falha crítica impedia a reexecução, e idempotência é requisito para
+    uso em frota.
+    """
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: True)
+
+    capturado = {}
+
+    def fake_precheck(config, skip_ports=False):
+        capturado["skip_ports"] = skip_ports
+        from automation.python.checks import CheckResult
+
+        return CheckResult(items=[])
+
+    monkeypatch.setattr(setup_steps, "run_precheck", fake_precheck)
+    setup_steps.perform_precheck_only(ksc_test_config, logger)
+
+    assert capturado["skip_ports"] is True
+
+
+def test_precheck_checks_ports_on_clean_host(monkeypatch, logger, ksc_test_config):
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
+
+    capturado = {}
+
+    def fake_precheck(config, skip_ports=False):
+        capturado["skip_ports"] = skip_ports
+        from automation.python.checks import CheckResult
+
+        return CheckResult(items=[])
+
+    monkeypatch.setattr(setup_steps, "run_precheck", fake_precheck)
+    setup_steps.perform_precheck_only(ksc_test_config, logger)
+
+    assert capturado["skip_ports"] is False
+
+
+def test_web_console_setup_skipped_when_parameters_unchanged(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """Reexecutar o setup.js regenera o certificado TLS e recria as contas.
+
+    Em um Web Console já configurado com os mesmos parâmetros isso quebra a
+    confiança de clientes que já aceitaram o certificado — e a auditoria não
+    acusa a troca.
+    """
+    setup_file = tmp_path / "setup.json"
+    setup_file.write_text(setup_steps.build_web_console_setup(ksc_test_config))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(setup_file))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+    monkeypatch.setattr(
+        setup_steps,
+        "run_command",
+        lambda cmd, **kw: ("KSCWebConsole.service enabled", "", 0),
+    )
+
+    configure_web_console(ksc_test_config, logger)
+
+    # Nenhuma chamada ao setup.js: o certificado existente é preservado.
+    assert not any("setup.js" in " ".join(c["cmd"]) for c in recorded)
+
+
+def test_web_console_reconfigured_when_parameters_differ(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """Parâmetros diferentes são reconfiguração intencional: o setup.js roda."""
+    setup_file = tmp_path / "setup.json"
+    outra_porta = ksc_test_config.model_copy(update={"web_port": 8080})
+    setup_file.write_text(setup_steps.build_web_console_setup(outra_porta))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(setup_file))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config, logger)
+
+    assert any("setup.js" in " ".join(c["cmd"]) for c in recorded)
+
+
+def test_web_console_configured_when_unit_absent(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """Arquivo igual mas sem unidade significa instalação incompleta."""
+    setup_file = tmp_path / "setup.json"
+    setup_file.write_text(setup_steps.build_web_console_setup(ksc_test_config))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(setup_file))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config, logger)
+
+    assert any("setup.js" in " ".join(c["cmd"]) for c in recorded)

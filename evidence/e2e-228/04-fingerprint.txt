@@ -1,0 +1,69 @@
+## pacotes
+klnagent64 16.3.0-1207
+ksc64 16.3.0-1207
+ksc-web-console 16.3.12907-1
+postgresql16 16.15-1PGDG.rhel9.8
+postgresql16-libs 16.15-1PGDG.rhel9.8
+postgresql16-server 16.15-1PGDG.rhel9.8
+
+## unidades systemd
+klactprx_srv.service enabled=enabled active=active
+kladminserver_srv.service enabled=enabled active=active
+klcssnmp_srv.service enabled=enabled active=active
+kliam_srv.service enabled=enabled active=active
+klnagent_srv.service enabled=enabled active=active
+klwebsrv_srv.service enabled=enabled active=active
+KSCSvcWebConsole.service enabled=enabled active=active
+KSCWebConsoleManagement.service enabled=enabled active=active
+KSCWebConsoleNATS.service enabled=enabled active=active
+KSCWebConsolePlugin.service enabled=enabled active=active
+KSCWebConsole.service enabled=enabled active=active
+postgresql-16.service enabled=enabled active=active
+
+## portas em escuta
+22
+111
+443
+1329
+2001
+2003
+2005
+4222
+4444
+5432
+8060
+8061
+9050
+9500
+13000
+13111
+13299
+17000
+19170
+30522
+
+## contas de sistema
+ksc:994:994
+kladmins:994
+
+## bases e roles
+ksc
+ksciam
+postgres
+kluser
+postgres
+
+## permissões dos diretórios do produto
+/opt/kaspersky 750 root:kladmins
+/opt/kaspersky/ksc64 750 root:kladmins
+/opt/kaspersky/ksc64/sbin 750 root:kladmins
+/var/opt/kaspersky 755 root:kladmins
+/var/opt/kaspersky/ksc-web-console 754 user_management_3r5ggq_yg8:kl_users_group_x93bchrp08
+
+## arquivos de configuração (hash do conteúdo)
+/etc/ksc-web-console-setup.json a78af9c889255b6b
+/etc/systemd/system/kladminserver_srv.service.d/10-ld-library-path.conf ba86d5f846888fe6
+/etc/systemd/system/KSCWebConsole.service.d/10-bind-privileged-port.conf a574fb93e31b14d7
+
+## certificado do Web Console
+/var/opt/kaspersky/ksc-web-console/KLRootCA.crt 93:63:5C:FD:46:A8:E2:B5:74:EB:73:82:CF:53:22:F5:E3:23:55:1D:CC:06:C8:CB:EF:73:BD:38:37:1B:3D:73
