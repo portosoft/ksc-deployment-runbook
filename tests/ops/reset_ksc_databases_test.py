@@ -3,18 +3,25 @@ import shlex
 from unittest.mock import patch, MagicMock
 from automation.ops.reset_ksc_databases import reset_ksc_databases
 from automation.python.config import KscConfig
+from automation.python.credentials import (
+    generate_password,
+    generate_synthetic_fqdn,
+    generate_username,
+)
 
 
 @pytest.fixture
 def dummy_config():
+    # Credenciais geradas em vez de literais. O db_user mantém a aspa
+    # deliberadamente: o objetivo do teste é provar que a injeção é escapada.
     return KscConfig(
         db_host="127.0.0.1",
-        db_password="dummy_password",
+        db_password=generate_password(),
         db_user='kluser"test',  # Test malicious injection
-        ksc_admin_password="dummy_admin_password",
-        ksc_host="test.ksc.local",
-        ksc_user="testuser",
-        ksc_pass="testpass",
+        ksc_admin_password=generate_password(),
+        ksc_host=generate_synthetic_fqdn(),
+        ksc_user=generate_username(),
+        ksc_pass=generate_password(),
     )
 
 

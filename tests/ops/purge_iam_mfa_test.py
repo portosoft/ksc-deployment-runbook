@@ -4,17 +4,24 @@ import shlex
 from unittest.mock import patch, MagicMock
 from automation.ops.purge_iam_mfa import purge_iam_mfa
 from automation.python.config import KscConfig
+from automation.python.credentials import (
+    generate_password,
+    generate_synthetic_fqdn,
+    generate_username,
+)
 
 
 @pytest.fixture
 def dummy_config():
+    # Credenciais geradas em vez de literais: strings com aparência de senha no
+    # código-fonte poluem o baseline de segredos com falsos positivos.
     return KscConfig(
         db_host="127.0.0.1",
-        db_password="dummy_password",
-        ksc_admin_password="dummy_admin_password",
-        ksc_host="test.ksc.local",
-        ksc_user="testuser",
-        ksc_pass="testpass",
+        db_password=generate_password(),
+        ksc_admin_password=generate_password(),
+        ksc_host=generate_synthetic_fqdn(),
+        ksc_user=generate_username(),
+        ksc_pass=generate_password(),
     )
 
 
@@ -39,7 +46,7 @@ def test_purge_iam_mfa_secure_quoting(mock_run_remote_sudo, mock_connect, dummy_
     for i, q in enumerate(expected_queries):
         expected_cmd = f"-u postgres psql -d ksciam -c {shlex.quote(q)}"
         assert calls[i][0][1] == expected_cmd
-        assert calls[i][0][2] == "testpass"
+        assert calls[i][0][2] == dummy_config.ksc_pass
 
     # Test the restart command
     assert (

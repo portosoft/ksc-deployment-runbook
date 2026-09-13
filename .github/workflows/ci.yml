@@ -59,7 +59,7 @@ jobs:
           OLD_TS=$(python3 -c "import json; print(json.load(open('.secrets.baseline'))['generated_at'])")
           detect-secrets scan --baseline .secrets.baseline \
             --exclude-files '(\.example|\.md|.*raw_output\.txt)$' \
-            --exclude-lines '^(from|import)\s' \
+            --exclude-lines '^(from|import)\s|"sha256":\s*"[a-f0-9]{64}"' \
             . || true
           python3 -c "import json;b=json.load(open('.secrets.baseline'));b['generated_at']='$OLD_TS';json.dump(b,open('.secrets.baseline','w'),indent=2,sort_keys=True);print('generated_at restored')"
           git add .secrets.baseline

@@ -13,6 +13,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from automation.python.credentials import generate_password
 from automation.python.packages import (
     DEFAULT_CATALOG_PATH,
     ChecksumVerificationError,
@@ -250,8 +251,8 @@ class TestChecksumVerification(unittest.TestCase):
         from automation.python.setup_steps import SetupError, install_ksc_server
 
         config = KscConfig(
-            db_password="dummy",
-            ksc_admin_password="dummy",
+            db_password=generate_password(),
+            ksc_admin_password=generate_password(),
             packages_dir="/non/existent/path/for/ksc/packages",
         )
         logger = logging.getLogger("test")
@@ -265,8 +266,8 @@ class TestChecksumVerification(unittest.TestCase):
         from automation.python.setup_steps import SetupError, install_ksc_server
 
         config = KscConfig(
-            db_password="dummy",
-            ksc_admin_password="dummy",
+            db_password=generate_password(),
+            ksc_admin_password=generate_password(),
             packages_dir=None,
         )
         logger = logging.getLogger("test")
@@ -286,8 +287,8 @@ class TestChecksumVerification(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as td:
             config = KscConfig(
-                db_password="dummy",
-                ksc_admin_password="dummy",
+                db_password=generate_password(),
+                ksc_admin_password=generate_password(),
                 packages_dir=td,
             )
             logger = logging.getLogger("test")

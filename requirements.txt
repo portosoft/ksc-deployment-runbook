@@ -1,13 +1,30 @@
+# Dependências diretas do KSC Deployment Runbook.
+#
+# Somente o que o código importa de fato. Dependências transitivas não são
+# fixadas aqui: elas chegam pelos pacotes abaixo e fixá-las seletivamente
+# passava a impressão enganosa de um lockfile completo, que este arquivo não é.
+#
+# Requer Python >= 3.10 (md2pdf). No Rocky Linux 9, cujo python3 é a versão
+# 3.9, use o interpretador do AppStream — ver docs/03-pre-requisitos.md e #231.
+
+# Configuração e validação
 pydantic==2.13.5
+
+# Execução remota e criptografia do vault
 paramiko==5.0.0
-md2pdf==3.1.1
-pyyaml==6.0.3
-requests==2.34.2
 cryptography==50.0.1
-python-dotenv==1.2.3
-jinja2==3.1.6
-lxml==6.1.2
+
+# Conversão de .env para inventário Ansible (automation/ops/env_to_ansible.py)
+pyyaml==6.0.3
+
+# Relatório de auditoria em PDF. Traz consigo weasyprint, jinja2, Pillow e
+# markdown, que o projeto não importa diretamente.
+md2pdf==3.1.1
+
+# Smoke tests que exigem um KSC real (automation/smoke-tests/)
+requests==2.34.2
+
+# Testes
 pytest==9.1.1
 pytest-cov==7.1.0
 hypothesis==6.165.10
-Pillow==12.3.0
