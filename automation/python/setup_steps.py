@@ -448,6 +448,31 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
 """
 
 
+def _web_console_is_configured(parametros_desejados: str) -> bool:
+    """True se o Web Console já estiver configurado com estes mesmos parâmetros.
+
+    Exige as duas condições: a unidade principal existir — ela é criada pelo
+    setup.js, não pelo RPM — e o arquivo de parâmetros em uso ser idêntico ao
+    que seria gravado. Parâmetros diferentes significam reconfiguração
+    intencional, e aí o setup.js precisa mesmo rodar.
+    """
+    try:
+        stdout, _, rc = run_command(
+            ["systemctl", "list-unit-files", "KSCWebConsole.service"], check=False
+        )
+        if rc != 0 or "KSCWebConsole.service" not in (stdout or ""):
+            return False
+    except Exception:
+        return False
+
+    try:
+        atual = Path(WEB_CONSOLE_SETUP_FILE).read_text(encoding="utf-8")
+    except OSError:
+        return False
+
+    return atual.strip() == parametros_desejados.strip()
+
+
 def build_web_console_setup(config: KscConfig) -> str:
     """Monta o arquivo de parâmetros do Web Console.
 
@@ -488,6 +513,8 @@ def configure_web_console(
     """
     logger.info("Configurando o KSC Web Console...")
 
+    desejado = build_web_console_setup(config)
+
     if dry_run:
         logger.info(
             f"[CHECK] Seria gravado {WEB_CONSOLE_SETUP_FILE} (modo 0600) com porta "
@@ -495,10 +522,21 @@ def configure_web_console(
         )
         return
 
-    try:
-        Path(WEB_CONSOLE_SETUP_FILE).write_text(
-            build_web_console_setup(config), encoding="utf-8"
+    # Reexecutar o setup.js regenera o certificado TLS e recria as contas de
+    # serviço com novos nomes. Em um Web Console já configurado com os mesmos
+    # parâmetros isso é puro dano: invalida a confiança de qualquer cliente que
+    # já tenha aceitado o certificado, sem que a auditoria acuse mudança alguma.
+    if _web_console_is_configured(desejado):
+        logger.info(
+            "Web Console já configurado com estes parâmetros; setup.js ignorado "
+            "para preservar o certificado e as contas de serviço existentes."
         )
+        for unit in WEB_CONSOLE_SERVICES:
+            _run(["systemctl", "enable", "--now", unit], logger, check=False)
+        return
+
+    try:
+        Path(WEB_CONSOLE_SETUP_FILE).write_text(desejado, encoding="utf-8")
         os.chmod(WEB_CONSOLE_SETUP_FILE, 0o600)
     except OSError as e:
         raise SetupError(f"Falha ao gravar {WEB_CONSOLE_SETUP_FILE}: {e}")
