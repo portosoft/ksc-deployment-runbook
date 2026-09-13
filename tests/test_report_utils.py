@@ -58,7 +58,9 @@ def test_convert_markdown_to_pdf_success(mock_load_md2pdf, tmp_path):
 
     convert_markdown_to_pdf(md_path, pdf_path)
 
-    mock_md2pdf.assert_called_once_with(pdf_path, md_file_path=str(md_path))
+    # md2pdf 3.x: md2pdf(pdf, raw=None, md=None, ...). O parâmetro md_file_path
+    # é da linha 1.x e fazia a conversão sempre lançar TypeError.
+    mock_md2pdf.assert_called_once_with(pdf_path, md=md_path)
 
 
 @patch("logging.getLogger")
