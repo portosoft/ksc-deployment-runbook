@@ -55,9 +55,6 @@ KSC_PATHS = [
 ]
 
 
-_LOG = logging.getLogger(__name__)
-
-
 class RollbackError(Exception):
     pass
 
