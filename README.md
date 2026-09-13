@@ -35,16 +35,19 @@ para diretrizes. Para reportar vulnerabilidades de segurança, veja [SECURITY.md
 
 ## 📌 Status, maturidade e limitações
 
-**Estágio atual: MVP / Beta inicial.** Antes de usar em produção, leia:
+**Estágio atual: Beta.** Antes de usar em produção, leia:
 
-- Os passos de instalação em `automation/python/setup_steps.py` são **reais**
-  desde a desmockagem (preparação do SO, PostgreSQL 16, RPMs do KSC com `postinstall.pl`
-  e hardening), mas **ainda não foram exercitados em um servidor real**.
-- **Nenhuma validação end-to-end em servidor real foi registrada.** A
-  compatibilidade com KSC 16.x / Rocky 9 / Oracle 9 / PostgreSQL 16 é
-  **declarada, não comprovada**.
-- Os arquivos em `evidence/` provêm de execuções de teste com SSH simulado e
-  **não são evidência de deploy real**.
+- O ciclo completo foi **executado com sucesso contra um KSC 16.3.0.1207 real**
+  em Rocky Linux 9.8 com PostgreSQL 16, em 12/09/2026: instalação, Web Console
+  em HTTPS e relatório de auditoria sem falhas críticas. Evidências em
+  [`evidence/e2e-209/`](evidence/e2e-209/README.md).
+- **A validação cobre uma única combinação, em uma única execução de
+  laboratório.** Oracle Linux 9 e outras versões do KSC seguem **declaradas,
+  não comprovadas** ([#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227)).
+- **O rollback nunca foi exercitado** ([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)) e não há nenhuma
+  métrica de desempenho ([#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225)).
+- Fora de `evidence/e2e-209/`, os arquivos em `evidence/` provêm de execuções
+  de teste com SSH simulado e **não são evidência de deploy real**.
 
 Limitações completas: [project-review/06-known-limitations.md](project-review/06-known-limitations.md).
 

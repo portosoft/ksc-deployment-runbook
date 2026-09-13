@@ -33,19 +33,25 @@ pública ou baseada em comportamento observado, está em
 `03-integration-with-main-tool.md`.
 
 Sobre o estado atual, queremos ser precisos: o projeto está em estágio de
-**MVP**. A suíte de 108 testes unitários passa e o CI inclui CodeQL, Semgrep e
-verificação de segredos, mas **ainda não executamos uma instalação end-to-end
-em servidor real**, quatro funções de instalação permanecem como mocks
-declarados no código, e os artefatos em `evidence/` provêm de execuções
-simuladas. Portanto, **não afirmamos compatibilidade comprovada com o KSC
-16.x** — afirmamos que o projeto é destinado a ele e que a validação está em
-curso. As limitações estão listadas integralmente em `06-known-limitations.md`.
+**Beta**. Em 12/09/2026 executamos o ciclo completo contra um **KSC
+16.3.0.1207 real**, instalado a partir dos RPMs oficiais em Rocky Linux 9.8 com
+PostgreSQL 16: a instalação concluiu com sucesso, o Web Console respondeu em
+HTTPS e o relatório de auditoria foi gerado sem falhas críticas. Essa execução
+revelou dez defeitos no nosso próprio código, todos corrigidos.
+
+Ainda assim, **não afirmamos compatibilidade comprovada com o KSC 16.x em
+geral**: validamos **uma combinação**, em **uma execução de laboratório**.
+Oracle Linux 9 e outras versões seguem apenas declaradas, o rollback nunca foi
+exercitado e não coletamos nenhuma métrica de desempenho. As limitações estão
+listadas integralmente em `06-known-limitations.md`.
 
 Neste momento buscamos uma revisão técnica focada em três pontos em que
 dependemos de comportamento observado e não de documentação:
 
-1. A execução de `postinstall.pl` em modo silencioso é um caminho suportado
-   para reconfigurar um Administration Server já instalado?
+1. Qual é o caminho suportado para reconfigurar um Administration Server já
+   instalado? Verificamos que o `postinstall.pl` recusa reexecução
+   ("Do not run the `postinstall.pl` script again"), então o caminho que
+   usávamos não serve.
 2. Existe forma suportada de configurar o KSC Web Console em Linux sem editar
    `config.json` e `web-server.js`? Esses arquivos devem ser considerados
    internos?
@@ -60,9 +66,12 @@ produto nem suporte aos nossos usuários. Se qualquer uso que fazemos for
 considerado impróprio, nos comprometemos a ajustá-lo ou removê-lo.
 
 Podemos disponibilizar: o repositório completo, o ambiente de laboratório
-reproduzível, os logs estruturados, os resultados de testes e de CI, os
-diagramas de arquitetura e casos de falha reproduzíveis de instalação em Linux,
-que talvez sejam úteis como insumo para a documentação e para o instalador.
+reproduzível (Proxmox em container, provisionado por script), os logs
+estruturados do deploy real, os resultados de testes e de CI, os diagramas de
+arquitetura e um conjunto de casos concretos de falha de instalação em Linux —
+incluindo comportamentos do instalador e nomes de unidades systemd que
+divergem da documentação pública e que talvez sejam úteis como insumo para a
+documentação do produto.
 
 Agradecemos qualquer orientação que torne esta integração mais compatível,
 segura e sustentável.

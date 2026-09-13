@@ -8,15 +8,27 @@ da resposta.
 ### Q1 — Reconfiguração de um Administration Server já instalado
 
 **Pergunta.** Qual é o método suportado para reconfigurar um KSC 16.x
-Administration Server já instalado em Linux sem reinstalá-lo? A execução de
-`/opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl` em modo silencioso com um
-arquivo de respostas é um uso previsto?
+Administration Server já instalado em Linux sem reinstalá-lo?
 
-**Contexto.** É o caminho que utilizamos em `automation/ops/reconfigure_ksc_service.py`. Foi derivado de comportamento observado, não de documentação.
+**Contexto.** Usávamos `postinstall.pl` em modo silencioso, em
+`automation/ops/reconfigure_ksc_service.py`. A validação E2E respondeu a
+metade da pergunta: ao ser reexecutado em um servidor configurado, o próprio
+instalador encerra com código 1 e a mensagem
 
-**Por que importa.** Se não for suportado, estamos expondo usuários a um estado não previsto pelo produto.
+```
+Fatal error: Kaspersky Security Center is successfully configured.
+Do not run the `postinstall.pl` script again.
+```
 
-**Decisão que depende.** Manter, substituir ou remover completamente a funcionalidade de reconfiguração.
+Ou seja, esse **não** é o caminho de reconfiguração.
+
+**Por que importa.** Hoje não conhecemos nenhum caminho suportado para
+reconfigurar um servidor instalado, e mantemos uma funcionalidade apoiada em
+um que o produto desaconselha explicitamente.
+
+**Decisão que depende.** Substituir a implementação de
+`reconfigure_ksc_service.py` pelo caminho indicado, ou remover a
+funcionalidade caso não exista um.
 
 ---
 

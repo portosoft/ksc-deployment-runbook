@@ -28,13 +28,14 @@ implementação) · `Não confirmada`.
 | `/opt/kaspersky/ksc64/lib/bin/setup/postinstall.pl` | Reconfiguração pós-instalação do Administration Server em modo silencioso | Observada | Caminho e contrato do script | Implementado · **não confirmado** (Q1) |
 | `/opt/kaspersky/ksc64/sbin/kladduser` | Criação da conta administrativa inicial | Pública | Caminho e sintaxe | Implementado · não validado em alvo real |
 | Unidades systemd `kladminserver_srv`, `klnagent_srv`, `ksc-web-console`, `kliam_srv` | `start` / `stop` / `status` durante setup, hardening, reset de banco e auditoria | Pública | Nomes das unidades | Implementado |
+| `/etc/ksc-web-console-setup.json` + `setup.js` do componente | Configuração do Web Console após a instalação do RPM | Observada | Chaves do arquivo e caminho do `setup.js` | Implementado e **exercitado em instalação real** |
 | `/opt/kaspersky/ksc-web-console/server/config.json` | Ajuste de parâmetros do Web Console (JSON nativo) | Interna | Esquema do arquivo | Implementado · **alto risco de quebra** (Q2) |
 | `/opt/kaspersky/ksc-web-console/server/core/env-local/web-server.js` | Inspeção/ajuste de binding do servidor web | Interna | Arquivo de implementação | Implementado · **alto risco de quebra** (Q2) |
 | Bancos `ksc` e `ksciam` no PostgreSQL 16 | Tuning, reset controlado em laboratório, purge de MFA do IAM | Observada | Nomes e esquema das bases | Implementado · **não confirmado** (Q4) |
 | Portas 443, 8080, 13000, 13291, 14000 | Pré-checagem de disponibilidade e regras nftables de hardening | Oficial | Documentação de portas do produto | Implementado |
 | `LD_LIBRARY_PATH` para `/opt/kaspersky/ksc64/lib` | Pré-condição verificada antes de executar utilitários | Observada | Layout de diretórios | Implementado |
 | Contextos SELinux sobre `/opt/kaspersky` e `/var/opt/kaspersky` | Verificação e ajuste no hardening | Observada | Política do SO e do produto | Implementado · não validado |
-| API do Administration Server (porta 13291) | Apenas verificação de alcançabilidade; **não consumimos a API** | Não utilizada | — | Fora de escopo atual |
+| API do Administration Server | Apenas verificação de alcançabilidade; **não consumimos a API** | Não utilizada | — | Fora de escopo · ver a nota de portas abaixo |
 | Klakaut / SDK de automação | **Não utilizado** | — | — | Ver Q5 |
 
 ## 3.3 Uso declarado de superfícies frágeis
@@ -47,11 +48,40 @@ Registramos abertamente os três pontos em que dependemos de detalhe interno:
    mudar entre versões sem aviso. Se a Kaspersky indicar um método suportado de
    configuração do Web Console, migraremos e removeremos esse acesso.
 2. **`postinstall.pl` em modo silencioso para reconfiguração.** Usamos como
-   caminho de reconfiguração de um servidor já instalado. Não sabemos se esse é
-   o uso previsto do script.
+   caminho de reconfiguração de um servidor já instalado. **A validação E2E
+   indica que esse uso não é previsto:** ao ser reexecutado em um servidor já
+   configurado, o próprio instalador responde
+
+   ```
+   Fatal error: Kaspersky Security Center is successfully configured.
+   Do not run the `postinstall.pl` script again.
+   ```
+
+   e encerra com código 1. Tratamos isso no fluxo de instalação, que passou a
+   detectar servidores já configurados, mas a funcionalidade de reconfiguração
+   em `automation/ops/reconfigure_ksc_service.py` continua apoiada nesse
+   caminho. A pergunta Q1 deixou de ser "isto é suportado?" e passou a ser
+   "qual é o caminho suportado?".
 3. **Manipulação direta das bases `ksc`/`ksciam`.** Restrita a operações de
    laboratório (reset) e a uma operação de suporte (purge de MFA no IAM). Não
    lemos nem gravamos tabelas de negócio do produto em operação normal.
+
+### Portas observadas em instalação real
+
+A documentação do projeto e os pré-checks assumem um conjunto de portas que
+não corresponde inteiramente ao que o produto abre. Verificado em
+2026-09-12 sobre KSC 16.3.0.1207 em Rocky Linux 9.8:
+
+| Porta | Assumida pelo projeto | Observada |
+|---|---|---|
+| 443 | Web Console HTTPS | Em escuta, após a configuração do componente |
+| 13000 | Network Agent SSL | Em escuta (`klserver`) |
+| 13291 | API do Administration Server | **Não está em escuta**; a porta OpenAPI ativa é a **13299** |
+| 14000 | Network Agent plain | **Não está em escuta** |
+
+O próprio repositório já divergia de si mesmo: o exemplo de configuração do Web
+Console referenciava `openApiPort: 13299`, enquanto `automation/python/checks.py`
+e a documentação verificavam a 13291. Isso alimenta a pergunta Q5.
 
 ## 3.4 Configuração exigida no alvo
 
@@ -65,16 +95,17 @@ Registramos abertamente os três pontos em que dependemos de detalhe interno:
 
 | Versão KSC | Ambiente | Resultado | Limitações | Evidência |
 |---|---|---|---|---|
-| 16.x | Rocky Linux 9 + PostgreSQL 16 | **Alvo declarado** | Nenhum deploy end-to-end registrado | Declaração de escopo em `README.md` e `docs/02-matriz-compatibilidade.md` |
-| 16.x | Oracle Linux 9 + PostgreSQL 16 | **Alvo declarado** | Idem | Idem |
+| **16.3.0.1207** | **Rocky Linux 9.8 + PostgreSQL 16** | **Testado — deploy completo bem-sucedido** | Uma única execução, em VM de laboratório; sem medição de desempenho | `evidence/e2e-209/`, 2026-09-12 |
+| 16.2.x | Rocky Linux 9 + PostgreSQL 16 | Inferido — pacotes catalogados, nunca instalados | Nunca exercitado | Nenhuma |
+| 16.x | Oracle Linux 9 + PostgreSQL 16 | **Alvo declarado**, não testado | Nenhum deploy registrado | Declaração de escopo |
 | 15.x | — | Inferido como possivelmente compatível | Nunca exercitado | Nenhuma |
 | < 15.0 | — | Fora de escopo | — | — |
 | Qualquer versão com MySQL/MariaDB | — | Não suportado | — | — |
 
-Estado da compatibilidade: **declarada e inferida, não testada e não confirmada
-pelos mantenedores.** Esta é a afirmação mais importante deste pacote e não a
-apresentamos de outra forma. Nenhuma célula da tabela acima deve ser lida como
-"validado".
+Estado da compatibilidade: **uma combinação testada, as demais inferidas ou
+apenas declaradas; nenhuma confirmada pelos mantenedores.** A primeira linha da
+tabela tem lastro em execução real registrada; nenhuma das outras deve ser lida
+como validada. Ampliar a matriz é a issue [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227).
 
 Estratégia de versionamento pretendida: SemVer, com a versão menor do KSC
 suportada declarada explicitamente em cada release e um teste de fumaça por

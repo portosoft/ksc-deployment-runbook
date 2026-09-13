@@ -7,15 +7,15 @@
 | Objetivo do projeto está claro | ✅ | [00](00-executive-summary.md), [01](01-technical-overview.md) | — |
 | Integração está documentada | ✅ | [03 §3.2](03-integration-with-main-tool.md) | Cada interface classificada por tipo |
 | Uso de superfícies internas está declarado | ✅ | [03 §3.3](03-integration-with-main-tool.md) | Três pontos declarados abertamente |
-| Compatibilidade foi testada | ❌ | — | **Declarada e inferida, nunca testada** (L-02) |
+| Compatibilidade foi testada | ⚠️ | `evidence/e2e-209/`, 2026-09-12 | KSC 16.3.0.1207 + Rocky 9.8 + PG 16 testado; demais combinações inferidas (L-02) |
 | Dependências estão identificadas | ✅ | `requirements.txt`, [01 §1.1](01-technical-overview.md) | Sem lockfile de árvore completa |
-| Riscos de segurança foram avaliados | ⚠️ | [04](04-security-and-privacy.md) | Controles existem; auditoria externa nunca realizada |
-| Testes principais existem | ⚠️ | 124 testes, 2026-09-12 | Somente unitários; nenhum E2E (L-02) |
+| Riscos de segurança foram avaliados | ⚠️ | [04](04-security-and-privacy.md) | Controles existem; auditoria externa nunca realizada. O E2E revelou que o hardening derrubava o produto — corrigido e coberto por teste |
+| Testes principais existem | ✅ | 144 testes + ciclo E2E completo | Cobertura percentual ainda não publicada |
 | Limitações estão documentadas | ✅ | [06](06-known-limitations.md) | 15 limitações registradas |
-| Processo de instalação está documentado | ✅ | `README.md`, `docs/03`–`docs/08` | Instalação implementada; nunca exercitada em servidor real (L-01) |
+| Processo de instalação está documentado | ✅ | `README.md`, `docs/03`–`docs/08`, `docs/14` | Instalação exercitada com sucesso em servidor real |
 | Processo de contribuição está documentado | ✅ | `CONTRIBUTING.md`, `CODEOFCONDUCT.md` | — |
 | Licença está definida | ✅ | Apache 2.0 | Sem redistribuição de artefatos Kaspersky |
-| Rollback ou remoção estão documentados | ⚠️ | `docs/11-rollback.md` | Manual e nunca exercitado (L-06) |
+| Rollback ou remoção estão documentados | ⚠️ | `docs/11-rollback.md` | Manual e nunca exercitado — [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) (L-06) |
 | Solicitações aos mantenedores são objetivas | ✅ | [07 §7.1](07-collaboration-proposal.md), [08](08-maintainer-questions.md) | 5 pedidos, 7 perguntas |
 | Aviso de não afiliação presente | ✅ | [README do pacote](README.md) | Sujeito a ajuste conforme Q7 |
 
@@ -23,6 +23,7 @@ Legenda: ✅ atendido · ⚠️ parcial · ❌ não atendido.
 
 ## 10.2 Checklist de submissão — a executar antes do envio
 
+- [x] Validação E2E concluída ([#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209)) com evidências em `evidence/e2e-209/`
 - [ ] [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) concluído: `pytest -q` sem erros de coleta e cobertura publicada
 - [ ] [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) concluído: versão em inglês de `00`, `03` e do README
 - [ ] [#229](https://github.com/portosoft/ksc-deployment-runbook/issues/229) iniciado: PRs duplicadas fechadas e agentes automatizados contidos
@@ -36,28 +37,27 @@ Legenda: ✅ atendido · ⚠️ parcial · ❌ não atendido.
 
 ## 10.3 Classificação de prontidão
 
-> **Pronto para discussão inicial e revisão técnica de arquitetura.**
+> **Pronto para revisão técnica.**
 > **Não pronto para piloto, submissão formal ou upstream.**
 
 **Justificativa.**
 
-Sustenta a classificação atual: a integração está mapeada e classificada por
-tipo, as dependências frágeis estão declaradas em vez de omitidas, existe
-suíte de testes unitários passando com 108 casos, controles de supply chain e
-de segredos estão implementados e verificados em CI, a licença é clara e os
-pedidos aos mantenedores são específicos e de baixo custo para eles. Há
-material suficiente para uma conversa técnica produtiva.
+Sustenta a classificação atual: o ciclo completo foi executado contra um KSC
+16.3.0.1207 real em Rocky Linux 9.8, com `setup --apply` concluindo em 0, Web
+Console respondendo em HTTPS e relatório de auditoria sem falhas críticas. A
+integração está mapeada e classificada por tipo, as dependências frágeis estão
+declaradas em vez de omitidas, há 144 testes unitários passando somados à
+evidência E2E, e os controles de supply chain e de segredos são verificados em
+CI. Os dez defeitos que a execução real revelou foram corrigidos e cobertos por
+testes de regressão.
 
-Impede a classificação seguinte: nenhuma execução end-to-end em servidor real
-foi realizada — os passos de instalação são reais desde a desmockagem
-(PR #222), mas nunca
-rodaram contra um KSC real —, os artefatos de evidência são de origem
-simulada, o rollback nunca foi exercitado
-e não há nenhuma métrica de desempenho. Sem isso, qualquer afirmação de
-compatibilidade seria especulação, e um piloto exporia usuários a um caminho
-não comprovado.
+Impede a classificação seguinte: a matriz tem **uma única combinação testada**,
+em uma **única execução de laboratório**; o rollback nunca foi exercitado
+([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)); a idempotência foi tratada no código mas não medida
+([#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228)); não há nenhuma métrica de desempenho ([#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225)); e o
+`.env` em texto claro continua sendo caminho suportado ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)). Um
+piloto exporia usuários a caminhos de recuperação que nunca foram exercitados.
 
-**Gatilho para reclassificar como "pronto para piloto":** conclusão das issues
-[#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209), [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102), [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) e [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), com os logs reais
-substituindo os artefatos simulados em `evidence/`. Acompanhamento no
-[board](https://github.com/orgs/portosoft/projects/1).
+**Gatilho para reclassificar como "pronto para piloto":** conclusão de
+[#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) e [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101).
+Acompanhamento no [board](https://github.com/orgs/portosoft/projects/1).
