@@ -378,18 +378,23 @@ def check_services_and_db(config: KscConfig) -> CheckResult:
     """
     result = CheckResult(items=[])
 
-    pg_units = ["postgresql", "postgresql-16"]
+    # O nome da unidade varia conforme a origem do pacote. A busca precisa
+    # percorrer todos os candidatos até encontrar um ativo: no Rocky 9 a
+    # unidade genérica "postgresql" existe e está inativa, enquanto a que
+    # realmente serve o KSC é a "postgresql-16". Interromper no primeiro
+    # status definido reportava um falso crítico.
+    pg_units = ["postgresql-16", "postgresql"]
     pg_status = None
+    unit_name = pg_units[0]
     for unit in pg_units:
         status = _systemd_is_active(unit)
         if status is True:
             pg_status = True
             unit_name = unit
             break
-        elif status is False:
+        if status is False and pg_status is None:
             pg_status = False
             unit_name = unit
-            break
 
     if pg_status is True:
         result.add(
