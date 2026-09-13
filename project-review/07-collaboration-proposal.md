@@ -54,5 +54,5 @@ componente proprietário no projeto.
 
 1. Envio deste pacote e da mensagem em [11-outreach-message.md](11-outreach-message.md).
 2. Resposta às perguntas Q1–Q7 de [08-maintainer-questions.md](08-maintainer-questions.md), por escrito ou em uma sessão técnica de 45 minutos.
-3. Em paralelo e independentemente da resposta: execução das issues [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) (rollback), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) (idempotência), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227) (matriz) e [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) (segredos).
+3. Em paralelo e independentemente da resposta: execução das issues [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) (rollback), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) (idempotência), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227) (matriz) e [#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237) (segredos).
 4. Reapresentação do pacote com essas evidências incorporadas, momento em que a prontidão poderá ser reclassificada para "pronto para piloto".

@@ -104,7 +104,7 @@ podem ser delegadas por regras `sudo` específicas?
 
 **Por que importa.** É a principal recomendação de segurança pendente do projeto.
 
-**Decisão que depende.** Documentar e restringir o modelo de privilégio exigido do operador ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)).
+**Decisão que depende.** Documentar e restringir o modelo de privilégio exigido do operador ([#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237)).
 
 ---
 
