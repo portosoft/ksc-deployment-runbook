@@ -294,10 +294,39 @@ def test_accounts_created_before_installer(monkeypatch, recorded, logger):
 
 
 def test_existing_accounts_are_preserved(monkeypatch, recorded, logger):
+    """Conta já no grupo correto não é tocada."""
     monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+
+    def fake(cmd, check=True, capture_output=True, env=None, input_data=None):
+        recorded.append({"cmd": cmd, "input": input_data})
+        return (f"{setup_steps.KSC_ADMINS_GROUP} outro", "", 0)
+
+    monkeypatch.setattr(setup_steps, "run_command", fake)
     setup_steps._ensure_ksc_accounts(logger)
 
-    assert recorded == [], "contas existentes não devem ser recriadas"
+    assert not any(
+        c["cmd"][0] in ("useradd", "groupadd", "usermod") for c in recorded
+    ), "contas existentes e já no grupo não devem ser alteradas"
+
+
+def test_existing_account_outside_group_is_added(monkeypatch, recorded, logger):
+    """Conta preexistente fora de kladmins seria trancada para fora pelo hardening.
+
+    O hardening fecha o acesso de "outros" e concede apenas ao grupo: uma conta
+    de serviço fora dele perde acesso aos próprios binários (203/EXEC).
+    """
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+
+    def fake(cmd, check=True, capture_output=True, env=None, input_data=None):
+        recorded.append({"cmd": cmd, "input": input_data})
+        return ("outrogrupo", "", 0)
+
+    monkeypatch.setattr(setup_steps, "run_command", fake)
+    setup_steps._ensure_ksc_accounts(logger)
+
+    assert any(
+        c["cmd"][:2] == ["usermod", "-aG"] for c in recorded
+    ), "a conta precisa ser adicionada ao grupo administrativo"
 
 
 def test_response_file_matches_account_constants(ksc_test_config):

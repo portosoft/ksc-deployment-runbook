@@ -84,7 +84,9 @@ sudo systemctl disable --now kladminserver_srv klnagent_srv kliam_srv klwebsrv_s
 # Pacotes
 sudo dnf remove -y ksc64 klnagent64 ksc-web-console
 
-# Bases e role (ajuste o nome da role ao seu KSC_DB_USER)
+# Bases e role — SOMENTE se KSC_DB_HOST for local. Em banco remoto, pule este
+# bloco: ele usa o psql local e removeria bases homônimas deste servidor.
+# Ajuste o nome da role ao seu KSC_DB_USER.
 sudo -u postgres psql <<'SQL'
 SELECT pg_terminate_backend(pid) FROM pg_stat_activity
  WHERE datname IN ('ksc', 'ksciam') AND pid <> pg_backend_pid();

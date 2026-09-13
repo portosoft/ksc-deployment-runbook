@@ -136,6 +136,8 @@ Para recriar a VM do zero: `./infra/proxmox/provision-vm.sh --recreate`.
 | `KSC_VM_DISK_GB` | `120` | O mínimo exigido pelos checks é 100 GB |
 | `KSC_PVE_STORAGE` | `local` | Storage do nó |
 | `KSC_VM_NET_MODEL` | `e1000` | Ver a nota sobre `vhost-net` abaixo |
+| `KSC_ROCKY_VERSION` | `9.8` | Versão fixada da imagem; `latest` impediria reproduzir as evidências |
+| `KSC_ROCKY_IMAGE_SHA256` | vazio | Preenchido, exige integridade da imagem baixada |
 
 ### Particularidades do ambiente containerizado
 
@@ -164,12 +166,15 @@ O snapshot `clean-baseline` é criado automaticamente pelo `provision-vm.sh`
 antes de qualquer execução do runbook.
 
 ```bash
+# O VMID acompanha KSC_VMID (padrão 100); ajuste se tiver alterado a variável.
+VMID="${KSC_VMID:-100}"
+
 # Conferir
-podman exec ksc-proxmox qm listsnapshot 100
+podman exec ksc-proxmox qm listsnapshot "$VMID"
 
 # Restaurar a VM ao estado limpo entre ciclos de teste
-podman exec ksc-proxmox qm rollback 100 clean-baseline
-podman exec ksc-proxmox qm start 100
+podman exec ksc-proxmox qm rollback "$VMID" clean-baseline
+podman exec ksc-proxmox qm start "$VMID"
 ```
 
 > [!TIP]
@@ -180,7 +185,7 @@ podman exec ksc-proxmox qm start 100
 > ciclos de deploy:
 >
 > ```bash
-> podman exec ksc-proxmox qm snapshot 100 packages-ready \
+> podman exec ksc-proxmox qm snapshot "${KSC_VMID:-100}" packages-ready \
 >   --description "Repositório, dependências e RPMs verificados; antes do setup --apply"
 > ```
 

@@ -5,7 +5,7 @@ da resposta.
 
 ---
 
-### Q1 — Reconfiguração de um Administration Server já instalado
+## Q1 — Reconfiguração de um Administration Server já instalado
 
 **Pergunta.** Qual é o método suportado para reconfigurar um KSC 16.x
 Administration Server já instalado em Linux sem reinstalá-lo?
@@ -32,7 +32,7 @@ funcionalidade caso não exista um.
 
 ---
 
-### Q2 — Configuração do Web Console
+## Q2 — Configuração do Web Console
 
 **Pergunta.** Existe uma forma suportada de configurar o KSC Web Console em
 Linux (porta, binding, parâmetros de servidor) que não envolva editar
@@ -48,7 +48,7 @@ internos e sujeitos a mudança sem aviso?
 
 ---
 
-### Q3 — Arquivo de respostas da instalação silenciosa
+## Q3 — Arquivo de respostas da instalação silenciosa
 
 **Pergunta.** Qual é o conjunto canônico de chaves do arquivo de respostas da
 instalação silenciosa do KSC 16.x em Linux, quais são obrigatórias, e esse
@@ -62,7 +62,7 @@ formato tem garantia de estabilidade dentro da linha 16.x?
 
 ---
 
-### Q4 — Manipulação das bases `ksc` e `ksciam`
+## Q4 — Manipulação das bases `ksc` e `ksciam`
 
 **Pergunta.** A sequência de rollback que documentamos — parar
 `kladminserver_srv`, `klnagent_srv`, `ksc-web-console` e `kliam_srv`, encerrar
@@ -79,7 +79,7 @@ produto? Há algum estado fora do PostgreSQL (arquivos, certificados, chaves em
 
 ---
 
-### Q5 — Interface programática de automação
+## Q5 — Interface programática de automação
 
 **Pergunta.** Para automação de configuração pós-instalação em Linux, a
 recomendação é utilizar a API do Administration Server (porta 13291), o SDK
@@ -94,7 +94,7 @@ distribuição Linux e a Windows nesse aspecto?
 
 ---
 
-### Q6 — Privilégios mínimos
+## Q6 — Privilégios mínimos
 
 **Pergunta.** Qual é o conjunto mínimo de privilégios necessário para instalar,
 reconfigurar e auditar o KSC 16.x em Linux? As operações exigem `root` pleno ou
@@ -108,7 +108,7 @@ podem ser delegadas por regras `sudo` específicas?
 
 ---
 
-### Q7 — Marca, nomenclatura e conformidade
+## Q7 — Marca, nomenclatura e conformidade
 
 **Pergunta.** Qual é a forma aceitável de um projeto independente sob Apache
 2.0 referenciar o Kaspersky Security Center no nome do repositório, na

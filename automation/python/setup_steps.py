@@ -270,7 +270,19 @@ def _ensure_ksc_accounts(logger: logging.Logger, dry_run: bool = False) -> None:
         _run(["groupadd", "--system", KSC_ADMINS_GROUP], logger)
 
     if _account_exists("passwd", KSC_SERVICE_USER):
-        logger.info(f"Conta de serviço '{KSC_SERVICE_USER}' já existe.")
+        # Uma conta preexistente pode estar fora do grupo administrativo. Como o
+        # hardening fecha o acesso de "outros" e concede apenas ao grupo, deixá-la
+        # de fora a trancaria para fora dos próprios binários do produto.
+        stdout, _, rc = run_command(["id", "-nG", KSC_SERVICE_USER], check=False)
+        grupos = (stdout or "").split()
+        if rc == 0 and KSC_ADMINS_GROUP not in grupos:
+            logger.warning(
+                f"Conta '{KSC_SERVICE_USER}' existe fora do grupo '{KSC_ADMINS_GROUP}'; "
+                "adicionando para que o hardening não lhe retire o acesso."
+            )
+            _run(["usermod", "-aG", KSC_ADMINS_GROUP, KSC_SERVICE_USER], logger)
+        else:
+            logger.info(f"Conta de serviço '{KSC_SERVICE_USER}' já existe.")
     else:
         _run(
             [
@@ -559,6 +571,15 @@ def configure_web_console(
         except OSError as e:
             raise SetupError(f"Falha ao gravar o drop-in do Web Console: {e}")
         _run(["systemctl", "daemon-reload"], logger)
+    elif Path(WEB_CONSOLE_DROPIN_DIR).exists():
+        # A porta deixou de ser privilegiada: manter o drop-in concederia
+        # CAP_NET_BIND_SERVICE sem necessidade alguma (CWE-250).
+        logger.info(
+            f"Porta {config.web_port} não é privilegiada; removendo o drop-in de "
+            "capacidade que deixou de ser necessário."
+        )
+        _run(["rm", "-rf", WEB_CONSOLE_DROPIN_DIR], logger, check=False)
+        _run(["systemctl", "daemon-reload"], logger)
 
     # O setup.js precisa ser executado a partir do diretório do componente.
     _run(
@@ -573,6 +594,15 @@ def configure_web_console(
     for unit in WEB_CONSOLE_SERVICES:
         _run(["systemctl", "reset-failed", unit], logger, check=False)
         _run(["systemctl", "enable", "--now", unit], logger, check=False)
+
+    # Sem esta verificação a função reportaria sucesso com o Web Console parado,
+    # que foi exatamente o modo de falha observado em 200/CHDIR.
+    inativos = [unit for unit in WEB_CONSOLE_SERVICES if not _unit_is_active(unit)]
+    if inativos:
+        raise SetupError(
+            f"Serviços do Web Console não ficaram ativos: {inativos}. "
+            "Consulte docs/10-troubleshooting.md."
+        )
 
     logger.info(f"Web Console configurado na porta {config.web_port}.")
 
@@ -752,8 +782,8 @@ def post_install_hardening(
     #
     # O que se faz aqui é apenas dar ao grupo administrativo o acesso ao
     # diretório-raiz, preservando a travessia de que as demais contas dependem.
-    _run(["chgrp", KSC_ADMINS_GROUP, KSC_DATA_DIR], logger, dry_run, check=False)
-    _run(["chmod", "g+rx,o+rx", KSC_DATA_DIR], logger, dry_run, check=False)
+    _run(["chgrp", KSC_ADMINS_GROUP, KSC_DATA_DIR], logger, dry_run)
+    _run(["chmod", "g+rx,o+rx", KSC_DATA_DIR], logger, dry_run)
 
     dropin_file = str(Path(SYSTEMD_DROPIN_DIR) / SYSTEMD_DROPIN_NAME)
     dropin_content = f"[Service]\nEnvironment=LD_LIBRARY_PATH={KSC_LIB_DIR}\n"

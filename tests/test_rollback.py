@@ -126,6 +126,51 @@ def test_verify_reports_leftovers(monkeypatch, logger):
 
     residuos = verify_rollback(logger)
 
-    # Com 'rpm -q' retornando 0, os três pacotes constam como instalados.
-    assert len(residuos) == len(KSC_RPMS)
-    assert all("pacote instalado" in r for r in residuos)
+    # Com 'rpm -q' retornando 0, os três pacotes constam como instalados; o psql
+    # retorna erro e isso também é resíduo, não ausência dele.
+    pacotes = [r for r in residuos if "pacote instalado" in r]
+    assert len(pacotes) == len(KSC_RPMS)
+    assert any("não foi possível inspecionar o PostgreSQL" in r for r in residuos)
+
+
+def test_verify_reports_uninspectable_postgres(monkeypatch, logger):
+    """Não conseguir olhar o banco não pode ser reportado como host limpo."""
+    monkeypatch.setattr(
+        rollback, "run_command", lambda cmd, **kw: ("", "conexão recusada", 2)
+    )
+    monkeypatch.setattr(rollback.Path, "exists", lambda self: False)
+    monkeypatch.setattr(rollback, "_account_exists", lambda kind, name: False)
+    monkeypatch.setattr(rollback, "_existing_units", lambda units: [])
+
+    residuos = verify_rollback(logger)
+
+    assert residuos, "uma inspeção que falhou não pode resultar em lista vazia"
+    assert any("conexão recusada" in r for r in residuos)
+
+
+def test_rollback_uses_configured_postgres_endpoint(recorded, logger, ksc_test_config):
+    """Sem -h/-p, um db_port fora do padrão atingiria outro cluster."""
+    config = ksc_test_config.model_copy(update={"db_port": 5433})
+    perform_rollback(config, logger)
+
+    psql = [c["cmd"] for c in recorded if "psql" in c["cmd"]]
+    assert psql, "nenhuma invocação do psql registrada"
+    for cmd in psql:
+        assert "-p" in cmd and "5433" in cmd
+        assert "-h" in cmd and config.db_host in cmd
+
+
+def test_rollback_raises_when_a_step_fails(monkeypatch, logger, ksc_test_config):
+    """Um rollback que falhou em passos não pode terminar com sucesso."""
+    from automation.python import setup_steps
+
+    def falha(cmd, check=True, capture_output=True, env=None, input_data=None):
+        if cmd[0] == "dnf":
+            return ("", "erro ao remover pacotes", 1)
+        return ("", "", 0)
+
+    monkeypatch.setattr(rollback, "run_command", falha)
+    monkeypatch.setattr(setup_steps, "run_command", falha)
+
+    with pytest.raises(rollback.RollbackError, match="Rollback incompleto"):
+        perform_rollback(ksc_test_config, logger)

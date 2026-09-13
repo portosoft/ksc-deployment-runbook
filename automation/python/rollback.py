@@ -19,10 +19,10 @@ confirmação, como as demais operações destrutivas da CLI.
 
 import logging
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from .config import KscConfig
-from .setup_steps import (
+from .setup_steps import (  # noqa: F401
     KSC_ADMINS_GROUP,
     KSC_DATA_DIR,
     KSC_SERVICE_USER,
@@ -31,6 +31,7 @@ from .setup_steps import (
     WEB_CONSOLE_DROPIN_DIR,
     WEB_CONSOLE_SERVICES,
     WEB_CONSOLE_SETUP_FILE,
+    SetupError,
     _account_exists,
     _run,
 )
@@ -54,6 +55,9 @@ KSC_PATHS = [
 ]
 
 
+_LOG = logging.getLogger(__name__)
+
+
 class RollbackError(Exception):
     pass
 
@@ -68,20 +72,33 @@ def _existing_units(candidates: List[str]) -> List[str]:
             )
             if rc == 0 and unit in (stdout or ""):
                 presentes.append(unit)
-        except Exception:
+        except Exception as e:
+            # Uma unidade que não pôde ser consultada é tratada como ausente:
+            # o passo seguinte tolera ausência, e a verificação final reporta
+            # qualquer unidade que ainda exista.
+            _LOG.debug("Falha ao consultar a unidade %s: %s", unit, e)
             continue
     return presentes
 
 
-def _psql_postgres(sql: str, logger: logging.Logger, dry_run: bool) -> None:
+def _psql_cmd(config: Optional[KscConfig], *extra: str) -> List[str]:
+    """Monta a invocação do psql usando o endpoint declarado na configuração.
+
+    Sem -h/-p o psql usa o endpoint local padrão. Com um db_port diferente do
+    padrão, as operações destrutivas e a verificação atingiriam outro cluster
+    que não o do KSC.
+    """
+    cmd = ["runuser", "-u", "postgres", "--", "psql", "-v", "ON_ERROR_STOP=1", "-q"]
+    if config is not None:
+        cmd += ["-h", config.db_host, "-p", str(config.db_port)]
+    return cmd + list(extra)
+
+
+def _psql_postgres(
+    sql: str, config: KscConfig, logger: logging.Logger, dry_run: bool
+) -> None:
     """Executa SQL administrativo como o usuário postgres, via stdin."""
-    _run(
-        ["runuser", "-u", "postgres", "--", "psql", "-v", "ON_ERROR_STOP=1", "-q"],
-        logger,
-        dry_run,
-        input_data=sql,
-        check=False,
-    )
+    _run(_psql_cmd(config), logger, dry_run, input_data=sql)
 
 
 def perform_rollback(
@@ -102,11 +119,17 @@ def perform_rollback(
 
     # 1. Serviços. Parar antes de remover pacotes evita processos escrevendo
     #    em diretórios que estão sendo apagados e conexões abertas no banco.
+    falhas: List[str] = []
+
     unidades = _existing_units(WEB_CONSOLE_SERVICES + KSC_SERVICES)
     if unidades:
         logger.info(f"Parando {len(unidades)} unidade(s) do KSC...")
         for unit in unidades:
-            _run(["systemctl", "disable", "--now", unit], logger, dry_run, check=False)
+            rc = _run(
+                ["systemctl", "disable", "--now", unit], logger, dry_run, check=False
+            )
+            if rc != 0:
+                falhas.append(f"parar a unidade {unit}")
     else:
         logger.info("Nenhuma unidade do KSC presente.")
 
@@ -118,7 +141,11 @@ def perform_rollback(
             instalados.append(rpm)
     if instalados:
         logger.info(f"Removendo pacotes: {instalados}")
-        _run(["dnf", "remove", "-y"] + instalados, logger, dry_run, check=False)
+        if (
+            _run(["dnf", "remove", "-y"] + instalados, logger, dry_run, check=False)
+            != 0
+        ):
+            falhas.append(f"remover os pacotes {instalados}")
     else:
         logger.info("Nenhum pacote do KSC instalado.")
 
@@ -128,15 +155,26 @@ def perform_rollback(
         for base in KSC_DATABASES:
             # Encerrar conexões antes do DROP: uma sessão remanescente faz o
             # comando falhar com "database is being accessed by other users".
-            _psql_postgres(
-                "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
-                f"WHERE datname = '{base}' AND pid <> pg_backend_pid();",
-                logger,
-                dry_run,
-            )
-            _psql_postgres(f'DROP DATABASE IF EXISTS "{base}";', logger, dry_run)
+            try:
+                _psql_postgres(
+                    "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
+                    f"WHERE datname = '{base}' AND pid <> pg_backend_pid();",
+                    config,
+                    logger,
+                    dry_run,
+                )
+                _psql_postgres(
+                    f'DROP DATABASE IF EXISTS "{base}";', config, logger, dry_run
+                )
+            except SetupError as e:
+                falhas.append(f"remover a base {base}: {e}")
 
-        _psql_postgres(f'DROP ROLE IF EXISTS "{config.db_user}";', logger, dry_run)
+        try:
+            _psql_postgres(
+                f'DROP ROLE IF EXISTS "{config.db_user}";', config, logger, dry_run
+            )
+        except SetupError as e:
+            falhas.append(f"remover a role {config.db_user}: {e}")
     else:
         logger.info(
             f"PostgreSQL remoto em {config.db_host}: bases e role preservadas. "
@@ -148,7 +186,8 @@ def perform_rollback(
         if dry_run:
             logger.info(f"[CHECK] Seria removido: {caminho}")
         elif Path(caminho).exists():
-            _run(["rm", "-rf", caminho], logger, check=False)
+            if _run(["rm", "-rf", caminho], logger, check=False) != 0:
+                falhas.append(f"remover {caminho}")
         else:
             logger.info(f"Ausente, nada a remover: {caminho}")
 
@@ -159,7 +198,8 @@ def perform_rollback(
         if dry_run:
             logger.info(f"[CHECK] Seria removido o drop-in: {dropin}")
         elif Path(dropin).exists():
-            _run(["rm", "-rf", dropin], logger, check=False)
+            if _run(["rm", "-rf", dropin], logger, check=False) != 0:
+                falhas.append(f"remover o drop-in {dropin}")
     _run(["systemctl", "daemon-reload"], logger, dry_run, check=False)
 
     # 6. Contas de sistema, por último: removê-las antes faria os passos
@@ -171,18 +211,35 @@ def perform_rollback(
         )
     else:
         if _account_exists("passwd", KSC_SERVICE_USER):
-            _run(["userdel", KSC_SERVICE_USER], logger, check=False)
+            if _run(["userdel", KSC_SERVICE_USER], logger, check=False) != 0:
+                falhas.append(f"remover a conta {KSC_SERVICE_USER}")
         if _account_exists("group", KSC_ADMINS_GROUP):
-            _run(["groupdel", KSC_ADMINS_GROUP], logger, check=False)
+            if _run(["groupdel", KSC_ADMINS_GROUP], logger, check=False) != 0:
+                falhas.append(f"remover o grupo {KSC_ADMINS_GROUP}")
+
+    # Sem isto, um rollback que falhou em vários passos ainda terminava com
+    # 'rollback_success' no log de evidências.
+    if falhas:
+        raise RollbackError(
+            "Rollback incompleto — não foi possível: " + "; ".join(falhas)
+        )
 
     logger.info("Rollback concluído.")
 
 
-def verify_rollback(logger: logging.Logger) -> List[str]:
+def verify_rollback(
+    logger: logging.Logger, config: Optional[KscConfig] = None
+) -> List[str]:
     """Verifica se sobrou algum resíduo e retorna a lista do que foi encontrado.
+
+    Args:
+        logger: Logger da execução.
+        config: Configuração do KSC, usada para alcançar o PostgreSQL correto.
 
     Returns:
         Lista de descrições dos resíduos. Vazia quando o host está limpo.
+        Uma verificação que não conseguiu inspecionar algo reporta isso como
+        resíduo, e não como ausência dele.
     """
     residuos = []
 
@@ -208,24 +265,23 @@ def verify_rollback(logger: logging.Logger) -> List[str]:
     if _account_exists("group", KSC_ADMINS_GROUP):
         residuos.append(f"grupo presente: {KSC_ADMINS_GROUP}")
 
+    consulta = "SELECT datname FROM pg_database WHERE datname IN ('ksc', 'ksciam')"
     try:
-        stdout, _, rc = run_command(
-            [
-                "runuser",
-                "-u",
-                "postgres",
-                "--",
-                "psql",
-                "-tAc",
-                "SELECT datname FROM pg_database WHERE datname IN ('ksc', 'ksciam')",
-            ],
-            check=False,
+        stdout, stderr, rc = run_command(
+            _psql_cmd(config, "-tAc", consulta), check=False
         )
         if rc == 0:
             for base in (stdout or "").split():
                 residuos.append(f"base de dados presente: {base}")
-    except Exception:
-        pass
+        else:
+            # Não conseguir inspecionar não é o mesmo que não haver resíduo:
+            # silenciar aqui faria a CLI anunciar um host limpo sem base para isso.
+            residuos.append(
+                f"não foi possível inspecionar o PostgreSQL (rc={rc}): "
+                f"{(stderr or '').strip() or 'sem detalhe'}"
+            )
+    except Exception as e:
+        residuos.append(f"não foi possível inspecionar o PostgreSQL: {e}")
 
     for item in residuos:
         logger.warning(f"Resíduo: {item}")

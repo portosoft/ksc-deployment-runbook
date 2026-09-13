@@ -319,6 +319,13 @@ def main():
         from .logging_utils import configure_logger, init_evidence_dir, log_json
         from .rollback import perform_rollback, verify_rollback
 
+        if args.verify and not args.apply:
+            print(
+                "[ERROR] --verify exige --apply: em modo --check não há o que verificar.",
+                file=sys.stderr,
+            )
+            return 3
+
         if args.apply and args.confirm_token != "ROLLBACK-CONFIRM":
             print(
                 "[ERROR] Token de confirmação ausente ou inválido (--confirm-token=ROLLBACK-CONFIRM).",
@@ -337,7 +344,7 @@ def main():
             return 1
 
         if args.verify and args.apply:
-            residuos = verify_rollback(logger)
+            residuos = verify_rollback(logger, config)
             log_json(logger, "rollback_verify", residuos=len(residuos))
             if residuos:
                 print(
