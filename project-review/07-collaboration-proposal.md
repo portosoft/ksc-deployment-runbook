@@ -29,9 +29,9 @@ manifesto da equipe.
 
 | Oferta | Estado |
 |---|---|
-| Casos de falha reproduzíveis de instalação em Rocky/Oracle Linux 9, com logs estruturados | Parcial — depende do ciclo E2E ([#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209)) |
-| Relatórios de defeito qualificados, com evidência e ambiente declarados | Disponível a partir de [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
-| Ambiente de laboratório reproduzível (Proxmox em Podman rootless) para reprodução de cenários | Definido, execução pendente |
+| Casos de falha reproduzíveis de instalação em Rocky Linux 9, com logs estruturados | **Disponível** — dez defeitos documentados em `evidence/e2e-209/` |
+| Relatórios de defeito qualificados, com evidência e ambiente declarados | **Disponível** |
+| Ambiente de laboratório reproduzível (Proxmox em Podman rootless) para reprodução de cenários | **Operante e automatizado** (`infra/proxmox/provision-vm.sh`) |
 | Material de referência operacional em português sobre KSC em Linux | Disponível hoje |
 | Ajuste ou remoção imediata de qualquer uso que a equipe considere impróprio | Compromisso assumido |
 
@@ -54,5 +54,5 @@ componente proprietário no projeto.
 
 1. Envio deste pacote e da mensagem em [11-outreach-message.md](11-outreach-message.md).
 2. Resposta às perguntas Q1–Q7 de [08-maintainer-questions.md](08-maintainer-questions.md), por escrito ou em uma sessão técnica de 45 minutos.
-3. Em paralelo e independentemente da resposta: execução das issues [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209), [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) e [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101).
-4. Reapresentação do pacote com as evidências de [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) incorporadas, momento em que a prontidão poderá ser reclassificada para "pronto para piloto".
+3. Em paralelo e independentemente da resposta: execução das issues [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) (rollback), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) (idempotência), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227) (matriz) e [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) (segredos).
+4. Reapresentação do pacote com essas evidências incorporadas, momento em que a prontidão poderá ser reclassificada para "pronto para piloto".

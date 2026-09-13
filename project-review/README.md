@@ -28,7 +28,7 @@ solicitado à equipe da Kaspersky.
 | [02-architecture.md](02-architecture.md) | Componentes, fluxos, decisões arquiteturais |
 | [03-integration-with-main-tool.md](03-integration-with-main-tool.md) | Uso do KSC, interfaces, compatibilidade |
 | [04-security-and-privacy.md](04-security-and-privacy.md) | Dados, segredos, superfície de ataque, riscos |
-| [05-testing-and-validation.md](05-testing-and-validation.md) | Testes, CI/CD, evidências e seu grau de validação |
+| [05-testing-and-validation.md](05-testing-and-validation.md) | Testes, CI/CD, **validação E2E executada** e evidências |
 | [06-known-limitations.md](06-known-limitations.md) | Limitações e riscos para a ferramenta principal |
 | [07-collaboration-proposal.md](07-collaboration-proposal.md) | Pedidos específicos à equipe Kaspersky |
 | [08-maintainer-questions.md](08-maintainer-questions.md) | Perguntas técnicas objetivas |

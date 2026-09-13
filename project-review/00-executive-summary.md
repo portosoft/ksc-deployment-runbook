@@ -45,14 +45,19 @@ integração — é exatamente sobre ela que buscamos orientação.
 
 ## Estado atual
 
-Maturidade classificada como **MVP / Beta inicial**: 124 testes unitários
-passam localmente, 11 workflows de CI (incluindo CodeQL, Semgrep e verificação
-de baseline de segredos) estão ativos, e a documentação operacional está
-completa. Os passos de instalação em `setup_steps.py` deixaram de ser mocks e
-executam comandos reais, mas **nunca foram exercitados contra um KSC real**:
-não existe validação end-to-end registrada, e os artefatos em `evidence/` são
-saídas de execução de testes com transporte SSH simulado — **não são evidências
-de deploy real**. `[FATO]`
+Maturidade classificada como **Beta**: 144 testes unitários passam localmente,
+11 workflows de CI (incluindo CodeQL, Semgrep e verificação de baseline de
+segredos) estão ativos, e a documentação operacional está completa. Em
+2026-09-12 o ciclo completo foi executado contra um **KSC 16.3.0.1207 real**,
+instalado a partir dos RPMs oficiais em Rocky Linux 9.8 com PostgreSQL 16:
+`setup --apply` concluiu com código 0, o Web Console respondeu em HTTPS e o
+relatório de auditoria foi gerado sem falhas críticas. `[OBSERVADO]`
+
+Essa execução revelou **dez defeitos** que nenhum teste unitário detectaria —
+entre eles o fato de que o hardening proposto pelo próprio runbook deixava o
+Administration Server inoperante. Todos foram corrigidos e cobertos por testes
+de regressão. A validação cobre **uma combinação**; Oracle Linux 9 e outras
+versões do KSC seguem apenas declaradas. `[LIMITAÇÃO]`
 
 ## O que pedimos à equipe Kaspersky
 
@@ -62,7 +67,9 @@ detalhados em [07-collaboration-proposal.md](07-collaboration-proposal.md):
 1. Confirmação de quais interfaces que utilizamos são **contratos estáveis** e
    quais podem mudar sem aviso entre versões menores do KSC 16.x.
 2. Orientação sobre o método suportado para **reconfigurar** um Administration
-   Server já instalado sem reinstalação.
+   Server já instalado — o `postinstall.pl` recusa reexecução com
+   *"Do not run the postinstall.pl script again"*, de modo que a pergunta não
+   é mais se o caminho que usávamos é suportado, mas qual é o suportado.
 3. Confirmação do **formato canônico do arquivo de respostas** da instalação
    silenciosa e de suas chaves obrigatórias.
 4. Revisão do nosso manuseio de segredos e do **modelo de privilégio** exigido
@@ -72,9 +79,12 @@ detalhados em [07-collaboration-proposal.md](07-collaboration-proposal.md):
 
 ## Prontidão
 
-**Pronto para discussão inicial e revisão técnica de arquitetura; não pronto
-para piloto, submissão formal ou upstream.** A lacuna que impede os estágios
-seguintes é única e conhecida: ausência de validação end-to-end em ambiente
-real — issue [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209).
+**Pronto para revisão técnica; não pronto para piloto, submissão formal ou
+upstream.** A ausência de validação end-to-end, que antes bloqueava qualquer
+avanço, foi resolvida pela issue [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209). O que separa o projeto de um
+piloto agora é menor e está enumerado: rollback nunca exercitado
+([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)), idempotência não medida ([#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228)), matriz de
+compatibilidade com uma única combinação testada ([#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227)) e o
+manuseio de segredos ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)).
 O backlog completo está no [board do projeto](https://github.com/orgs/portosoft/projects/1);
 [09-roadmap.md](09-roadmap.md) apresenta a visão dele para o leitor externo.

@@ -4,15 +4,17 @@
 
 | # | Limitação | Categoria | Impacto | Quando ocorre | Mitigação atual | Solução planejada |
 |---|---|---|---|---|---|---|
-| L-01 | Passos de instalação implementados, porém nunca executados contra um KSC real | Funcional | Comportamento real desconhecido | Sempre | `dry_run` em `--check`; 16 testes unitários; gate SHA-256 obrigatório | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) (execução E2E) |
-| L-02 | Nenhuma validação end-to-end em servidor real registrada | Testes | Compatibilidade é declarada, não comprovada | Sempre | Declaração explícita em todos os documentos | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
-| L-03 | Artefatos em `evidence/` provêm de testes com SSH simulado | Testes | Risco de leitura equivocada como prova de deploy | Sempre | Aviso explícito em §5.4 | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
+| ~~L-01~~ | **Resolvida.** Deploy real do KSC 16.3.0.1207 executado com sucesso em Rocky Linux 9.8 | — | — | — | — | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209), concluída |
+| L-02 | Validação E2E registrada em **uma única combinação** (Rocky 9.8 + KSC 16.3 + PG 16) | Testes | Demais combinações seguem inferidas | Oracle Linux 9; outras versões do KSC | Matriz de §3.5 distingue testado de inferido | [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227) |
+| L-03 | Parte dos artefatos em `evidence/` ainda provém de execuções simuladas | Testes | Risco de leitura equivocada | Fora de `evidence/e2e-209/` | §5.4 distingue os dois conjuntos | — |
 | L-04 | Dependência do esquema de `config.json` e `web-server.js` do Web Console | Compatibilidade | Quebra silenciosa em atualização do produto | Mudança de versão do KSC | Parsing JSON nativo em vez de regex | Q2 + [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) |
-| L-05 | Uso de `postinstall.pl` para reconfiguração pode não ser suportado | Compatibilidade | Comportamento indefinido | Reconfiguração de servidor instalado | Verificação de código de retorno | Q1 + [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) |
+| L-05 | **O instalador recusa reexecução do `postinstall.pl`**, caminho usado por `reconfigure_ksc_service.py` | Compatibilidade | Reconfiguração sem caminho suportado conhecido | Reconfiguração de servidor instalado | `setup --apply` detecta servidor configurado; a operação de reconfiguração segue apoiada nesse caminho | Q1 |
 | L-06 | Sem rollback automático após falha parcial | Operação | Estado intermediário exige intervenção manual | Falha no meio do `--apply` | Procedimento manual em `docs/11-rollback.md` | [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223) |
 | L-07 | `.env` em texto claro continua sendo caminho suportado | Segurança | Segredos em disco sem cifragem | Operador não usa o vault | Vault disponível; aviso em `docs/03-pre-requisitos.md` | [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) |
 | L-08 | Sanitização de segredos nos logs não auditada | Segurança | Possível vazamento em `evidence/` | Não determinado | Nenhuma | [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) |
 | L-09 | Nenhuma métrica de desempenho coletada | Desempenho | Impossível dimensionar ou comparar | Sempre | Nenhuma afirmação de desempenho é feita | [#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225) |
+| L-16 | Portas divergem da documentação: a 13291 não escuta (a ativa é a **13299**) e a 14000 tampouco | Compatibilidade | Pré-checks e hardening miram portas erradas | Sempre | Divergência documentada em §3.3 | Q5 + [#205](https://github.com/portosoft/ksc-deployment-runbook/issues/205) |
+| L-17 | O Web Console em porta privilegiada depende de um drop-in de capacidade sobre unidade gerada pelo instalador | Compatibilidade | Uma mudança na unidade pode invalidar o ajuste | `web_port` < 1024 | Drop-in próprio, sem editar a unidade original | Q2 |
 | L-10 | Documentação exclusivamente em pt-BR | Documentação | Barreira para revisão internacional | Contato com equipe global | Este pacote identifica a lacuna | [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) |
 | L-11 | Sem release tagueada, sem pacote distribuível, sem artefato assinado | Adoção | Instalação apenas por clone do repositório | Sempre | — | [#224](https://github.com/portosoft/ksc-deployment-runbook/issues/224) |
 | L-12 | Duas pilhas de automação em paralelo (Python e Ansible) | Manutenção | Divergência de comportamento entre caminhos | Sempre | Ansible é auxiliar | [#226](https://github.com/portosoft/ksc-deployment-runbook/issues/226) |
@@ -37,8 +39,9 @@
 
 Para que a revisão parta de uma base honesta:
 
-- Não afirmamos que o projeto é compatível com o KSC 16.x — afirmamos que é
-  **destinado** a ele e que a compatibilidade ainda não foi comprovada.
+- Não afirmamos compatibilidade com o KSC 16.x em geral. Afirmamos que **uma
+  combinação foi testada** — KSC 16.3.0.1207 em Rocky Linux 9.8 com PostgreSQL
+  16 —, em uma única execução de laboratório. As demais seguem inferidas.
 - Não afirmamos que o deploy automatizado é mais rápido, mais seguro ou mais
   confiável que o procedimento manual.
 - Não afirmamos que o projeto está pronto para produção.
