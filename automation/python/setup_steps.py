@@ -761,6 +761,10 @@ def post_install_hardening(
 def perform_precheck_only(config: KscConfig, logger: logging.Logger) -> CheckResult:
     """Executa apenas os pré-checks sem iniciar a instalação. Retorna CheckResult.
 
+    Em um host onde o KSC já está instalado, a verificação de portas livres é
+    omitida: as portas estão ocupadas pelo próprio produto, e tratá-las como
+    falha crítica impediria a reexecução de `setup --apply`.
+
     Args:
         config: Configuração do KSC.
         logger: Logger para registro das operações.
@@ -768,7 +772,12 @@ def perform_precheck_only(config: KscConfig, logger: logging.Logger) -> CheckRes
     Returns:
         CheckResult com os resultados dos pré-checks.
     """
-    return run_precheck(config)
+    instalado = _ksc_is_configured()
+    if instalado:
+        logger.info(
+            "KSC já instalado neste host: a verificação de portas livres não se aplica."
+        )
+    return run_precheck(config, skip_ports=instalado)
 
 
 def perform_setup(

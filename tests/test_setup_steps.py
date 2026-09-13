@@ -451,3 +451,46 @@ def test_data_dir_is_not_hardened_recursively(
     cmds = _cmds(recorded)
     assert f"chmod -R o-rwx {setup_steps.KSC_DATA_DIR}" not in cmds
     assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
+
+
+# --- Idempotência -----------------------------------------------------------
+
+
+def test_precheck_skips_ports_when_ksc_already_installed(monkeypatch, logger, ksc_test_config):
+    """A segunda execução de setup --apply abortava com as portas do próprio KSC.
+
+    Em um host já instalado, 'porta 443 em uso' é o estado correto — tratá-la
+    como falha crítica impedia a reexecução, e idempotência é requisito para
+    uso em frota.
+    """
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: True)
+
+    capturado = {}
+
+    def fake_precheck(config, skip_ports=False):
+        capturado["skip_ports"] = skip_ports
+        from automation.python.checks import CheckResult
+
+        return CheckResult(items=[])
+
+    monkeypatch.setattr(setup_steps, "run_precheck", fake_precheck)
+    setup_steps.perform_precheck_only(ksc_test_config, logger)
+
+    assert capturado["skip_ports"] is True
+
+
+def test_precheck_checks_ports_on_clean_host(monkeypatch, logger, ksc_test_config):
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
+
+    capturado = {}
+
+    def fake_precheck(config, skip_ports=False):
+        capturado["skip_ports"] = skip_ports
+        from automation.python.checks import CheckResult
+
+        return CheckResult(items=[])
+
+    monkeypatch.setattr(setup_steps, "run_precheck", fake_precheck)
+    setup_steps.perform_precheck_only(ksc_test_config, logger)
+
+    assert capturado["skip_ports"] is False
