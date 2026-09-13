@@ -1,0 +1,16 @@
+[INFO] Executando: systemctl enable --now klwebsrv_srv.service
+[INFO] Hardening pós-instalação concluído; serviços do KSC ativos.
+[INFO] Restaurando SELinux para o modo enforcing (Segurança por Padrão).
+[INFO] SELinux alterado para modo: 1
+[INFO] {"event": "setup_apply_success", "timestamp": "2026-09-13T04:18:34.065196Z"}
+Instalação concluída com sucesso.
+exit=0
+- [OK] postgresql: Ativo (postgresql-16).
+- [OK] klnagent_srv: Ativo.
+- [OK] kladminserver_srv: Ativo.
+- [OK] db_query: SELECT 1 executado com sucesso.
+- [OK] web_console: Porta 443 em LISTEN.
+- [OK] selinux: SELinux em modo 'enforcing'.
+Status geral: OK (sem falhas críticas).
+exit=0
+HTTP 200 em https://127.0.0.1:8443/login

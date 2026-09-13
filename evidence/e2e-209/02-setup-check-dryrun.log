@@ -1,0 +1,42 @@
+[INFO] {"event": "setup_precheck_start", "timestamp": "2026-09-12T20:30:33.714312Z"}
+[INFO] {"event": "setup_precheck_result", "timestamp": "2026-09-12T20:30:33.718291Z", "has_critical": false}
+[INFO] Verificando/instalando pré-requisitos do SO...
+[INFO] [CHECK] Seria executado: dnf install -y tar curl wget perl libidn policycoreutils-python-utils
+[INFO] Pré-requisitos do SO instalados.
+[INFO] Configurando PostgreSQL 16 local...
+[INFO] [CHECK] Seria executado: dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+[INFO] [CHECK] Seria executado: dnf -qy module disable postgresql
+[INFO] [CHECK] Seria executado: dnf install -y postgresql16-server
+[INFO] [CHECK] Seria executado: /usr/pgsql-16/bin/postgresql-16-setup initdb
+[INFO] [CHECK] Seria executado: systemctl enable --now postgresql-16
+[INFO] [CHECK] Seria executado: <comando com dados sensíveis omitido>
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Simulação do provisionamento do PostgreSQL 16 concluída.
+[INFO] Verificando integridade SHA-256 dos pacotes em '/var/tmp/ksc_packages'...
+[WARNING] [CHECK] Simulação da instalação dos pacotes indisponível: Falha ao validar diretório de pacotes '/var/tmp/ksc_packages': Diretório não encontrado: /var/tmp/ksc_packages
+[INFO] Aplicando hardening pós-instalação...
+[INFO] [CHECK] Seria executado: chmod -R o-rwx /opt/kaspersky
+[INFO] [CHECK] Seria executado: chmod -R o-rwx /var/opt/kaspersky
+[INFO] [CHECK] Seria criado o drop-in systemd /etc/systemd/system/kladminserver_srv.service.d/10-ld-library-path.conf com Environment=LD_LIBRARY_PATH=/opt/kaspersky/ksc64/lib
+[INFO] [CHECK] Seria executado: restorecon -Rv /opt/kaspersky
+[INFO] [CHECK] Seria executado: restorecon -Rv /var/opt/kaspersky
+[INFO] [CHECK] Seria executado: systemctl daemon-reload
+[INFO] [CHECK] Seria executado: systemctl enable --now kladminserver_srv.service
+[INFO] [CHECK] Seria executado: systemctl enable --now klnagent_srv.service
+[INFO] [CHECK] Seria executado: systemctl enable --now ksc-web-console.service
+[INFO] [CHECK] Simulação do hardening pós-instalação concluída.
+[INFO] {"event": "setup_dryrun_success", "timestamp": "2026-09-12T20:30:33.727686Z"}
+
+=== RESUMO DOS CHECKS ===
+- [OK] os_version: SO suportado: rocky 9.8
+- [OK] selinux: SELinux em modo 'enforcing'.
+- [OK] port_13000: Porta 13000 livre.
+- [OK] port_14000: Porta 14000 livre.
+- [OK] port_443: Porta 443 livre.
+- [WARNING] ram_total: RAM total 15732 MB abaixo da recomendação (16384 MB).
+- [OK] disk_opt: Espaço em /opt (116 GB) adequado.
+- [OK] disk_varopt: Espaço em /var/opt (116 GB) adequado.
+
+Status geral: OK (sem falhas críticas).
+exit=0

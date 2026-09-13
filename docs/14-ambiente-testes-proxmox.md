@@ -214,40 +214,48 @@ sudo dnf install -y git python3.11 python3.11-pip
 
 git clone https://github.com/portosoft/ksc-deployment-runbook.git
 cd ksc-deployment-runbook
-python3.11 -m pip install --user -r requirements.txt
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
 
 # Preparar o arquivo de variáveis de teste
 cp configs/env/ksc_vars.env.example configs/env/ksc_vars.env
 # Ajuste as variáveis (ou use init_config.py)
-python3.11 -m automation.python.init_config
+.venv/bin/python -m automation.python.init_config
 ```
+
+> [!IMPORTANT]
+> O ambiente virtual não é detalhe de estilo. Com `pip install --user`, as
+> dependências ficam no diretório do operador e o `root` não as enxerga: os
+> comandos que exigem privilégio falham com `ModuleNotFoundError`. Usar
+> `.venv/bin/python` com e sem `sudo` garante o mesmo interpretador nos dois
+> casos.
 
 ### 3. Executar o Ciclo de Testes Completo
 
 ```bash
 # 1. Auditoria prévia de pré-requisitos
-python3.11 -m automation.python.kscctl audit --check
+.venv/bin/python -m automation.python.kscctl audit --check
 
 # 2. Obter e validar os pacotes oficiais (gate SHA-256 obrigatório)
-python3.11 -m automation.python.kscctl packages --download ksc-server-16.3-pt-BR       --output-dir /var/tmp/ksc_packages
-python3.11 -m automation.python.kscctl packages --download ksc-network-agent-16.3-pt-BR --output-dir /var/tmp/ksc_packages
-python3.11 -m automation.python.kscctl packages --download ksc-web-console-16.3-pt-BR   --output-dir /var/tmp/ksc_packages
-python3.11 -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
+.venv/bin/python -m automation.python.kscctl packages --download ksc-server-16.3-pt-BR        --output-dir /var/tmp/ksc_packages
+.venv/bin/python -m automation.python.kscctl packages --download ksc-network-agent-16.3-pt-BR --output-dir /var/tmp/ksc_packages
+.venv/bin/python -m automation.python.kscctl packages --download ksc-web-console-16.3-pt-BR   --output-dir /var/tmp/ksc_packages
+.venv/bin/python -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
 
 # 3. Simular a instalação completa sem alterar o sistema
-python3.11 -m automation.python.kscctl setup --check
+.venv/bin/python -m automation.python.kscctl setup --check
 
-# 4. Instalação e provisionamento reais
-python3.11 -m automation.python.kscctl setup --apply
+# 4. Instalação e provisionamento reais — exigem privilégio
+sudo .venv/bin/python -m automation.python.kscctl setup --apply
 
 # 5. Hardening de banco de dados
-python3.11 -m automation.python.kscctl db harden --apply
+sudo .venv/bin/python -m automation.python.kscctl db harden --apply
 
 # 6. Auditoria pós-instalação
-python3.11 -m automation.python.kscctl audit --postcheck
+sudo .venv/bin/python -m automation.python.kscctl audit --postcheck
 
 # 7. Geração do relatório de conformidade (Markdown + PDF)
-python3.11 -m automation.python.kscctl audit --report
+sudo .venv/bin/python -m automation.python.kscctl audit --report
 ```
 
 ### 4. Validação Externa (a partir do Host do Desenvolvedor)
