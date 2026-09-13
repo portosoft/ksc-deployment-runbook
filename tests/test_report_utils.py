@@ -112,3 +112,42 @@ def test_convert_markdown_to_pdf_uses_current_md2pdf_signature(tmp_path, monkeyp
     assert recebido["md"] == markdown
     assert recebido["pdf"] == pdf
     assert pdf.exists()
+
+
+def test_report_omits_precheck_when_ksc_already_installed(tmp_path):
+    """Reexecutar o pré-check pós-deploy marcava como crítico as portas do próprio KSC."""
+    from pathlib import Path
+
+    from automation.python.checks import CheckItem, CheckResult
+    from automation.python.report_utils import generate_markdown_report
+
+    post = CheckResult(items=[CheckItem(name="web_console", status="ok", message="LISTEN")])
+    destino = tmp_path / "report.md"
+
+    generate_markdown_report(None, post, Path("evidence"), destino)
+
+    conteudo = destino.read_text()
+    assert "Não aplicável" in conteudo
+    assert "CRITICAL" not in conteudo
+    assert "Nenhuma falha crítica no pós-check." in conteudo
+
+
+def test_report_summarises_critical_failures(tmp_path):
+    from pathlib import Path
+
+    from automation.python.checks import CheckItem, CheckResult
+    from automation.python.report_utils import generate_markdown_report
+
+    post = CheckResult(
+        items=[
+            CheckItem(name="postgresql", status="critical", message="Inativo."),
+            CheckItem(name="selinux", status="ok", message="enforcing"),
+        ]
+    )
+    destino = tmp_path / "report.md"
+
+    generate_markdown_report(None, post, Path("evidence"), destino)
+
+    conteudo = destino.read_text()
+    assert "1 falha(s) crítica(s)" in conteudo
+    assert "postgresql" in conteudo
