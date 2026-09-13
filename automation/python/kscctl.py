@@ -131,6 +131,33 @@ def main():
         help="Aplica correções no config.json e reinicia console.",
     )
 
+    # Subcomando: rollback
+    rollback_parser = subparsers.add_parser(
+        "rollback",
+        help="Remove a instalação do KSC e o estado que ela deixa no host.",
+    )
+    rollback_group = rollback_parser.add_mutually_exclusive_group(required=True)
+    rollback_group.add_argument(
+        "--check",
+        action="store_true",
+        help="Lista o que seria removido, sem alterar o sistema.",
+    )
+    rollback_group.add_argument(
+        "--apply",
+        action="store_true",
+        help="Executa a remoção. Destrutivo e irreversível.",
+    )
+    rollback_parser.add_argument(
+        "--confirm-token",
+        type=str,
+        help="Token necessário para confirmação de operação destrutiva.",
+    )
+    rollback_parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="Ao final, verifica e reporta resíduos remanescentes.",
+    )
+
     # Subcomando: packages
     packages_parser = subparsers.add_parser(
         "packages",
@@ -287,6 +314,44 @@ def main():
         except Exception as e:
             print(f"[ERROR] Purge de MFA falhou: {e}", file=sys.stderr)
             return 1
+
+    elif args.command == "rollback":
+        from .logging_utils import (configure_logger, init_evidence_dir,
+                                    log_json)
+        from .rollback import perform_rollback, verify_rollback
+
+        if args.apply and args.confirm_token != "ROLLBACK-CONFIRM":
+            print(
+                "[ERROR] Token de confirmação ausente ou inválido (--confirm-token=ROLLBACK-CONFIRM).",
+                file=sys.stderr,
+            )
+            return 3
+
+        evidence_dir = init_evidence_dir("deploy")
+        logger = configure_logger(evidence_dir)
+        log_json(logger, "rollback_start", apply=bool(args.apply))
+        try:
+            perform_rollback(config, logger, dry_run=not args.apply)
+        except Exception as e:
+            log_json(logger, "rollback_failed", error=str(e))
+            print(f"[ERROR] Rollback falhou: {e}", file=sys.stderr)
+            return 1
+
+        if args.verify and args.apply:
+            residuos = verify_rollback(logger)
+            log_json(logger, "rollback_verify", residuos=len(residuos))
+            if residuos:
+                print(
+                    f"\n[AVISO] {len(residuos)} resíduo(s) remanescente(s):",
+                    file=sys.stderr,
+                )
+                for item in residuos:
+                    print(f"  - {item}", file=sys.stderr)
+                return 1
+            print("\nVerificação: nenhum resíduo do KSC encontrado no host.")
+
+        log_json(logger, "rollback_success")
+        return 0
 
     elif args.command == "web" and args.subcommand == "fix-config":
         from automation.ops import fix_web_console_config
