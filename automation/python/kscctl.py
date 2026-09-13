@@ -316,8 +316,7 @@ def main():
             return 1
 
     elif args.command == "rollback":
-        from .logging_utils import (configure_logger, init_evidence_dir,
-                                    log_json)
+        from .logging_utils import configure_logger, init_evidence_dir, log_json
         from .rollback import perform_rollback, verify_rollback
 
         if args.apply and args.confirm_token != "ROLLBACK-CONFIRM":

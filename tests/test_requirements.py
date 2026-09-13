@@ -96,3 +96,18 @@ def test_requirements_declares_python_floor():
     """O piso de versão do Python precisa estar visível: no Rocky 9 o padrão é 3.9."""
     conteudo = REQUIREMENTS.read_text(encoding="utf-8")
     assert "3.10" in conteudo
+
+
+def test_isort_uses_black_profile():
+    """Sem o profile, black e isort desfazem o trabalho um do outro (#234).
+
+    O efeito prático não era quebrar o CI — os dois convergiam dentro da mesma
+    execução —, mas fazer todo `pre-commit run` reportar falha sem haver
+    problema, o que ensina a ignorar a saída do hook.
+    """
+    pyproject = REQUIREMENTS.parent / "pyproject.toml"
+    assert pyproject.is_file(), "pyproject.toml é onde as ferramentas são alinhadas"
+
+    conteudo = pyproject.read_text(encoding="utf-8")
+    assert "[tool.isort]" in conteudo
+    assert 'profile = "black"' in conteudo
