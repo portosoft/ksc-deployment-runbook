@@ -22,10 +22,18 @@ from pathlib import Path
 from typing import List
 
 from .config import KscConfig
-from .setup_steps import (KSC_ADMINS_GROUP, KSC_DATA_DIR, KSC_SERVICE_USER,
-                          KSC_SERVICES, SYSTEMD_DROPIN_DIR,
-                          WEB_CONSOLE_DROPIN_DIR, WEB_CONSOLE_SERVICES,
-                          WEB_CONSOLE_SETUP_FILE, _account_exists, _run)
+from .setup_steps import (
+    KSC_ADMINS_GROUP,
+    KSC_DATA_DIR,
+    KSC_SERVICE_USER,
+    KSC_SERVICES,
+    SYSTEMD_DROPIN_DIR,
+    WEB_CONSOLE_DROPIN_DIR,
+    WEB_CONSOLE_SERVICES,
+    WEB_CONSOLE_SETUP_FILE,
+    _account_exists,
+    _run,
+)
 from .shell_utils import run_command
 
 # Todos os RPMs do produto. O procedimento manual esquecia o klnagent64, que

@@ -1,0 +1,11 @@
+# Configuração das ferramentas de formatação.
+#
+# Sem seções [project] ou [build-system]: este arquivo não define um pacote
+# Python, apenas alinha black e isort. Sem o profile abaixo, os dois hooks
+# discordam sobre imports multi-linha e desfazem o trabalho um do outro a cada
+# execução do pre-commit, que passa a reportar falha sem haver problema — ver
+# issue #234.
+
+[tool.isort]
+profile = "black"
+line_length = 88
