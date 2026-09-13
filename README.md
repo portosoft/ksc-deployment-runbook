@@ -22,8 +22,11 @@ forma repetível e auditável.
   instalação, Web Console em HTTPS e relatório de auditoria sem falhas críticas.
 - **Rollback** sobre instalação interrompida, seguido de reinstalação limpa
   ([`evidence/e2e-223/`](evidence/e2e-223/README.md)).
-- **Idempotência**: três execuções consecutivas de `setup --apply` deixando o
-  host byte a byte idêntico ([`evidence/e2e-228/`](evidence/e2e-228/README.md)).
+- **Idempotência**: três execuções consecutivas de `setup --apply` deixando
+  idêntico todo o estado coberto pelo fingerprint — pacotes, serviços, portas,
+  contas, permissões, hashes de configuração e o certificado do Web Console
+  ([`evidence/e2e-228/`](evidence/e2e-228/README.md)). O conteúdo das bases de
+  dados não é comparado.
 
 **Não comprovado:**
 
@@ -44,7 +47,7 @@ Limitações completas em
 
 | ✅ Use quando | ❌ Não use quando |
 | :--- | :--- |
-| Implantação nova em Rocky ou Oracle Linux 9 | Migração de KSC Windows para Linux (procedimento diferente) |
+| Implantação nova em **Rocky Linux 9** (validado) ou Oracle Linux 9 (suportado em tese, [não testado](https://github.com/portosoft/ksc-deployment-runbook/issues/227)) | Migração de KSC Windows para Linux (procedimento diferente) |
 | PostgreSQL 16 local ou remoto | Versões de KSC anteriores à 15.0 |
 | É preciso auditar e endurecer o servidor | Ambientes com MySQL ou MariaDB |
 
@@ -60,7 +63,7 @@ pós-deploy.
 
 | Item | Exigência |
 | :--- | :--- |
-| SO | Rocky Linux 9.x ou Oracle Linux 9.x |
+| SO | Rocky Linux 9.x — **validado em 9.8**. Oracle Linux 9.x é suportado em tese, mas nunca foi exercitado ([#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227)) |
 | **Python** | **3.10 ou superior.** O `python3` do Rocky 9 é a versão 3.9 e **não** satisfaz o `requirements.txt` — instale `python3.11` do AppStream ([#231](https://github.com/portosoft/ksc-deployment-runbook/issues/231)) |
 | SGBD | PostgreSQL 16.x |
 | RAM | 8 GB mínimo; abaixo de 16 GB o pré-check emite aviso |
@@ -76,34 +79,41 @@ pós-deploy.
 > simulados; a partir da 2.0.0 eles alteram o servidor. Use `setup --check`
 > para simular a sequência completa sem tocar no sistema.
 
+> [!IMPORTANT]
+> Use um **ambiente virtual**, e o mesmo interpretador com e sem `sudo`. Uma
+> instalação com `pip install --user` fica no diretório do operador e não é
+> visível para o `root`: os comandos que exigem privilégio falhariam com
+> `ModuleNotFoundError` antes mesmo de começar.
+
 ```bash
-# 1. Repositório e dependências (python3.11 no Rocky 9 — ver Requisitos)
+# 1. Repositório e ambiente virtual (python3.11 no Rocky 9 — ver Requisitos)
 git clone https://github.com/portosoft/ksc-deployment-runbook.git
 cd ksc-deployment-runbook
-python3.11 -m pip install --user -r requirements.txt
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
 
 # 2. Variáveis de ambiente
 cp configs/env/ksc_vars.env.example configs/env/ksc_vars.env
-python3.11 -m automation.python.init_config      # configuração interativa segura
+.venv/bin/python -m automation.python.init_config   # configuração interativa segura
 
 # 3. Pré-check
-python3.11 -m automation.python.kscctl audit --check
+.venv/bin/python -m automation.python.kscctl audit --check
 
 # 4. Pacotes oficiais, com verificação SHA-256 obrigatória
-python3.11 -m automation.python.kscctl packages --list
-python3.11 -m automation.python.kscctl packages --download ksc-server-16.3-pt-BR \
+.venv/bin/python -m automation.python.kscctl packages --list
+.venv/bin/python -m automation.python.kscctl packages --download ksc-server-16.3-pt-BR \
   --output-dir /var/tmp/ksc_packages
-python3.11 -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
+.venv/bin/python -m automation.python.kscctl packages --verify-dir /var/tmp/ksc_packages
 
 # 5. Simular a instalação completa, sem alterar nada
-python3.11 -m automation.python.kscctl setup --check
+.venv/bin/python -m automation.python.kscctl setup --check
 
-# 6. Instalar
-sudo python3.11 -m automation.python.kscctl setup --apply
+# 6. Instalar — mesmo interpretador, agora com privilégio
+sudo .venv/bin/python -m automation.python.kscctl setup --apply
 
 # 7. Verificar e gerar o relatório de evidências
-python3.11 -m automation.python.kscctl audit --postcheck
-python3.11 -m automation.python.kscctl audit --report
+sudo .venv/bin/python -m automation.python.kscctl audit --postcheck
+sudo .venv/bin/python -m automation.python.kscctl audit --report
 ```
 
 Para desfazer tudo e voltar ao estado anterior, veja
@@ -186,7 +196,7 @@ Para desfazer tudo e voltar ao estado anterior, veja
 ## 🧪 Testes
 
 ```bash
-python3 -m pytest -q
+.venv/bin/python -m pytest -q
 ```
 
 O laboratório de validação ponta a ponta está documentado em
