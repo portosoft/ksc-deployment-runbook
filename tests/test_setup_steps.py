@@ -15,6 +15,7 @@ from automation.python import setup_steps
 from automation.python.setup_steps import (
     SetupError,
     build_response_file,
+    configure_web_console,
     ensure_os_prereqs,
     install_ksc_server,
     post_install_hardening,
@@ -191,6 +192,7 @@ def test_install_runs_postinstall_and_removes_answers(
         return path
 
     monkeypatch.setattr(setup_steps, "_write_response_file", spy)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
     install_ksc_server(config, logger)
 
     cmds = _cmds(recorded)
@@ -212,6 +214,8 @@ def test_answers_removed_even_when_postinstall_fails(
         return ("", "", 0)
 
     monkeypatch.setattr(setup_steps, "run_command", failing)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: False)
+    monkeypatch.setattr(setup_steps, "_ensure_ksc_accounts", lambda *a, **k: None)
 
     written = {}
     original = setup_steps._write_response_file
@@ -221,7 +225,7 @@ def test_answers_removed_even_when_postinstall_fails(
         lambda content: written.setdefault("path", original(content)),
     )
 
-    with pytest.raises(SetupError, match="Comando falhou"):
+    with pytest.raises(SetupError, match="postinstall.pl falhou"):
         install_ksc_server(config, logger)
 
     assert not os.path.exists(written["path"])
@@ -269,3 +273,181 @@ def test_apply_without_packages_dir_still_fails(monkeypatch, recorded, logger, k
 
     with pytest.raises(SetupError, match="KSC_PACKAGES_DIR"):
         install_ksc_server(config, logger, dry_run=False)
+
+
+def test_os_prereqs_are_valid_on_el9():
+    """libidn (v1) não existe no EL9 e abortava a instalação; o pacote é libidn2."""
+    assert "libidn" not in setup_steps.OS_PREREQ_PACKAGES
+    assert "libidn2" in setup_steps.OS_PREREQ_PACKAGES
+    # perl é exigido pelo postinstall.pl, que é o instalador silencioso do KSC.
+    assert "perl" in setup_steps.OS_PREREQ_PACKAGES
+
+
+def test_accounts_created_before_installer(monkeypatch, recorded, logger):
+    """O postinstall.pl aborta se o grupo administrativo não existir previamente."""
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: False)
+    setup_steps._ensure_ksc_accounts(logger)
+
+    cmds = _cmds(recorded)
+    assert any(c.startswith(f"groupadd --system {setup_steps.KSC_ADMINS_GROUP}") for c in cmds)
+    assert any("useradd" in c and setup_steps.KSC_SERVICE_USER in c for c in cmds)
+
+
+def test_existing_accounts_are_preserved(monkeypatch, recorded, logger):
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+    setup_steps._ensure_ksc_accounts(logger)
+
+    assert recorded == [], "contas existentes não devem ser recriadas"
+
+
+def test_response_file_matches_account_constants(ksc_test_config):
+    """As contas criadas e as declaradas no arquivo de respostas têm de coincidir."""
+    content = build_response_file(ksc_test_config)
+
+    assert f"KLSRV_UNATT_KLADMINSGROUP={setup_steps.KSC_ADMINS_GROUP}" in content
+    assert f"KLSRV_UNATT_KLSVCUSER={setup_steps.KSC_SERVICE_USER}" in content
+    assert f"KLSRV_UNATT_KLSRVUSER={setup_steps.KSC_SERVICE_USER}" in content
+
+
+def test_hardening_grants_group_access_before_removing_world_access(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """chmod -R o-rwx isolado tirava do serviço a travessia de /opt/kaspersky.
+
+    Os binários pertencem a root e o klserver roda como a conta de serviço, que
+    dependia da permissão de "outros" — removê-la sem conceder acesso ao grupo
+    fazia o serviço falhar com 203/EXEC.
+    """
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    chgrp_idx = next(i for i, c in enumerate(cmds) if c.startswith("chgrp"))
+    chmod_idx = next(i for i, c in enumerate(cmds) if "o-rwx" in c and "/opt/kaspersky" in c)
+    assert chgrp_idx < chmod_idx, "o grupo precisa ser ajustado antes de fechar 'outros'"
+    assert "g+rX" in cmds[chmod_idx]
+
+
+def test_web_console_is_not_treated_as_a_systemd_unit():
+    """O RPM do Web Console não cria ksc-web-console.service."""
+    assert "ksc-web-console.service" not in setup_steps.KSC_SERVICES
+    assert "kladminserver_srv.service" in setup_steps.KSC_SERVICES
+
+
+def test_postinstall_skipped_when_already_configured(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """postinstall.pl recusa reexecução: 'Do not run the postinstall.pl script again'.
+
+    Reexecutar setup --apply em um host já configurado não pode falhar.
+    """
+    monkeypatch.setattr(setup_steps, "verify_ksc_packages", lambda *a, **k: None)
+    monkeypatch.setattr(setup_steps, "_ksc_is_configured", lambda: True)
+    monkeypatch.setattr(setup_steps, "_account_exists", lambda kind, name: True)
+    _stage_rpms(tmp_path)
+    config = ksc_test_config.model_copy(update={"packages_dir": str(tmp_path)})
+
+    install_ksc_server(config, logger)
+
+    assert not any(setup_steps.KSC_POSTINSTALL in c for c in _cmds(recorded))
+
+
+def test_hardening_restores_traversal_of_data_dir(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """O diretório de dados é root:root; sem travessia o klserver não sobe."""
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    assert f"chgrp {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" in cmds
+    assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
+    # Nada é alterado recursivamente ali: contas de serviço do instalador, fora
+    # do grupo administrativo, dependem das permissões que ele mesmo definiu.
+    assert f"chgrp -R {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" not in cmds
+
+
+def test_failed_units_are_reset_before_enabling(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "_unit_is_active", lambda unit: True)
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    for unit in setup_steps.KSC_SERVICES:
+        reset = cmds.index(f"systemctl reset-failed {unit}")
+        enable = cmds.index(f"systemctl enable --now {unit}")
+        assert reset < enable
+
+
+# --- Web Console ------------------------------------------------------------
+
+
+def test_web_console_setup_uses_installer_key_names(ksc_test_config):
+    """O setup.js lê defaultLangId/trusted/certPath; o exemplo histórico errava."""
+    import json as _json
+
+    data = _json.loads(setup_steps.build_web_console_setup(ksc_test_config))
+
+    assert data["acceptEula"] is True
+    assert data["address"] == ksc_test_config.ksc_fqdn
+    assert data["port"] == ksc_test_config.web_port
+    assert "defaultLangId" in data and "defaultLanguageId" not in data
+    assert "trusted" in data and "trusted_cert" not in data
+
+
+def test_web_console_grants_capability_for_privileged_port(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """A unidade do instalador roda sem privilégio: sem a capacidade não há bind."""
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 443}), logger)
+
+    dropin = tmp_path / "dropin.d" / setup_steps.WEB_CONSOLE_DROPIN_NAME
+    assert "AmbientCapabilities=CAP_NET_BIND_SERVICE" in dropin.read_text()
+
+
+def test_web_console_skips_capability_on_unprivileged_port(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
+
+    assert not (tmp_path / "dropin.d").exists()
+
+
+def test_web_console_setup_file_is_0600(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+    target = tmp_path / "setup.json"
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(target))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
+
+    assert stat.S_IMODE(os.stat(target).st_mode) == 0o600
+
+
+def test_data_dir_is_not_hardened_recursively(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """chmod -R o-rwx no diretório de dados derrubava klserver e Web Console."""
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    assert f"chmod -R o-rwx {setup_steps.KSC_DATA_DIR}" not in cmds
+    assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds

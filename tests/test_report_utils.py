@@ -58,7 +58,9 @@ def test_convert_markdown_to_pdf_success(mock_load_md2pdf, tmp_path):
 
     convert_markdown_to_pdf(md_path, pdf_path)
 
-    mock_md2pdf.assert_called_once_with(pdf_path, md_file_path=str(md_path))
+    # md2pdf 3.x: md2pdf(pdf, raw=None, md=None, ...). O parâmetro md_file_path
+    # é da linha 1.x e fazia a conversão sempre lançar TypeError.
+    mock_md2pdf.assert_called_once_with(pdf_path, md=md_path)
 
 
 @patch("logging.getLogger")
@@ -79,3 +81,73 @@ def test_convert_markdown_to_pdf_failure(mock_load_md2pdf, mock_get_logger, tmp_
         "Não foi possível gerar o PDF: Test failure"
         in mock_logger.warning.call_args[0][0]
     )
+
+
+def test_convert_markdown_to_pdf_uses_current_md2pdf_signature(tmp_path, monkeypatch):
+    """A assinatura do md2pdf 3.x é md2pdf(pdf, raw=None, md=None, ...).
+
+    A chamada usava `md_file_path`, parâmetro da linha 1.x: a conversão sempre
+    lançava TypeError, capturado e registrado apenas como warning, de modo que
+    o PDF de evidências nunca era gerado.
+    """
+    from pathlib import Path
+
+    from automation.python import report_utils
+
+    recebido = {}
+
+    def fake_md2pdf(pdf, raw=None, md=None, **kwargs):
+        recebido["pdf"] = pdf
+        recebido["md"] = md
+        Path(pdf).write_bytes(b"%PDF-1.7\n")
+
+    monkeypatch.setattr(report_utils, "_load_md2pdf", lambda: fake_md2pdf)
+
+    markdown = tmp_path / "report.md"
+    markdown.write_text("# Relatorio\n")
+    pdf = tmp_path / "report.pdf"
+
+    report_utils.convert_markdown_to_pdf(markdown, pdf)
+
+    assert recebido["md"] == markdown
+    assert recebido["pdf"] == pdf
+    assert pdf.exists()
+
+
+def test_report_omits_precheck_when_ksc_already_installed(tmp_path):
+    """Reexecutar o pré-check pós-deploy marcava como crítico as portas do próprio KSC."""
+    from pathlib import Path
+
+    from automation.python.checks import CheckItem, CheckResult
+    from automation.python.report_utils import generate_markdown_report
+
+    post = CheckResult(items=[CheckItem(name="web_console", status="ok", message="LISTEN")])
+    destino = tmp_path / "report.md"
+
+    generate_markdown_report(None, post, Path("evidence"), destino)
+
+    conteudo = destino.read_text()
+    assert "Não aplicável" in conteudo
+    assert "CRITICAL" not in conteudo
+    assert "Nenhuma falha crítica no pós-check." in conteudo
+
+
+def test_report_summarises_critical_failures(tmp_path):
+    from pathlib import Path
+
+    from automation.python.checks import CheckItem, CheckResult
+    from automation.python.report_utils import generate_markdown_report
+
+    post = CheckResult(
+        items=[
+            CheckItem(name="postgresql", status="critical", message="Inativo."),
+            CheckItem(name="selinux", status="ok", message="enforcing"),
+        ]
+    )
+    destino = tmp_path / "report.md"
+
+    generate_markdown_report(None, post, Path("evidence"), destino)
+
+    conteudo = destino.read_text()
+    assert "1 falha(s) crítica(s)" in conteudo
+    assert "postgresql" in conteudo
