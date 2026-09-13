@@ -4,16 +4,20 @@ import yaml
 from unittest.mock import patch, MagicMock
 
 from automation.ops.env_to_ansible import env_to_ansible
+from automation.python.credentials import generate_password
 
 
 def test_env_to_ansible_yaml_injection():
     """
     Test that env_to_ansible safely escapes potentially dangerous YAML payloads.
     """
-    env_content = """
+    # A senha é gerada e o payload de injeção YAML é acrescentado a ela: o
+    # valor literal anterior era classificado como segredo pelo detect-secrets.
+    senha = generate_password(include_symbols=False)
+    env_content = f"""
 # comment
 DB_HOST=127.0.0.1
-DB_PASSWORD=secret" \n  hacked_key: "hacked_value
+DB_PASSWORD={senha}" \n  hacked_key: "hacked_value
 """
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
         f.write(env_content)
@@ -37,7 +41,7 @@ DB_PASSWORD=secret" \n  hacked_key: "hacked_value
             parsed_yaml = yaml.safe_load(generated_yaml)
 
             assert parsed_yaml['db_host'] == '127.0.0.1'
-            assert parsed_yaml['db_password'] == 'secret'
+            assert parsed_yaml['db_password'] == senha
             assert 'hacked_key' not in parsed_yaml
 
     os.unlink(env_path)

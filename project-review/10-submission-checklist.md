@@ -55,9 +55,9 @@ Impede a classificação seguinte: a matriz tem **uma única combinação testad
 em uma **única execução de laboratório**; o rollback nunca foi exercitado
 ([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)); a idempotência foi tratada no código mas não medida
 ([#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228)); não há nenhuma métrica de desempenho ([#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225)); e o
-`.env` em texto claro continua sendo caminho suportado ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)). Um
+`.env` em texto claro continua sendo caminho suportado ([#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237)). Um
 piloto exporia usuários a caminhos de recuperação que nunca foram exercitados.
 
 **Gatilho para reclassificar como "pronto para piloto":** conclusão de
-[#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) e [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101).
+[#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) e [#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237).
 Acompanhamento no [board](https://github.com/orgs/portosoft/projects/1).

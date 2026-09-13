@@ -68,7 +68,8 @@ correção está aplicada — todo item abaixo referencia a issue real.
 | [#207](https://github.com/portosoft/ksc-deployment-runbook/issues/207) | Substituir `sed` por JSON nativo e `ALTER SYSTEM` | Parcialmente aplicado | Reduz a fragilidade de L-04 | — | Médio |
 | [#99](https://github.com/portosoft/ksc-deployment-runbook/issues/99) | Ampliar cobertura de testes de ops e runtime | Em andamento — `setup_steps.py` coberto pelo PR #222 | Sinal confiável de qualidade | — | Baixo |
 | [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102) | Formalizar smoke tests fora do fluxo padrão | Pendente — causa os 2 erros de coleta do pytest | Elimina L-13 | — | Baixo |
-| [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) | Sanear dependências e baseline de segredos | Pendente | Parte de L-07 e L-08 | — | Médio |
+| [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101) | Sanear dependências e baseline de segredos | **Concluída** | Dependências mortas removidas; baseline zerado | — | Baixo |
+| [#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237) | Endurecer manuseio de segredos: vault padrão, sanitização de logs, host key, sudo mínimo | Pendente | Fecha L-07 e L-08 | — | Médio |
 | [#205](https://github.com/portosoft/ksc-deployment-runbook/issues/205) | Corrigir regras nftables e procedimento de rollback | Pendente | Reduz risco operacional | — | Médio |
 | [#206](https://github.com/portosoft/ksc-deployment-runbook/issues/206) | Harmonizar contrato CLI (`--config`, `--verbose`) e paths | Pendente | Usabilidade e execução fora da raiz | — | Baixo |
 | [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) | Documentação final e critério de prontidão externa | Em andamento — este pacote de revisão | Fecha parte de L-10 | — | Baixo |
@@ -132,6 +133,7 @@ Todo o trabalho está sob o épico [#203](https://github.com/portosoft/ksc-deplo
 | 6 — QA e E2E | [#209](https://github.com/portosoft/ksc-deployment-runbook/issues/209) |
 | 7 — Sustentabilidade | [#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223), [#224](https://github.com/portosoft/ksc-deployment-runbook/issues/224), [#225](https://github.com/portosoft/ksc-deployment-runbook/issues/225), [#226](https://github.com/portosoft/ksc-deployment-runbook/issues/226), [#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227), [#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228) |
 | Governança | [#229](https://github.com/portosoft/ksc-deployment-runbook/issues/229) |
+| Segurança | [#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237) |
 | Qualidade e prontidão (herdadas) | [#99](https://github.com/portosoft/ksc-deployment-runbook/issues/99), [#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101), [#102](https://github.com/portosoft/ksc-deployment-runbook/issues/102), [#103](https://github.com/portosoft/ksc-deployment-runbook/issues/103) |
 
 A meta-issue [#97](https://github.com/portosoft/ksc-deployment-runbook/issues/97) foi **encerrada** em favor do [#203](https://github.com/portosoft/ksc-deployment-runbook/issues/203): as duas

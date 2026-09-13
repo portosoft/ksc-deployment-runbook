@@ -550,7 +550,7 @@ def configure_web_console(
             Path(WEB_CONSOLE_DROPIN_DIR, WEB_CONSOLE_DROPIN_NAME).write_text(
                 "[Service]\n"
                 "AmbientCapabilities=CAP_NET_BIND_SERVICE\n"
-                "CapabilityBoundingSet=CAP_NET_BIND_SERVICE\n",
+                "CapabilityBoundingSet=CAP_NET_BIND_SERVICE\n",  # pragma: allowlist secret
                 encoding="utf-8",
             )
             logger.info(

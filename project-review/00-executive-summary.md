@@ -85,6 +85,6 @@ avanço, foi resolvida pela issue [#209](https://github.com/portosoft/ksc-deploy
 piloto agora é menor e está enumerado: rollback nunca exercitado
 ([#223](https://github.com/portosoft/ksc-deployment-runbook/issues/223)), idempotência não medida ([#228](https://github.com/portosoft/ksc-deployment-runbook/issues/228)), matriz de
 compatibilidade com uma única combinação testada ([#227](https://github.com/portosoft/ksc-deployment-runbook/issues/227)) e o
-manuseio de segredos ([#101](https://github.com/portosoft/ksc-deployment-runbook/issues/101)).
+manuseio de segredos ([#237](https://github.com/portosoft/ksc-deployment-runbook/issues/237)).
 O backlog completo está no [board do projeto](https://github.com/orgs/portosoft/projects/1);
 [09-roadmap.md](09-roadmap.md) apresenta a visão dele para o leitor externo.
