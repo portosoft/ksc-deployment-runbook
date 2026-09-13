@@ -96,12 +96,20 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            if [ "$GPG_AVAILABLE" = "true" ]; then
-              git commit -S -m "chore: update .secrets.baseline and pre-commit fixes"
-            else
-              git commit -m "chore: update .secrets.baseline and pre-commit fixes"
-              echo "::warning::Commit sem assinatura GPG. Configure os secrets GPG_PRIVATE_KEY e GPG_PASSPHRASE para commits verificados."
+            if [ "$GPG_AVAILABLE" != "true" ]; then
+              # Os branches protegidos exigem assinatura verificada. Sem GPG, o
+              # push é recusado pelo servidor e o job falha em todo push — sem
+              # relação com lint ou testes. Aqui a divergência é reportada e o
+              # commit não é tentado.
+              echo "::warning::Há divergência a commitar, mas os secrets GPG_PRIVATE_KEY e GPG_PASSPHRASE não estão configurados. O commit automático foi ignorado: um push sem assinatura seria recusado pela proteção do branch."
+              echo "Arquivos divergentes:"
+              git diff --staged --name-only
+              git diff --staged
+              echo "::warning::Rode 'pre-commit run --all-files' localmente e commite o resultado."
+              git reset >/dev/null
+              exit 0
             fi
+            git commit -S -m "chore: update .secrets.baseline and pre-commit fixes"
             git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
             git push origin "${{ github.ref_name }}"
           fi
