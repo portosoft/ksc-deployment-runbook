@@ -26,7 +26,7 @@ solicitado explicitamente. `[FATO]`
 | Criação de arquivos sensíveis com modo restrito | `automation/python/utils/secure_file.py` | `tests/test_secure_file.py` |
 | Integridade de artefatos (supply chain) | SHA-256 em blocos de 64 KB, comparação resistente a timing, gate obrigatório antes da instalação | `tests/test_packages.py` |
 | Eliminação de credenciais realistas do repositório | Geração sintética em testes (`credentials.py`), marcadores `<PREENCHER>` nos `.example`, `.secrets.baseline` verificado em CI | `tests/test_credentials.py`, `tests/test_credentials_properties.py` (property-based com `hypothesis`) |
-| Prevenção de injeção de comando | Substituição de `sed` por manipulação JSON nativa e por `ALTER SYSTEM`; `run_remote_sudo` centralizado em vez de `exec_command` direto | Revisão registrada em `docs/internal/review-remediation-v2.md` |
+| Prevenção de injeção de comando | Substituição de `sed` por manipulação JSON nativa e por `ALTER SYSTEM`; comandos **privilegiados** passam por `run_remote_sudo`. Exceção registrada: `automation/ops/reconfigure_ksc_service.py` ainda usa `client.exec_command` para remover o arquivo temporário, cujo caminho é gerado por UUID | Revisão registrada em `docs/internal/review-remediation-v2.md` |
 | Entrada hostil em testes | `generate_hostile_password()` produz senhas contendo `'`, espaço, `;`, `&` e `$(` | Testes de propriedade |
 | Análise estática | CodeQL, Semgrep, Aikido e `detect-secrets` em CI | `.github/workflows/` |
 | Hardening do alvo | Regras nftables para 443/8080/13000/13291/14000, permissões, SELinux | `docs/08-hardening.md`, `automation/bash/validate-harden.sh` |

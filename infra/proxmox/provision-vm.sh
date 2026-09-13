@@ -32,13 +32,38 @@ SNAPSHOT="${KSC_BASELINE_SNAPSHOT:-clean-baseline}"
 SECRETS_FILE="${KSC_SECRETS_FILE:-$HOME/.secrets/ksc-proxmox.env}"
 SSH_KEY="${KSC_VM_SSH_KEY:-$HOME/.ssh/ksc-lab}"
 
-ROCKY_IMAGE_URL="${KSC_ROCKY_IMAGE_URL:-https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2}"
-IMAGE_PATH="/var/lib/vz/template/iso/rocky9-genericcloud.qcow2"
+# Versão fixada: "latest" muda com o tempo e uma reexecução traria outra
+# versão menor do Rocky, incapaz de reproduzir a evidência registrada em
+# evidence/e2e-209/ (Rocky Linux 9.8). Para atualizar, troque a versão e o
+# checksum juntos, a partir de CHECKSUM publicado pelo projeto Rocky.
+ROCKY_VERSION="${KSC_ROCKY_VERSION:-9.8}"
+ROCKY_IMAGE_NAME="Rocky-9-GenericCloud-Base.latest.x86_64.qcow2"
+ROCKY_IMAGE_URL="${KSC_ROCKY_IMAGE_URL:-https://dl.rockylinux.org/vault/rocky/${ROCKY_VERSION}/images/x86_64/${ROCKY_IMAGE_NAME}}"
+# Deixe vazio para pular a verificação; preencha para exigir integridade.
+ROCKY_IMAGE_SHA256="${KSC_ROCKY_IMAGE_SHA256:-}"
+IMAGE_PATH="/var/lib/vz/template/iso/rocky${ROCKY_VERSION}-genericcloud.qcow2"
 
 RECREATE=0
 [[ "${1:-}" == "--recreate" ]] && RECREATE=1
 
 log() { printf '[provision-vm] %s\n' "$*"; }
+
+ssh_vm() {
+  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+      -o ConnectTimeout=5 -i "$SSH_KEY" -p 2222 "${VM_USER}@127.0.0.1" "$@"
+}
+
+wait_for_ssh() {
+  log "aguardando o SSH da VM responder em 127.0.0.1:2222 (até 5 min)"
+  for _ in $(seq 1 60); do
+    if ssh_vm true 2>/dev/null; then
+      log "SSH disponível."
+      return 0
+    fi
+    sleep 5
+  done
+  die "a VM não respondeu no SSH. Verifique os sidecars socat e o KSC_VM_IP."
+}
 die() { printf '[provision-vm][ERRO] %s\n' "$*" >&2; exit 1; }
 
 pve() { podman exec "$CONTAINER" "$@"; }
@@ -84,7 +109,15 @@ if pve qm status "$VMID" >/dev/null 2>&1; then
     pve qm stop "$VMID" >/dev/null 2>&1 || true
     pve qm destroy "$VMID" --purge
   else
+    # Sair aqui reportaria sucesso com a VM parada, e o passo seguinte do
+    # runbook não conseguiria conectar. O contrato é entregar a VM acessível.
     log "VM $VMID já existe. Use --recreate para recriá-la do zero."
+    if [[ "$(pve qm status "$VMID")" != "status: running" ]]; then
+      log "VM está parada; iniciando."
+      pve qm start "$VMID"
+    fi
+    wait_for_ssh
+    log "VM $VMID pronta. Acesso: ssh -i $SSH_KEY -p 2222 ${VM_USER}@127.0.0.1"
     exit 0
   fi
 fi
@@ -92,10 +125,23 @@ fi
 # --- Imagem base -------------------------------------------------------------
 
 if pve test -f "$IMAGE_PATH"; then
-  log "imagem genericcloud do Rocky 9 já presente no nó"
+  log "imagem genericcloud do Rocky ${ROCKY_VERSION} já presente no nó"
 else
-  log "baixando a imagem genericcloud do Rocky Linux 9 (aprox. 600 MB)"
+  log "baixando a imagem genericcloud do Rocky Linux ${ROCKY_VERSION} (aprox. 600 MB)"
   pve curl -fsSL --retry 3 -o "$IMAGE_PATH" "$ROCKY_IMAGE_URL"
+fi
+
+if [[ -n "$ROCKY_IMAGE_SHA256" ]]; then
+  log "verificando a integridade da imagem"
+  obtido="$(pve sha256sum "$IMAGE_PATH" | awk '{print $1}')"
+  if [[ "$obtido" != "$ROCKY_IMAGE_SHA256" ]]; then
+    pve rm -f "$IMAGE_PATH"
+    die "checksum da imagem não confere.
+  esperado: $ROCKY_IMAGE_SHA256
+  obtido:   $obtido"
+  fi
+else
+  log "KSC_ROCKY_IMAGE_SHA256 não definido: integridade da imagem não verificada."
 fi
 
 # --- Criação da VM -----------------------------------------------------------
@@ -145,21 +191,8 @@ pve qm start "$VMID"
 
 # --- Espera o SSH responder --------------------------------------------------
 
-log "aguardando o SSH da VM responder em 127.0.0.1:2222 (até 5 min)"
-for _ in $(seq 1 60); do
-  if ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-         -o ConnectTimeout=5 -i "$SSH_KEY" -p 2222 \
-         "${VM_USER}@127.0.0.1" true 2>/dev/null; then
-    log "SSH disponível."
-    break
-  fi
-  sleep 5
-done
-
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-    -i "$SSH_KEY" -p 2222 "${VM_USER}@127.0.0.1" \
-    'cat /etc/os-release | head -2' \
-  || die "a VM subiu, mas o SSH não respondeu. Verifique os sidecars socat e o KSC_VM_IP."
+wait_for_ssh
+ssh_vm 'head -2 /etc/os-release'
 
 # --- Snapshot de linha de base ----------------------------------------------
 
