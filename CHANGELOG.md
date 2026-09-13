@@ -6,65 +6,114 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added
-- **R-01a — desmockagem de `setup_steps.py`**: os quatro passos de instalação passam a executar
-  comandos reais no servidor alvo — pré-requisitos de SO via `dnf`, PostgreSQL 16 (repositório PGDG,
-  `initdb` idempotente, role e bases `ksc`/`ksciam` criadas via `psql` com SQL vindo do stdin),
-  instalação dos RPMs do KSC seguida de `postinstall.pl` em modo silencioso, e hardening com
-  drop-in systemd de `LD_LIBRARY_PATH`, `restorecon` e verificação de que os serviços ficaram ativos
-- Suporte a `dry_run` em todos os passos de instalação; `ksc_setup --check` passa a simular a
-  sequência completa e registrar cada comando que seria executado, sem alterar o sistema
-- `build_response_file()` como fonte única do formato KLAUTOANSWERS, compartilhada entre a
-  instalação inicial e `automation/ops/reconfigure_ksc_service.py`
-- `tests/test_setup_steps.py` com 16 testes: recusa de SO não suportado, idempotência do cluster
-  PostgreSQL, ausência da senha do banco em argv, remoção do arquivo de respostas mesmo quando o
-  `postinstall.pl` falha, e falha explícita quando os serviços não sobem
-- Catálogo oficial de pacotes Kaspersky e hashes criptográficos SHA-256 (`configs/ksc/packages.json` e `configs/ksc/checksums.sha256`) extraídos do portal oficial
-- Módulo `automation/python/packages.py` e subcomando `kscctl packages` (`--list`, `--verify-dir`, `--download`) com validação de integridade em blocos de 64 KB e proteção contra timing attacks
-- Verificação obrigatória de integridade de pacotes RPM antes da instalação em `setup_steps.py` (Zero Trust Gate)
-- Testes unitários em `tests/test_packages.py` e testes de contrato CLI em `tests/test_cli_contracts.py`
-- Geração sintética de credenciais para testes (`credentials.py` + fixtures pytest)
-- `init_config.py` para configuração interativa segura de variáveis de ambiente de produção
-- `automation/bash/validate-harden.sh` para validação pós-hardening em Rocky Linux 9 / KSC 16.x
-- `configs/ksc/ksc_response.txt.template` como template de respostas do instalador silencioso
-- `configs/postgres/postgresql.conf.template` com parâmetros mínimos de hardening do PostgreSQL
 
-### Changed
-- `automation/python/shell_utils.py`: `run_command` aceita `input_data` para enviar dados sensíveis
-  via stdin, mantendo senhas e SQL fora da lista de processos do servidor
-- `automation/ops/reconfigure_ksc_service.py`: arquivo de respostas deixa de ser duplicado no script
-  e passa a usar `build_response_file()`, com os valores reais de `db_host`, `db_port` e `db_user`
-  em vez dos literais `127.0.0.1`/`5432`/`kluser`
-- `tests/test_packages.py`: o caso que validava sucesso da instalação com diretório vazio passa a
-  exigir falha explícita por ausência dos RPMs oficiais
-- Arquivos `.example` agora usam marcadores `<PREENCHER>` ao invés de valores com aparência realista
-- `kscctl.py`, `ksc_audit.py`, `ksc_setup.py`: eliminado anti-pattern `sys.argv` — subcomandos
-  agora chamam funções diretamente (`run_audit_check`, `run_setup_check`, etc.)
-- `automation/ops/reconfigure_ksc_service.py`: usa `run_remote_sudo` centralizado em vez de
-  `client.exec_command` direto
-- `automation/lib/vault.py`: adicionada verificação de permissões 0o600 na chave antes da leitura
-- `automation/bash/*.sh`: adicionado `# shellcheck shell=bash` para compatibilidade com runners
-- `.pre-commit-config.yaml`: hook shellcheck migrado para `language: system` (sem Docker)
-- `docs/03-pre-requisitos.md`: nota explícita de que `--vault` também grava `.env` plaintext
-- `CHECKLIST.md`: comando exato `python3 -m automation.python.init_config` no item de pre-check
-- `.github/workflows/trigger-bot-pr.yml`: PRs gerados agora seguem o template com título e
-  body informativos derivados do último commit e do CHANGELOG
-- `automation/ops/ksc_harden_db.py`: modo `--check` agora respeita dry-run local, sem abrir SSH
-- `automation/python/utils/secure_file.py`: compatibilidade aprimorada para ambientes sem `os.fchmod`
-- `automation/python/report_utils.py`: carregamento tardio de `md2pdf` e normalização POSIX do caminho de evidências
-- `docs/06-instalacao-ksc.md`: template de respostas documentado como artefato-base para geração dinâmica
+## [2.0.0] — 2026-09-13
+
+Primeira versão com deploy real validado. Até aqui o `setup --apply` era
+simulado; a partir desta versão ele instala o produto.
+
+### ⚠️ Mudança de comportamento
+
+- **`kscctl setup --apply` deixou de ser simulação e passou a instalar de
+  fato.** Quem tinha o hábito de executá-lo esperando um no-op agora provisiona
+  PostgreSQL 16, instala os RPMs do KSC, executa o `postinstall.pl`, configura o
+  Web Console e aplica hardening no servidor. Para simular a sequência completa
+  sem alterar nada, use `setup --check`.
+- **Python 3.10 ou superior passa a ser obrigatório.** O `python3` do Rocky
+  Linux 9 é a versão 3.9 e não satisfaz o `requirements.txt`; use o
+  `python3.11` do AppStream. Ver issue #231.
+
+### Added
+
+- **Instalação real** (#208): preparação do SO, PostgreSQL 16 com `initdb`
+  idempotente e criação condicional de role e bases, instalação dos RPMs com
+  gate SHA-256 obrigatório, `postinstall.pl` silencioso com arquivo de respostas
+  em modo 0600 removido ao final, e hardening com drop-in de `LD_LIBRARY_PATH`.
+- **Configuração do KSC Web Console** (#209): o RPM instala os arquivos, mas quem
+  configura o produto é o `setup.js`, com parâmetros em
+  `/etc/ksc-web-console-setup.json`. Inclui drop-in de `CAP_NET_BIND_SERVICE`
+  quando a porta é privilegiada, sem o qual o serviço reinicia indefinidamente
+  sem escutar.
+- **`kscctl rollback`** (#223): remoção completa da instalação, com `--verify`
+  que percorre o host e falha se sobrar resíduo. Exige `--confirm-token`.
+- **`dry_run` em todos os passos de instalação**: `setup --check` passa a simular
+  a sequência completa registrando cada comando que seria executado.
+- **Laboratório de validação** (#209): `infra/proxmox/provision-vm.sh` provisiona
+  a VM de testes com imagem genericcloud e cloud-init, em versão fixada.
+- **`automation/bash/state-fingerprint.sh`** (#228): impressão determinística do
+  estado do host, para verificar idempotência por diff.
+- **Evidências das validações** em `evidence/e2e-209/`, `e2e-223/` e `e2e-228/`.
+- `tests/test_requirements.py` (#101): impede que dependências mortas voltem.
 
 ### Fixed
-- `.github/workflows/sync-develop.yml`: loop de retry com espera condicional para push em `develop` após releases em `main`
-- `tests/test_remote.py`: migrado para fixture `ksc_test_config` (removia pragma hardcoded)
-- `.github/workflows/ci-integration.yml`: substituídas credenciais hardcoded por
-  `generate_password()`; removidos subcomandos que exigiam SSH real no dry-run
-- `.github/workflows/codeql.yml` e `recreate-prs.yml`: hash do `actions/checkout` atualizado
-  para Node.js 24
-- `.secrets.baseline`: ordenação de chaves (`sort_keys=True`) sincronizada com a esteira de CI
-- `.secrets.baseline`: entradas marcadas como `is_verified: true`
-- `tests/ops/ksc_harden_db_test.py`: check mode agora valida ausência de conexão SSH
-- `tests/test_report_utils.py`: mocks e asserções ajustados para estabilidade local e compatibilidade com Windows
+
+Defeitos revelados pela primeira execução contra um KSC real — nenhum deles era
+detectável por teste unitário:
+
+- `libidn` não existe no EL9; o pacote é `libidn2` (#209).
+- O grupo `kladmins` e a conta de serviço precisam existir **antes** do
+  instalador, que os valida mas não os cria (#209).
+- **O hardening derrubava o produto**: `chmod -R o-rwx` retirava do `klserver` o
+  acesso aos próprios binários (203/EXEC) e do Web Console o acesso ao diretório
+  de trabalho (200/CHDIR) (#209).
+- `ksc-web-console.service` não existe; as unidades reais são `KSCWebConsole`,
+  `KSCSvcWebConsole`, `KSCWebConsoleManagement`, `KSCWebConsoleNATS` e
+  `KSCWebConsolePlugin` (#209).
+- `setup --apply` não era idempotente: o `postinstall.pl` recusa reexecução e as
+  portas ocupadas pelo próprio KSC reprovavam o pré-check (#209, #228).
+- A reexecução **substituía o certificado TLS** do Web Console e recriava suas
+  contas de serviço, sem que o relatório de auditoria acusasse mudança (#228).
+- A busca da unidade do PostgreSQL parava em `postgresql` e nunca chegava a
+  `postgresql-16`, reprovando o pós-check com o banco ativo (#209).
+- O **PDF de auditoria nunca era gerado**: a chamada usava a assinatura da linha
+  1.x do `md2pdf` e as bibliotecas do WeasyPrint não eram instaladas (#209).
+- O relatório reexecutava o pré-check em servidor instalado, acusando como
+  crítico as portas que o KSC passou a ocupar (#209).
+- Falhas silenciosas no rollback e no setup, apontadas em revisão de código:
+  passos destrutivos que reportavam sucesso após falhar, verificação que
+  anunciava host limpo sem ter conseguido inspecionar, e consulta ao PostgreSQL
+  sem o endpoint configurado.
+- `black` e `isort` desfaziam o trabalho um do outro a cada execução do
+  pre-commit (#234).
+
+### Changed
+
+- `docs/11-rollback.md` reescrito: o procedimento anterior deixava sete resíduos,
+  entre eles o RPM `klnagent64`, a base `ksciam` e uma role `ksc_admin` que o
+  runbook nunca cria (#223).
+- `docs/14-ambiente-testes-proxmox.md`: provisionamento automatizado no lugar dos
+  passos manuais de interface web.
+- `requirements.txt` (#101): removidas `python-dotenv`, `jinja2`, `lxml` e
+  `Pillow` — a primeira sem uso algum, as demais transitivas do `md2pdf`.
+- `.secrets.baseline` (#101): de 22 achados, todos falsos positivos, para zero.
+- `run_command` aceita `input_data`, mantendo senhas e SQL fora da lista de
+  processos do servidor.
+- `infra/proxmox/compose.yml`: nome de projeto fixo `ksc-lab`, para não colidir
+  com outros laboratórios homônimos no mesmo host.
+
+### Security
+
+- Verificação SHA-256 obrigatória dos pacotes antes de qualquer instalação.
+- SELinux restaurado para `enforcing` ao final, inclusive em caso de erro.
+- Drop-in de `CAP_NET_BIND_SERVICE` removido quando a porta deixa de ser
+  privilegiada (CWE-250).
+
+### Conhecido e não resolvido
+
+- Validação em **uma única combinação**: Rocky Linux 9.8 + KSC 16.3.0.1207 +
+  PostgreSQL 16. Oracle Linux 9 e outras versões seguem declaradas (#227).
+- Nenhuma métrica de desempenho coletada (#225).
+- `.env` em texto claro ainda é caminho suportado (#237).
+
+
+## [1.1.1] - 2026-05-16
+### Fixed
+- Hardcoded credential removed from \utomation/python/fix_ksc_auth.py\
+- \.secrets.baseline\ cleaned of references to deleted files
+- \scratch/check_api.py\ removed from repository
+
+### Changed
+- 65 didactic scripts archived to \utomation/archive/didactic-2026-05/\
 
 ## [1.1.0] - 2026-05-16
 ### Added
@@ -96,12 +145,3 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 - Removidas redundâncias de documentação.
 - Padronização de termos técnicos.
-
-## [1.1.1] - 2026-05-16
-### Fixed
-- Hardcoded credential removed from \utomation/python/fix_ksc_auth.py\
-- \.secrets.baseline\ cleaned of references to deleted files
-- \scratch/check_api.py\ removed from repository
-
-### Changed
-- 65 didactic scripts archived to \utomation/archive/didactic-2026-05/\

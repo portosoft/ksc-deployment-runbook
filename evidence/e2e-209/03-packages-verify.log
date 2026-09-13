@@ -1,0 +1,7 @@
+
+Verificação de integridade em: /var/tmp/ksc_packages
+Pacotes verificados com sucesso: 3
+  [OK] pt-BR/klnagent64-16.3.0-1207.x86_64.rpm (Kaspersky Security Center Network Agent 16.3.0.1207)
+  [OK] pt-BR/ksc-web-console-16.3.12907.x86_64.rpm (Kaspersky Security Center Web Console 16.3.0.1207)
+  [OK] pt-BR/ksc64-16.3.0-1207.x86_64.rpm (Kaspersky Security Center Administration Server 16.3.0.1207)
+exit=0
