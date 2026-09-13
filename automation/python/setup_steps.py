@@ -37,6 +37,11 @@ OS_PREREQ_PACKAGES = [
     "perl",
     "libidn2",
     "policycoreutils-python-utils",
+    # Bibliotecas de sistema do WeasyPrint, usadas por `kscctl audit --report`
+    # para gerar o PDF de evidências. Sem elas a conversão falha na importação.
+    "pango",
+    "cairo",
+    "gdk-pixbuf2",
 ]
 
 # PostgreSQL 16 — conforme docs/05-instalacao-postgresql.md.

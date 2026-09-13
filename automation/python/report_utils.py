@@ -53,7 +53,10 @@ def convert_markdown_to_pdf(markdown_path: Path, pdf_path: Path) -> None:
     """
     try:
         md2pdf = _load_md2pdf()
-        md2pdf(pdf_path, md_file_path=str(markdown_path))
+        # A assinatura do md2pdf 3.x é md2pdf(pdf, raw=None, md=None, ...). O
+        # parâmetro `md_file_path` é da linha 1.x e fazia a conversão falhar
+        # silenciosamente com TypeError, registrado apenas como warning.
+        md2pdf(Path(pdf_path), md=Path(markdown_path))
     except Exception as e:
         import logging
 
