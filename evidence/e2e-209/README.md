@@ -11,7 +11,10 @@ simulados descritos em `project-review/05-testing-and-validation.md` §5.4.
 | `02-setup-check-dryrun.log` | `kscctl setup --check` (dry-run da sequência completa) | exit 0 |
 | `03-packages-verify.log` | `kscctl packages --verify-dir` sobre os RPMs oficiais | 3 pacotes íntegros |
 | `04-setup-apply.log` | **`kscctl setup --apply` — deploy real e limpo** | **exit 0** |
-| `05-estado-final.log` | Serviços e portas após o deploy | 6 serviços `active` |
+| `05-estado-final.log` | Serviços e portas após o deploy | 12 serviços `active` |
+| `06-audit-postcheck.log` | `kscctl audit --postcheck` | exit 0, zero críticos |
+| `07-audit-report.md` / `.pdf` | `kscctl audit --report` | Relatório com zero falhas críticas |
+| `08-web-console-externo.log` | Acesso ao Web Console a partir do host | HTTP 200 em `/login` |
 
 ## Ambiente
 
@@ -25,7 +28,24 @@ simulados descritos em `project-review/05-testing-and-validation.md` §5.4.
 | Python | 3.11.13 (AppStream) — **não** o 3.9 padrão do SO, ver abaixo |
 | SELinux | `Enforcing` |
 | Snapshot | `clean-baseline` criado antes de qualquer execução |
-| Commit | `8af2d21` (develop) |
+| Commit | branch `feat/209-lab-e2e-proxmox` |
+
+## Defeitos corrigidos a partir destas execuções
+
+Nenhum era detectável por teste unitário; todos vieram de rodar contra o produto.
+
+| Sintoma observado | Correção |
+|---|---|
+| `Unable to find a match: libidn` | O pacote no EL9 é `libidn2` |
+| `But the kladmins group does not exist` | Grupo e conta de serviço passam a ser criados antes do instalador |
+| `klserver`: `Permission denied`, `203/EXEC` | O hardening removia do serviço o acesso aos próprios binários |
+| Web Console: `200/CHDIR` | O hardening recursivo do diretório de dados derrubava as contas criadas pelo instalador |
+| `Do not run the postinstall.pl script again` | `setup --apply` passa a detectar servidor já configurado |
+| Web Console sem unidade e sem porta | Configuração via `setup.js` e arquivo de parâmetros em `/etc` |
+| Web Console reiniciando sem escutar na 443 | Drop-in com `CAP_NET_BIND_SERVICE` para portas privilegiadas |
+| `[CRITICAL] postgresql: Inativo` com o banco ativo | A busca da unidade parava em `postgresql` e não chegava a `postgresql-16` |
+| PDF nunca gerado | Assinatura do `md2pdf` 3.x e bibliotecas do WeasyPrint ausentes |
+| Relatório com críticos falsos de porta | O pré-check deixa de ser reexecutado em servidor já instalado |
 
 ## O que estas evidências comprovam
 
@@ -42,24 +62,28 @@ simulados descritos em `project-review/05-testing-and-validation.md` §5.4.
   `active`: `kladminserver_srv`, `klnagent_srv`, `kliam_srv`, `klwebsrv_srv`,
   `klactprx_srv` e `klcssnmp_srv`.
 
+- **O Web Console está operante:** `https://127.0.0.1:8443` responde HTTP 200
+  em `/login`, através do encaminhamento do laboratório para a porta 443 da VM.
+- O relatório de auditoria é gerado em Markdown e PDF, com zero falhas
+  críticas no pós-check.
+
 ## O que estas evidências **não** comprovam
 
-- **O Web Console não está acessível.** O RPM instala os arquivos, mas a
-  configuração depende de uma etapa própria, parametrizada por
-  `configs/ksc/ksc-web-console-setup.json.example`, que a automação ainda não
-  executa. A porta 443 não está em escuta.
 - O deploy não foi exercitado em Oracle Linux 9 nem em outra versão menor do
-  KSC 16.x.
-- O rollback não foi exercitado sobre uma instalação parcial.
+  KSC 16.x (issue #227).
+- O rollback não foi exercitado sobre uma instalação parcial (issue #223).
+- A idempotência foi tratada no código, mas não foi medida por um segundo
+  ciclo completo comparando relatórios (issue #228).
+- Nenhuma métrica de tempo ou consumo de recursos foi coletada (issue #225).
 
 ## Divergências de porta observadas
 
 | Porta | Documentação do projeto | Observado na instalação real |
 |---|---|---|
+| 443 | Web Console HTTPS | Em escuta |
 | 13000 | Network Agent SSL | Em escuta (`klserver`) |
 | 13291 | API do Administration Server | **Não está em escuta**; a porta OpenAPI ativa é a **13299** |
 | 14000 | Network Agent plain | **Não está em escuta** |
-| 443 | Web Console HTTPS | Não está em escuta (Web Console não configurado) |
 
 `configs/ksc/ksc-web-console-setup.json.example` já referencia `openApiPort:
 13299`, enquanto `automation/python/checks.py` e a documentação verificam a
