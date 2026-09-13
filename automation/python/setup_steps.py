@@ -11,6 +11,7 @@ sistema é executado, apenas registrado no log de evidências. É o que sustenta
 o contrato ``--check`` da CLI.
 """
 
+import json
 import logging
 import os
 import tempfile
@@ -69,6 +70,24 @@ KSC_SERVICES = [
 # aborta com "But the kladmins group does not exist".
 KSC_ADMINS_GROUP = "kladmins"
 KSC_SERVICE_USER = "ksc"
+
+# Web Console. O RPM instala os arquivos, mas quem configura o produto é o
+# setup.js, executado pelo scriptlet de pós-instalação com o arquivo de
+# parâmetros em /etc. As unidades não se chamam "ksc-web-console".
+WEB_CONSOLE_DIR = "/var/opt/kaspersky/ksc-web-console"
+WEB_CONSOLE_SETUP_FILE = "/etc/ksc-web-console-setup.json"
+WEB_CONSOLE_SERVICES = [
+    "KSCWebConsoleNATS.service",
+    "KSCWebConsoleManagement.service",
+    "KSCWebConsolePlugin.service",
+    "KSCSvcWebConsole.service",
+    "KSCWebConsole.service",
+]
+WEB_CONSOLE_DROPIN_DIR = "/etc/systemd/system/KSCWebConsole.service.d"
+WEB_CONSOLE_DROPIN_NAME = "10-bind-privileged-port.conf"
+
+# defaultLangId do instalador: 1046 = pt-BR, 1033 = en-US.
+WEB_CONSOLE_LANG_ID = 1046
 
 # Prefixos dos RPMs instalados pelo passo de instalação, em ordem de dependência.
 KSC_RPM_PREFIXES = ["ksc64-", "klnagent64-", "ksc-web-console-"]
@@ -424,6 +443,97 @@ KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
 """
 
 
+def build_web_console_setup(config: KscConfig) -> str:
+    """Monta o arquivo de parâmetros do Web Console.
+
+    As chaves são as que o próprio setup.js lê. Atenção: o exemplo histórico do
+    repositório usava `defaultLanguageId`, `trusted_cert` e `trusted_cert_key`,
+    que o instalador ignora — os nomes corretos são `defaultLangId`, `trusted`,
+    `certPath` e `keyPath`.
+
+    `acceptEula` aceita o contrato de licença de forma não interativa, em linha
+    com o EULA_ACCEPTED=1 já usado no arquivo de respostas do servidor.
+    """
+    return json.dumps(
+        {
+            "acceptEula": True,
+            "address": config.ksc_fqdn,
+            "port": config.web_port,
+            "defaultLangId": WEB_CONSOLE_LANG_ID,
+            "enableLog": True,
+            "trusted": "",
+            "certPath": "",
+            "keyPath": "",
+        },
+        indent=2,
+    )
+
+
+def configure_web_console(
+    config: KscConfig, logger: logging.Logger, dry_run: bool = False
+) -> None:
+    """Configura e sobe o KSC Web Console.
+
+    Instalar o RPM não basta: a configuração é feita pelo setup.js, que lê o
+    arquivo de parâmetros em /etc e cria as unidades systemd, os certificados e
+    as contas de serviço próprias do componente.
+
+    Raises:
+        SetupError: Se a gravação do arquivo ou a configuração falharem.
+    """
+    logger.info("Configurando o KSC Web Console...")
+
+    if dry_run:
+        logger.info(
+            f"[CHECK] Seria gravado {WEB_CONSOLE_SETUP_FILE} (modo 0600) com porta "
+            f"{config.web_port} e executado: {WEB_CONSOLE_DIR}/node setup.js"
+        )
+        return
+
+    try:
+        Path(WEB_CONSOLE_SETUP_FILE).write_text(
+            build_web_console_setup(config), encoding="utf-8"
+        )
+        os.chmod(WEB_CONSOLE_SETUP_FILE, 0o600)
+    except OSError as e:
+        raise SetupError(f"Falha ao gravar {WEB_CONSOLE_SETUP_FILE}: {e}")
+
+    # A unidade criada pelo instalador roda com um usuário sem privilégio e sem
+    # CAP_NET_BIND_SERVICE: sem esta capacidade o serviço não consegue abrir
+    # portas abaixo de 1024 e fica reiniciando sem nunca escutar.
+    if config.web_port < 1024:
+        try:
+            Path(WEB_CONSOLE_DROPIN_DIR).mkdir(parents=True, exist_ok=True)
+            Path(WEB_CONSOLE_DROPIN_DIR, WEB_CONSOLE_DROPIN_NAME).write_text(
+                "[Service]\n"
+                "AmbientCapabilities=CAP_NET_BIND_SERVICE\n"
+                "CapabilityBoundingSet=CAP_NET_BIND_SERVICE\n",
+                encoding="utf-8",
+            )
+            logger.info(
+                f"Drop-in de capacidade gravado para a porta privilegiada {config.web_port}."
+            )
+        except OSError as e:
+            raise SetupError(f"Falha ao gravar o drop-in do Web Console: {e}")
+        _run(["systemctl", "daemon-reload"], logger)
+
+    # O setup.js precisa ser executado a partir do diretório do componente.
+    _run(
+        [
+            "sh",
+            "-c",
+            f"cd {WEB_CONSOLE_DIR} && ./node setup.js {WEB_CONSOLE_SETUP_FILE}",
+        ],
+        logger,
+    )
+
+    for unit in WEB_CONSOLE_SERVICES:
+        _run(["systemctl", "reset-failed", unit], logger, check=False)
+        _run(["systemctl", "enable", "--now", unit], logger, check=False)
+
+    logger.info(f"Web Console configurado na porta {config.web_port}.")
+
+
 def _resolve_rpms(package_dir: str) -> List[str]:
     """Localiza os RPMs do KSC no diretório, em ordem de dependência.
 
@@ -591,14 +701,16 @@ def post_install_hardening(
     )
     _run(["chmod", "-R", "g+rX,o-rwx", "/opt/kaspersky"], logger, dry_run, check=False)
 
-    # No diretório de dados o tratamento é diferente: os subdiretórios já vêm do
-    # instalador com dono e grupo corretos (alguns deliberadamente privados),
-    # então nada é alterado recursivamente além de fechar o acesso de "outros".
-    # O que precisa de ajuste é apenas a travessia do diretório-raiz, que é
-    # root:root — sem ela o klserver não alcança o próprio estado.
-    _run(["chmod", "-R", "o-rwx", KSC_DATA_DIR], logger, dry_run, check=False)
+    # O diretório de dados NÃO recebe chmod recursivo. O instalador cria ali
+    # subdiretórios já restritos e contas de serviço próprias, de nomes
+    # gerados aleatoriamente e fora do grupo administrativo — o Web Console é
+    # uma delas. Fechar o acesso de "outros" recursivamente derrubava tanto o
+    # klserver (203/EXEC) quanto o Web Console (200/CHDIR).
+    #
+    # O que se faz aqui é apenas dar ao grupo administrativo o acesso ao
+    # diretório-raiz, preservando a travessia de que as demais contas dependem.
     _run(["chgrp", KSC_ADMINS_GROUP, KSC_DATA_DIR], logger, dry_run, check=False)
-    _run(["chmod", "g+rx", KSC_DATA_DIR], logger, dry_run, check=False)
+    _run(["chmod", "g+rx,o+rx", KSC_DATA_DIR], logger, dry_run, check=False)
 
     dropin_file = str(Path(SYSTEMD_DROPIN_DIR) / SYSTEMD_DROPIN_NAME)
     dropin_content = f"[Service]\nEnvironment=LD_LIBRARY_PATH={KSC_LIB_DIR}\n"
@@ -689,6 +801,7 @@ def perform_setup(
         ensure_os_prereqs(config, logger, dry_run)
         setup_postgres(config, logger, dry_run)
         install_ksc_server(config, logger, dry_run)
+        configure_web_console(config, logger, dry_run)
         post_install_hardening(config, logger, dry_run)
 
     except Exception as e:

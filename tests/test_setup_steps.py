@@ -15,6 +15,7 @@ from automation.python import setup_steps
 from automation.python.setup_steps import (
     SetupError,
     build_response_file,
+    configure_web_console,
     ensure_os_prereqs,
     install_ksc_server,
     post_install_hardening,
@@ -364,9 +365,9 @@ def test_hardening_restores_traversal_of_data_dir(
 
     cmds = _cmds(recorded)
     assert f"chgrp {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" in cmds
-    assert f"chmod g+rx {setup_steps.KSC_DATA_DIR}" in cmds
-    # O tratamento do diretório de dados não é recursivo além do fechamento
-    # de "outros": subdiretórios privados do instalador são preservados.
+    assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
+    # Nada é alterado recursivamente ali: contas de serviço do instalador, fora
+    # do grupo administrativo, dependem das permissões que ele mesmo definiu.
     assert f"chgrp -R {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" not in cmds
 
 
@@ -383,3 +384,70 @@ def test_failed_units_are_reset_before_enabling(
         reset = cmds.index(f"systemctl reset-failed {unit}")
         enable = cmds.index(f"systemctl enable --now {unit}")
         assert reset < enable
+
+
+# --- Web Console ------------------------------------------------------------
+
+
+def test_web_console_setup_uses_installer_key_names(ksc_test_config):
+    """O setup.js lê defaultLangId/trusted/certPath; o exemplo histórico errava."""
+    import json as _json
+
+    data = _json.loads(setup_steps.build_web_console_setup(ksc_test_config))
+
+    assert data["acceptEula"] is True
+    assert data["address"] == ksc_test_config.ksc_fqdn
+    assert data["port"] == ksc_test_config.web_port
+    assert "defaultLangId" in data and "defaultLanguageId" not in data
+    assert "trusted" in data and "trusted_cert" not in data
+
+
+def test_web_console_grants_capability_for_privileged_port(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """A unidade do instalador roda sem privilégio: sem a capacidade não há bind."""
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 443}), logger)
+
+    dropin = tmp_path / "dropin.d" / setup_steps.WEB_CONSOLE_DROPIN_NAME
+    assert "AmbientCapabilities=CAP_NET_BIND_SERVICE" in dropin.read_text()
+
+
+def test_web_console_skips_capability_on_unprivileged_port(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
+
+    assert not (tmp_path / "dropin.d").exists()
+
+
+def test_web_console_setup_file_is_0600(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+    target = tmp_path / "setup.json"
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(target))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
+
+    configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
+
+    assert stat.S_IMODE(os.stat(target).st_mode) == 0o600
+
+
+def test_data_dir_is_not_hardened_recursively(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
+    """chmod -R o-rwx no diretório de dados derrubava klserver e Web Console."""
+    monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
+
+    post_install_hardening(ksc_test_config, logger)
+
+    cmds = _cmds(recorded)
+    assert f"chmod -R o-rwx {setup_steps.KSC_DATA_DIR}" not in cmds
+    assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
