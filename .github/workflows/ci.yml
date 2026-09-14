@@ -34,7 +34,7 @@ jobs:
       - name: Warn when configured GPG key cannot be imported
         if: ${{ github.event_name == 'push' && env.HAS_GPG_KEY == 'true' && steps.import_gpg.outcome != 'success' }}
         run: |
-          echo "::warning::GPG_PRIVATE_KEY configurada, mas a importação falhou. O pipeline seguirá sem assinatura GPG no auto-commit."
+          echo "::warning::GPG_PRIVATE_KEY configurada, mas a importação falhou. O auto-commit será ignorado: um push sem assinatura é recusado pela proteção do branch. Lint e testes seguem normalmente."
 
       - name: Configure git for commits
         run: |
@@ -101,7 +101,7 @@ jobs:
               # push é recusado pelo servidor e o job falha em todo push — sem
               # relação com lint ou testes. Aqui a divergência é reportada e o
               # commit não é tentado.
-              echo "::warning::Há divergência a commitar, mas os secrets GPG_PRIVATE_KEY e GPG_PASSPHRASE não estão configurados. O commit automático foi ignorado: um push sem assinatura seria recusado pela proteção do branch."
+              echo "::warning::Há divergência a commitar, mas a assinatura GPG não está disponível — os secrets GPG_PRIVATE_KEY e GPG_PASSPHRASE não foram configurados, ou a importação da chave falhou. O commit automático foi ignorado: um push sem assinatura seria recusado pela proteção do branch."
               echo "Arquivos divergentes:"
               git diff --staged --name-only
               git diff --staged
