@@ -27,4 +27,4 @@ requests==2.34.2
 # Testes
 pytest==9.1.1
 pytest-cov==7.1.0
-hypothesis==6.165.10
+hypothesis==6.168.0
