@@ -13,6 +13,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from automation.python.credentials import generate_password
 from automation.python.packages import (
     DEFAULT_CATALOG_PATH,
     ChecksumVerificationError,
@@ -250,8 +251,8 @@ class TestChecksumVerification(unittest.TestCase):
         from automation.python.setup_steps import SetupError, install_ksc_server
 
         config = KscConfig(
-            db_password="dummy",
-            ksc_admin_password="dummy",
+            db_password=generate_password(),
+            ksc_admin_password=generate_password(),
             packages_dir="/non/existent/path/for/ksc/packages",
         )
         logger = logging.getLogger("test")
@@ -265,28 +266,34 @@ class TestChecksumVerification(unittest.TestCase):
         from automation.python.setup_steps import SetupError, install_ksc_server
 
         config = KscConfig(
-            db_password="dummy",
-            ksc_admin_password="dummy",
+            db_password=generate_password(),
+            ksc_admin_password=generate_password(),
             packages_dir=None,
         )
         logger = logging.getLogger("test")
         with self.assertRaises(SetupError):
             install_ksc_server(config, logger)
 
-    def test_install_ksc_server_valid_packages_dir_succeeds(self):
-        """Valida que install_ksc_server executa com sucesso se packages_dir for válido."""
+    def test_install_ksc_server_passes_gate_but_requires_rpms(self):
+        """Um diretório vazio passa no gate de integridade e falha por ausência de RPM.
+
+        Antes da desmockagem (R-01) este caso era considerado sucesso; com a
+        instalação real, um diretório sem os pacotes oficiais não pode instalar
+        coisa alguma.
+        """
         import logging
         from automation.python.config import KscConfig
-        from automation.python.setup_steps import install_ksc_server
+        from automation.python.setup_steps import SetupError, install_ksc_server
 
         with tempfile.TemporaryDirectory() as td:
             config = KscConfig(
-                db_password="dummy",
-                ksc_admin_password="dummy",
+                db_password=generate_password(),
+                ksc_admin_password=generate_password(),
                 packages_dir=td,
             )
             logger = logging.getLogger("test")
-            install_ksc_server(config, logger)
+            with self.assertRaisesRegex(SetupError, "não encontrado"):
+                install_ksc_server(config, logger)
 
 
 class TestCliPackagesIntegration(unittest.TestCase):

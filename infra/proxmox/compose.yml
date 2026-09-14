@@ -9,6 +9,11 @@
 # A senha do root do Proxmox nunca é commitada: vem de ~/.secrets/ksc-proxmox.env
 # =============================================================================
 
+# O nome do projeto é fixado porque o diretório deste arquivo (infra/proxmox) é
+# o mesmo de outros laboratórios no host: sem isto, o compose adota "proxmox"
+# como nome de projeto e tenta recriar os containers do laboratório alheio.
+name: ksc-lab
+
 services:
   proxmox:
     image: dockurr/proxmox:9.2.10
@@ -32,8 +37,9 @@ services:
       - ksc_proxmox_config:/var/lib/pve-cluster
     devices:
       - /dev/kvm
-    group_add:
-      - "keep-groups"
+    # Sem group_add: "keep-groups" é sintaxe do podman run e falha quando o
+    # compose roda através do provider docker-compose. Sob Podman rootless o
+    # acesso a /dev/kvm vem da ACL do dispositivo no host.
     privileged: true
     restart: unless-stopped
     stop_grace_period: 2m

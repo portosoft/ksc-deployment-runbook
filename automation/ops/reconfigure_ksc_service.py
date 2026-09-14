@@ -7,6 +7,7 @@ import logging
 import uuid
 from automation.python.config import KscConfig
 from automation.python.remote import connect_ksc_host, run_remote_sudo
+from automation.python.setup_steps import build_response_file
 from automation.python.logging_utils import (
     init_evidence_dir,
     configure_logger,
@@ -33,31 +34,8 @@ def reconfigure_ksc_service(config: KscConfig, apply: bool = False) -> None:
         apply=apply,
     )
 
-    # Conteúdo do arquivo de respostas (gerado dinamicamente com valores seguros)
-    ans_content = f"""EULA_ACCEPTED=1
-PP_ACCEPTED=1
-KSN_ACCEPTED=1
-KLSRV_UNATT_DBMS_TYPE=Postgres
-KLSRV_UNATT_DBMS_INSTANCE=127.0.0.1
-KLSRV_UNATT_DBMS_PORT=5432
-KLSRV_UNATT_DBMS_LOGIN=kluser
-KLSRV_UNATT_DBMS_PASSWORD={config.db_password}
-KLSRV_UNATT_DB_NAME=ksc
-KLSRV_UNATT_DBMS_IAM_TYPE=Postgres
-KLSRV_UNATT_DBMS_IAM_INSTANCE=127.0.0.1
-KLSRV_UNATT_DBMS_IAM_PORT=5432
-KLSRV_UNATT_DBMS_IAM_LOGIN=kluser
-KLSRV_UNATT_DBMS_IAM_PASSWORD={config.db_password}
-KLSRV_UNATT_DB_IAM_NAME=ksciam
-KLSRV_UNATT_SERVERADDRESS={config.ksc_fqdn}
-KLSRV_UNATT_IAM_ADDRESS=127.0.0.1
-KLSRV_UNATT_KLSVCUSER=ksc
-KLSRV_UNATT_KLADMINSGROUP=kladmins
-KLSRV_UNATT_KLIAMUSER=ksc
-KLSRV_UNATT_KLSRVUSER=ksc
-KLSRV_UNATT_KLADMINS_USER={config.ksc_admin_user}
-KLSRV_UNATT_KLADMINS_PASSWORD={config.ksc_admin_password}
-"""
+    # Fonte única do formato KLAUTOANSWERS, compartilhada com a instalação inicial.
+    ans_content = build_response_file(config)
 
     if not apply:
         run_logger.info(

@@ -1,0 +1,15 @@
+[INFO] {"event": "precheck_start", "timestamp": "2026-09-12T20:30:25.616806Z"}
+[INFO] {"event": "precheck_result", "timestamp": "2026-09-12T20:30:25.619597Z", "has_critical": false, "total_items": 8}
+
+=== RESUMO DOS CHECKS ===
+- [OK] os_version: SO suportado: rocky 9.8
+- [OK] selinux: SELinux em modo 'enforcing'.
+- [OK] port_13000: Porta 13000 livre.
+- [OK] port_14000: Porta 14000 livre.
+- [OK] port_443: Porta 443 livre.
+- [WARNING] ram_total: RAM total 15732 MB abaixo da recomendação (16384 MB).
+- [OK] disk_opt: Espaço em /opt (116 GB) adequado.
+- [OK] disk_varopt: Espaço em /var/opt (116 GB) adequado.
+
+Status geral: OK (sem falhas críticas).
+exit=0

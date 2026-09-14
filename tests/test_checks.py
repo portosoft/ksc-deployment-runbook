@@ -142,3 +142,48 @@ def test_check_ports_critical(mock_ports, ksc_test_config):
     critical_ports = [i.name for i in result.items if i.status == "critical"]
     assert "port_13000" in critical_ports
     assert "port_443" in critical_ports
+
+
+def test_postgres_check_finds_versioned_unit_when_generic_is_inactive(monkeypatch):
+    """No Rocky 9 a unidade genérica existe inativa; a que serve o KSC é postgresql-16.
+
+    A busca não pode parar no primeiro nome com status definido — isso gerava
+    um falso crítico com o PostgreSQL 16 rodando normalmente.
+    """
+    from automation.python import checks
+
+    estado = {"postgresql": False, "postgresql-16": True}
+    monkeypatch.setattr(checks, "_systemd_is_active", lambda unit: estado.get(unit))
+    monkeypatch.setattr(checks, "_check_db_select_1", lambda config: True)
+    monkeypatch.setattr(checks, "_check_tcp_port_open", lambda port: True)
+
+    from automation.python.credentials import generate_password
+    from automation.python.config import KscConfig
+
+    config = KscConfig(
+        db_password=generate_password(), ksc_admin_password=generate_password()
+    )
+    resultado = checks.check_services_and_db(config)
+
+    item = next(i for i in resultado.items if i.name == "postgresql")
+    assert item.status == "ok", item.message
+    assert "postgresql-16" in item.message
+
+
+def test_run_precheck_skip_ports_replaces_port_items():
+    """Com skip_ports, nenhum item de porta entra no resultado."""
+    from automation.python.checks import run_precheck
+    from automation.python.config import KscConfig
+    from automation.python.credentials import generate_password
+
+    config = KscConfig(
+        db_password=generate_password(), ksc_admin_password=generate_password()
+    )
+    resultado = run_precheck(config, skip_ports=True)
+
+    nomes = [i.name for i in resultado.items]
+    assert not any(n.startswith("port_") for n in nomes)
+    assert "ports" in nomes
+    assert not resultado.has_critical or all(
+        i.name != "ports" for i in resultado.items if i.status == "critical"
+    )

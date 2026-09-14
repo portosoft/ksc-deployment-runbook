@@ -1,14 +1,11 @@
 {
+  "_comentario": "Chaves lidas pelo setup.js do KSC Web Console 16.3. Gerado automaticamente por kscctl setup --apply em /etc/ksc-web-console-setup.json; este arquivo serve como referência.",
+  "acceptEula": true,
   "address": "<FQDN-DO-SERVIDOR>",
-  "port": 8080,
-  "trusted_cert": "",
-  "trusted_cert_key": "",
-  "defaultLanguageId": "pt-BR",
-  "openAPIServers": [
-    {
-      "address": "<FQDN-DO-SERVIDOR>",
-      "port": 13000,
-      "openApiPort": 13299
-    }
-  ]
+  "port": 443,
+  "defaultLangId": 1046,
+  "enableLog": true,
+  "trusted": "",
+  "certPath": "",
+  "keyPath": ""
 }

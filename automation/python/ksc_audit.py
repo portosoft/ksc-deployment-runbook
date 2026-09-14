@@ -89,7 +89,12 @@ def run_audit_report(config) -> int:
     evidence_root = Path("evidence")
 
     print("Coletando estado atual para relatório...")
-    pre = run_precheck(config)
+
+    # O pré-check só é significativo antes da instalação: depois dela, as
+    # portas que ele exige livres estão legitimamente ocupadas pelo KSC.
+    from .setup_steps import _ksc_is_configured
+
+    pre = None if _ksc_is_configured() else run_precheck(config)
     post = run_postcheck(config)
 
     report_dir = init_evidence_dir("reports")

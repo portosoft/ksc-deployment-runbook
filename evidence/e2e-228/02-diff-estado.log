@@ -1,0 +1,12 @@
+7263907 fix(setup): preservar o certificado do Web Console na reexecução (#228)
+=== execução 2 ===
+[INFO] {"event": "setup_apply_success", "timestamp": "2026-09-13T04:52:18.890973Z"}
+Instalação concluída com sucesso.
+=== execução 3 ===
+[INFO] {"event": "setup_apply_success", "timestamp": "2026-09-13T04:52:31.665777Z"}
+Instalação concluída com sucesso.
+
+### diff execução 1 -> 2
+(idêntico)
+### diff execução 2 -> 3
+(idêntico)

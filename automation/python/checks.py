@@ -310,11 +310,15 @@ def check_ports(config: KscConfig) -> CheckResult:
     return result
 
 
-def run_precheck(config: KscConfig) -> CheckResult:
+def run_precheck(config: KscConfig, skip_ports: bool = False) -> CheckResult:
     """Agrega os checks de pré-instalação: SO, SELinux, portas, RAM e disco.
 
     Args:
         config: Configuração do KSC.
+        skip_ports: Omite a verificação de portas livres. Use quando o KSC já
+            estiver instalado: as portas que a verificação exige livres estão
+            então legitimamente ocupadas pelo próprio produto, e tratá-las como
+            falha impede que `setup --apply` seja reexecutado.
 
     Returns:
         CheckResult consolidado com todos os checks de pré-instalação.
@@ -322,7 +326,16 @@ def run_precheck(config: KscConfig) -> CheckResult:
     aggregated = CheckResult(items=[])
     aggregated.items.extend(check_os_version().items)
     aggregated.items.extend(check_selinux(config).items)
-    aggregated.items.extend(check_ports(config).items)
+    if skip_ports:
+        aggregated.add(
+            CheckItem(
+                name="ports",
+                status="ok",
+                message="Verificação de portas omitida: o KSC já está instalado neste host.",
+            )
+        )
+    else:
+        aggregated.items.extend(check_ports(config).items)
     aggregated.items.extend(check_ram_and_disk(config).items)
     return aggregated
 
@@ -378,18 +391,23 @@ def check_services_and_db(config: KscConfig) -> CheckResult:
     """
     result = CheckResult(items=[])
 
-    pg_units = ["postgresql", "postgresql-16"]
+    # O nome da unidade varia conforme a origem do pacote. A busca precisa
+    # percorrer todos os candidatos até encontrar um ativo: no Rocky 9 a
+    # unidade genérica "postgresql" existe e está inativa, enquanto a que
+    # realmente serve o KSC é a "postgresql-16". Interromper no primeiro
+    # status definido reportava um falso crítico.
+    pg_units = ["postgresql-16", "postgresql"]
     pg_status = None
+    unit_name = pg_units[0]
     for unit in pg_units:
         status = _systemd_is_active(unit)
         if status is True:
             pg_status = True
             unit_name = unit
             break
-        elif status is False:
+        if status is False and pg_status is None:
             pg_status = False
             unit_name = unit
-            break
 
     if pg_status is True:
         result.add(

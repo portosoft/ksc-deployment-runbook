@@ -40,6 +40,10 @@ Thumbs.db
 
 # Logs e Temporários
 *.log
+# Exceção: as evidências das validações ponta a ponta são citadas nos READMEs
+# de evidence/ e no pacote de revisão. Sem versioná-las, o material aponta para
+# arquivos que quem clona o repositório não consegue abrir.
+!evidence/e2e-*/*.log
 tmp/
 temp/
 alerts.json

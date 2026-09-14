@@ -1,0 +1,21 @@
+=== serviços ===
+kladminserver_srv            active
+klnagent_srv                 active
+kliam_srv                    active
+klwebsrv_srv                 active
+klactprx_srv                 active
+klcssnmp_srv                 active
+KSCWebConsole                active
+KSCSvcWebConsole             active
+KSCWebConsoleNATS            active
+KSCWebConsoleManagement      active
+KSCWebConsolePlugin          active
+postgresql-16                active
+=== portas ===
+0.0.0.0:13000
+0.0.0.0:13299
+127.0.0.1:5432
+[::]:13000
+[::]:13299
+[::1]:5432
+*:443
