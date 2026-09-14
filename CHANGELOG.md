@@ -6,6 +6,15 @@ O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- `.github/workflows/ci.yml`: o passo de auto-commit deixa de tentar um push sem
+  assinatura GPG, que a proteção do branch recusa — o job falhava em todo push
+  para `develop` sem relação com lint ou testes. Sem GPG disponível, a
+  divergência passa a ser reportada com o diff e o commit é ignorado.
+- `.secrets.baseline` normalizado com a mesma ordenação de chaves que o CI
+  aplica (`sort_keys=True`). O arquivo divergia em 120 linhas a cada execução
+  apenas por ordem de chaves, o que fazia o auto-commit sempre ter o que
+  commitar.
 
 ## [2.0.0] — 2026-09-13
 
