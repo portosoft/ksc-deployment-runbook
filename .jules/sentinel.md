@@ -88,3 +88,8 @@
 **Vulnerability:** In `automation/ops/fix_web_console_config.py`, configuration values like `config.ksc_fqdn` were interpolated directly into a `sed` command string. If the value contains single quotes or slashes, it can break out of shell quoting or terminate the `sed` expression prematurely.
 **Learning:** Commands with inner replacement syntaxes like `sed` require escaping delimiters (such as `/`) as well as shell-quoting each expression argument with `shlex.quote()`.
 **Prevention:** Always escape `/` with `\/` in substituted values and wrap each `-e` expression in `shlex.quote()` before assembling the shell command.
+
+## 2026-06-04 - [CRITICAL] Prevent TOCTOU Race Conditions via paramiko SFTP File Permissions
+**Vulnerability:** A script (`automation/troubleshooting/ARCHIVED/patch_nats_js.py`) was creating a temporary file via Paramiko SFTP (`sftp.file(tmp_filename, "w")`) without explicitly setting secure file permissions (`chmod(0o600)`) prior to writing to the file, which risks Time-of-Check to Time-of-Use (TOCTOU) race conditions allowing local credential exposure.
+**Learning:** Creating sensitive configuration or temporary files via SFTP without explicitly setting permissions can expose credentials to local users. Setting permissions *after* the file is written leaves a Time-of-Check to Time-of-Use (TOCTOU) race condition where an attacker can read the file in the split second before `chmod` executes.
+**Prevention:** When creating sensitive files via `paramiko` SFTP, explicitly call `f.chmod(0o600)` on the file object *before* writing any data to ensure the file is secured immediately upon creation.
