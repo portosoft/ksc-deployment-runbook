@@ -37,6 +37,7 @@ def patch_nats_js(client, filepath):
     # Use a non-predictable filename to prevent predictable temporary file vulnerabilities (CWE-377)
     tmp_filename = f"/tmp/connection-creator_{uuid.uuid4().hex}.js"
     with sftp.file(tmp_filename, "w") as f:
+        f.chmod(0o600)
         f.write(new_content)
 
     return tmp_filename
