@@ -170,7 +170,10 @@ def perform_rollback(
                     dry_run,
                 )
                 _psql_postgres(
-                    f'DROP DATABASE IF EXISTS "{safe_base_ident}";', config, logger, dry_run
+                    f'DROP DATABASE IF EXISTS "{safe_base_ident}";',
+                    config,
+                    logger,
+                    dry_run,
                 )
             except SetupError as e:
                 falhas.append(f"remover a base {base}: {e}")

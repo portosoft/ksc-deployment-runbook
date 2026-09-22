@@ -387,7 +387,9 @@ def setup_postgres(
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
         safe_db_name_str = db_name.replace("'", "''")
         safe_db_name_ident = db_name.replace('"', '""')
-        inner_create = f'CREATE DATABASE "{safe_db_name_ident}" OWNER "{safe_db_user_ident}"'
+        inner_create = (
+            f'CREATE DATABASE "{safe_db_name_ident}" OWNER "{safe_db_user_ident}"'
+        )
         safe_inner_create = inner_create.replace("'", "''")
         create_sql = (
             f"SELECT '{safe_inner_create}' "
