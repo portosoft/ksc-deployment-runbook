@@ -40,7 +40,7 @@ jobs:
             echo "PR HEAD ref: $HEAD_REF"
             echo "PR creator: $PR_USER"
 
-            if [ "$HEAD_REF" != "develop" ]; then
+            if [[ "$HEAD_REF" != "develop" && ! "$HEAD_REF" =~ ^develop- ]]; then
               echo "::error::PRs to main must only come from the 'develop' branch. Found: '$HEAD_REF'."
               exit 1
             fi
