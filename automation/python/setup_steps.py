@@ -369,10 +369,13 @@ def setup_postgres(
     _run(["systemctl", "enable", "--now", PG_SERVICE], logger, dry_run)
 
     # Role de aplicação: criada apenas se ausente; a senha vai por stdin.
+    safe_db_user_ident = config.db_user.replace('"', '""')
+    safe_db_user_lit = config.db_user.replace("'", "''")
+    safe_db_pass_lit = config.db_password.replace("'", "''")
     role_sql = (
         "DO $$ BEGIN "
-        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{config.db_user}') THEN "
-        f"CREATE ROLE \"{config.db_user}\" LOGIN PASSWORD '{config.db_password}'; "
+        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{safe_db_user_lit}') THEN "
+        f"CREATE ROLE \"{safe_db_user_ident}\" LOGIN PASSWORD '{safe_db_pass_lit}'; "
         "END IF; END $$;"
     )
     _psql(role_sql, logger, dry_run, redacted=True)
@@ -381,9 +384,13 @@ def setup_postgres(
     for db_name in ("ksc", config.db_name):
         # CREATE DATABASE não roda dentro de bloco DO; o \gexec do psql executa
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
+        safe_db_name_ident = db_name.replace('"', '""')
+        safe_db_name_lit = db_name.replace("'", "''")
+        safe_db_name_ident_in_lit = safe_db_name_ident.replace("'", "''")
+        safe_db_user_ident_in_lit = safe_db_user_ident.replace("'", "''")
         create_sql = (
-            f'SELECT \'CREATE DATABASE "{db_name}" OWNER "{config.db_user}"\' '
-            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{db_name}')\n"
+            f'SELECT \'CREATE DATABASE "{safe_db_name_ident_in_lit}" OWNER "{safe_db_user_ident_in_lit}"\' '
+            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{safe_db_name_lit}')\n"
             "\\gexec\n"
         )
         _psql(create_sql, logger, dry_run)
