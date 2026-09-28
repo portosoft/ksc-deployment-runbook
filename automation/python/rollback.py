@@ -174,8 +174,9 @@ def perform_rollback(
                 falhas.append(f"remover a base {base}: {e}")
 
         try:
+            safe_db_user = config.db_user.replace('"', '""')
             _psql_postgres(
-                f'DROP ROLE IF EXISTS "{config.db_user}";', config, logger, dry_run
+                f'DROP ROLE IF EXISTS "{safe_db_user}";', config, logger, dry_run
             )
         except SetupError as e:
             falhas.append(f"remover a role {config.db_user}: {e}")
