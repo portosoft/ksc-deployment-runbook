@@ -88,3 +88,8 @@
 **Vulnerability:** In `automation/ops/fix_web_console_config.py`, configuration values like `config.ksc_fqdn` were interpolated directly into a `sed` command string. If the value contains single quotes or slashes, it can break out of shell quoting or terminate the `sed` expression prematurely.
 **Learning:** Commands with inner replacement syntaxes like `sed` require escaping delimiters (such as `/`) as well as shell-quoting each expression argument with `shlex.quote()`.
 **Prevention:** Always escape `/` with `\/` in substituted values and wrap each `-e` expression in `shlex.quote()` before assembling the shell command.
+
+## 2026-06-04 - [CRITICAL] Prevent SQL Injection via Unescaped Variables in Postgres Queries
+**Vulnerability:** In `automation/python/setup_steps.py` and `automation/ops/reset_ksc_databases.py`, variables like `config.db_user`, `config.db_password`, and `db` were interpolated directly into SQL queries passed to `psql`. If these variables contain quotes, they can cause syntax errors or allow SQL injection.
+**Learning:** Any user-controlled configuration value or input interpolated into an SQL query string before being passed to a database client like `psql` represents a SQL injection risk.
+**Prevention:** Always properly escape SQL identifiers (like user or database names) by replacing internal double quotes with two double quotes (`replace('"', '""')`) and wrapping the identifier in double quotes. Additionally, escape SQL string literals by replacing single quotes with two single quotes (`replace("'", "''")`).
