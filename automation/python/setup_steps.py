@@ -12,11 +12,10 @@ o contrato ``--check`` da CLI.
 """
 
 import json
-import uuid
-
 import logging
 import os
 import tempfile
+import uuid
 from pathlib import Path
 from typing import List, Optional
 
