@@ -64,10 +64,11 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
         # Drop e Recreate
         for db in dbs:
             # Terminar conexões ativas
+            db_literal = db.replace("'", "''")
             term_query = (
                 f"SELECT pg_terminate_backend(pg_stat_activity.pid) "
                 f"FROM pg_stat_activity "
-                f"WHERE pg_stat_activity.datname = '{db}' "
+                f"WHERE pg_stat_activity.datname = '{db_literal}' "
                 f"AND pid <> pg_backend_pid();"
             )
             term_cmd = f"-u postgres psql -c {shlex.quote(term_query)}"
