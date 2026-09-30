@@ -12,6 +12,7 @@ o contrato ``--check`` da CLI.
 """
 
 import json
+import uuid
 import logging
 import os
 import tempfile
@@ -369,11 +370,15 @@ def setup_postgres(
     _run(["systemctl", "enable", "--now", PG_SERVICE], logger, dry_run)
 
     # Role de aplicação: criada apenas se ausente; a senha vai por stdin.
+    tag = f"$q{uuid.uuid4().hex}$"
+    db_user_id = config.db_user.replace('"', '""')
+    db_user_lit = config.db_user.replace("'", "''")
+    db_password_lit = config.db_password.replace("'", "''")
     role_sql = (
-        "DO $$ BEGIN "
-        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{config.db_user}') THEN "
-        f"CREATE ROLE \"{config.db_user}\" LOGIN PASSWORD '{config.db_password}'; "
-        "END IF; END $$;"
+        f"DO {tag} BEGIN "
+        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{db_user_lit}') THEN "
+        f"CREATE ROLE \"{db_user_id}\" LOGIN PASSWORD '{db_password_lit}'; "
+        f"END IF; END {tag};"
     )
     _psql(role_sql, logger, dry_run, redacted=True)
 
