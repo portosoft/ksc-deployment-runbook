@@ -88,3 +88,8 @@
 **Vulnerability:** In `automation/ops/fix_web_console_config.py`, configuration values like `config.ksc_fqdn` were interpolated directly into a `sed` command string. If the value contains single quotes or slashes, it can break out of shell quoting or terminate the `sed` expression prematurely.
 **Learning:** Commands with inner replacement syntaxes like `sed` require escaping delimiters (such as `/`) as well as shell-quoting each expression argument with `shlex.quote()`.
 **Prevention:** Always escape `/` with `\/` in substituted values and wrap each `-e` expression in `shlex.quote()` before assembling the shell command.
+
+## 2026-10-03 - [CRITICAL] Fix SQL Injection in PostgreSQL DO blocks
+**Vulnerability:** Unsanitized user inputs (`config.db_user` and `config.db_password`) were directly interpolated into PostgreSQL `DO $$ BEGIN ... END $$;` blocks and `SELECT '...' \gexec` commands via f-strings, leading to SQL injection.
+**Learning:** When using Python f-strings to generate SQL for tools like `psql`, standard static tags like `$$` and unescaped quotes create trivial SQL injection vectors, especially in DDL operations where parameterized queries are often not supported natively.
+**Prevention:** Always escape SQL identifiers (`replace('"', '""')`) and string literals (`replace("'", "''")`), construct nested queries carefully by escaping inner quotes, and generate randomized DO block tags (e.g., `f"$q{uuid.uuid4().hex}$"`) starting with a letter.
