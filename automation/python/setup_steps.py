@@ -391,7 +391,9 @@ def setup_postgres(
 
         # CREATE DATABASE não roda dentro de bloco DO; o \gexec do psql executa
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
-        inner_sql = f'CREATE DATABASE "{safe_db_name_ident}" OWNER "{safe_db_user_ident}"'
+        inner_sql = (
+            f'CREATE DATABASE "{safe_db_name_ident}" OWNER "{safe_db_user_ident}"'
+        )
         safe_inner_sql = inner_sql.replace("'", "''")
 
         create_sql = (
