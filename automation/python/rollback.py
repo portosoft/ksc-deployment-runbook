@@ -159,23 +159,26 @@ def perform_rollback(
         for base in KSC_DATABASES:
             # Encerrar conexões antes do DROP: uma sessão remanescente faz o
             # comando falhar com "database is being accessed by other users".
+            safe_base_lit = base.replace("'", "''")
+            safe_base_ident = base.replace('"', '""')
             try:
                 _psql_postgres(
                     "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
-                    f"WHERE datname = '{base}' AND pid <> pg_backend_pid();",
+                    f"WHERE datname = '{safe_base_lit}' AND pid <> pg_backend_pid();",
                     config,
                     logger,
                     dry_run,
                 )
                 _psql_postgres(
-                    f'DROP DATABASE IF EXISTS "{base}";', config, logger, dry_run
+                    f'DROP DATABASE IF EXISTS "{safe_base_ident}";', config, logger, dry_run
                 )
             except SetupError as e:
                 falhas.append(f"remover a base {base}: {e}")
 
         try:
+            safe_user_ident = config.db_user.replace('"', '""')
             _psql_postgres(
-                f'DROP ROLE IF EXISTS "{config.db_user}";', config, logger, dry_run
+                f'DROP ROLE IF EXISTS "{safe_user_ident}";', config, logger, dry_run
             )
         except SetupError as e:
             falhas.append(f"remover a role {config.db_user}: {e}")
