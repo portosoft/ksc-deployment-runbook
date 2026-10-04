@@ -15,7 +15,6 @@ import json
 import logging
 import os
 import tempfile
-import uuid
 from pathlib import Path
 from typing import List, Optional
 
@@ -370,15 +369,15 @@ def setup_postgres(
     _run(["systemctl", "enable", "--now", PG_SERVICE], logger, dry_run)
 
     # Role de aplicação: criada apenas se ausente; a senha vai por stdin.
-    tag = f"$q{uuid.uuid4().hex}$"
-    safe_user_lit = config.db_user.replace("'", "''")
-    safe_user_ident = config.db_user.replace('"', '""')
-    safe_pass_lit = config.db_password.replace("'", "''")
+    safe_db_user_str = config.db_user.replace("'", "''")
+    safe_db_user_ident = config.db_user.replace('"', '""')
+    safe_db_password_str = config.db_password.replace("'", "''")
+
     role_sql = (
-        f"DO {tag} BEGIN "
-        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{safe_user_lit}') THEN "
-        f"CREATE ROLE \"{safe_user_ident}\" LOGIN PASSWORD '{safe_pass_lit}'; "
-        f"END IF; END {tag};"
+        "DO $$ BEGIN "
+        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{safe_db_user_str}') THEN "
+        f"CREATE ROLE \"{safe_db_user_ident}\" LOGIN PASSWORD '{safe_db_password_str}'; "
+        "END IF; END $$;"
     )
     _psql(role_sql, logger, dry_run, redacted=True)
 
@@ -386,13 +385,15 @@ def setup_postgres(
     for db_name in ("ksc", config.db_name):
         # CREATE DATABASE não roda dentro de bloco DO; o \gexec do psql executa
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
-        safe_db_lit = db_name.replace("'", "''")
-        safe_db_ident = db_name.replace('"', '""')
-        inner_query = f'CREATE DATABASE "{safe_db_ident}" OWNER "{safe_user_ident}"'
-        safe_inner_query = inner_query.replace("'", "''")
+        safe_db_name_str = db_name.replace("'", "''")
+        safe_db_name_ident = db_name.replace('"', '""')
+        inner_create = (
+            f'CREATE DATABASE "{safe_db_name_ident}" OWNER "{safe_db_user_ident}"'
+        )
+        safe_inner_create = inner_create.replace("'", "''")
         create_sql = (
-            f"SELECT '{safe_inner_query}' "
-            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{safe_db_lit}')\n"
+            f"SELECT '{safe_inner_create}' "
+            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{safe_db_name_str}')\n"
             "\\gexec\n"
         )
         _psql(create_sql, logger, dry_run)
