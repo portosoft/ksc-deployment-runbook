@@ -12,7 +12,7 @@ pydantic==2.13.5
 
 # Execução remota e criptografia do vault
 paramiko==5.0.0
-cryptography==50.0.1
+cryptography==50.0.2
 
 # Conversão de .env para inventário Ansible (automation/ops/env_to_ansible.py)
 pyyaml==6.0.3
