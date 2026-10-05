@@ -1,0 +1,19 @@
+🛡️ Sentinel: [CRITICAL] Fix SQL injection vulnerabilities in setup_postgres
+
+🚨 **Severity:** CRITICAL
+
+💡 **Vulnerability:**
+The `setup_postgres` function in `automation/python/setup_steps.py` constructed PostgreSQL anonymous blocks (`DO $$ BEGIN ... END $$;`) and outer execution blocks (`SELECT '...' \gexec`) using Python string interpolation (`f-strings`) for SQL string literals and identifiers. The input variables (like `config.db_user`, `config.db_password`, and `config.db_name`) were not sanitized before interpolation. Furthermore, the standard PostgreSQL `$$` dollar-quoting tag for the anonymous block was static, which an attacker could potentially escape from, facilitating a severe SQL injection vulnerability within administrative setup scripts.
+
+🎯 **Impact:**
+If arbitrary variables are evaluated without escaping in these elevated script blocks, an attacker could terminate the queries prematurely or inject unauthorized administrative SQL commands, risking full database compromise, privilege escalation, or lateral movement to the underlying host.
+
+🔧 **Fix:**
+* Replaced the static `$$` block tag with a randomized one generated using `uuid.uuid4().hex` and prefixed with the letter `$q` to adhere to valid PostgreSQL identifier rules.
+* Correctly escaped SQL string literals within both queries using `replace("'", "''")`.
+* Correctly escaped SQL identifiers (e.g., users and database names) via `replace('"', '""')`.
+* Added proper internal escaping handling for strings built inside of the `SELECT '...' \gexec` wrapper command.
+
+✅ **Verification:**
+1. Execute `pip install pytest pytest-mock hypothesis` and `PYTHONPATH=. python -m pytest tests/` to confirm tests remain intact.
+2. Execute `pip install flake8` and `flake8 tests/ automation/python/ automation/ops/` to ensure no new linting errors were introduced.

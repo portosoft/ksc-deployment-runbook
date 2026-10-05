@@ -14,8 +14,8 @@ o contrato ``--check`` da CLI.
 import json
 import logging
 import os
-import uuid
 import tempfile
+import uuid
 from pathlib import Path
 from typing import List, Optional
 
