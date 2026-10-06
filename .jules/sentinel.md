@@ -88,3 +88,8 @@
 **Vulnerability:** In `automation/ops/fix_web_console_config.py`, configuration values like `config.ksc_fqdn` were interpolated directly into a `sed` command string. If the value contains single quotes or slashes, it can break out of shell quoting or terminate the `sed` expression prematurely.
 **Learning:** Commands with inner replacement syntaxes like `sed` require escaping delimiters (such as `/`) as well as shell-quoting each expression argument with `shlex.quote()`.
 **Prevention:** Always escape `/` with `\/` in substituted values and wrap each `-e` expression in `shlex.quote()` before assembling the shell command.
+
+## 2025-02-28 - [CRITICAL] Prevent SQL Injection in Anonymous Blocks
+**Vulnerability:** In `automation/python/setup_steps.py`, user-controlled data (`config.db_user` and `config.db_password`) was interpolated directly into a PostgreSQL anonymous block using `$$`. An attacker could inject SQL by breaking out of the single quotes or the `$$` block itself. Furthermore, the `SELECT ... \gexec` query had nested single quotes that were not properly escaped.
+**Learning:** PostgreSQL identifiers and literals inside anonymous blocks and `\gexec` commands must be strictly escaped. The `$$` tag itself can be compromised if an attacker predicts or breaks it, so a randomized tag is preferred when interpolating variables. Single quotes in nested queries must be escaped before being wrapped in outer single quotes.
+**Prevention:** Always escape SQL string literals using `replace("'", "''")` and identifiers using `replace('"', '""')`. Use a randomized tag (e.g., `$q<uuid>$`) for anonymous blocks when dynamic interpolation is necessary. Ensure nested string quotes are escaped inside-out.
