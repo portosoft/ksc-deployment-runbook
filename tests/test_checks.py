@@ -76,7 +76,9 @@ def test_check_ram_and_disk_critical(mock_disk, mock_ram, mock_getenv, ksc_test_
 @patch("automation.python.checks.os.getenv", return_value="true")
 @patch("automation.python.checks._get_total_ram_mb", return_value=4096)
 @patch("automation.python.checks._get_disk_gb", return_value=50)
-def test_check_ram_and_disk_ci_warning(mock_disk, mock_ram, mock_getenv, ksc_test_config):
+def test_check_ram_and_disk_ci_warning(
+    mock_disk, mock_ram, mock_getenv, ksc_test_config
+):
     result = check_ram_and_disk(ksc_test_config)
     assert not result.has_critical
     assert (
@@ -85,9 +87,14 @@ def test_check_ram_and_disk_ci_warning(mock_disk, mock_ram, mock_getenv, ksc_tes
 
 
 @patch("automation.python.checks.os.getenv", return_value="false")
-@patch("automation.python.checks._get_total_ram_mb", side_effect=Exception("RAM check failed"))
+@patch(
+    "automation.python.checks._get_total_ram_mb",
+    side_effect=Exception("RAM check failed"),
+)
 @patch("automation.python.checks._get_disk_gb", return_value=150)
-def test_check_ram_and_disk_exception(mock_disk, mock_ram, mock_getenv, ksc_test_config):
+def test_check_ram_and_disk_exception(
+    mock_disk, mock_ram, mock_getenv, ksc_test_config
+):
     result = check_ram_and_disk(ksc_test_config)
 
     # We mocked _get_total_ram_mb to raise an Exception, so it should add a critical item

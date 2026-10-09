@@ -59,9 +59,7 @@ def reconfigure_ksc_service(config: KscConfig, apply: bool = False) -> None:
         client = connect_ksc_host(config.ksc_host, config.ksc_user, config.ksc_pass)
 
         # Upload do arquivo de respostas via SFTP de forma isolada e segura
-        run_logger.info(
-            f"Gerando arquivo de respostas em {ans_file} via SFTP..."
-        )
+        run_logger.info(f"Gerando arquivo de respostas em {ans_file} via SFTP...")
         sftp = client.open_sftp()
         f = sftp.file(ans_file, "w")
         # Força permissão apenas de leitura/escrita pelo owner para evitar vazamento local
@@ -79,9 +77,7 @@ def reconfigure_ksc_service(config: KscConfig, apply: bool = False) -> None:
         run_cmd = f"-E bash -c '{postinstall_cmd}'"
         log_json(run_logger, "run_command_start", cmd="postinstall.pl (silencioso)")
 
-        out, err, status = run_remote_sudo(
-            client, run_cmd, config.ksc_pass
-        )
+        out, err, status = run_remote_sudo(client, run_cmd, config.ksc_pass)
         if out:
             for line in out.splitlines():
                 run_logger.info(line.strip())

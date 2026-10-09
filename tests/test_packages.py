@@ -41,7 +41,9 @@ class TestPackagesCatalog(unittest.TestCase):
         for pkg_id, pkg in catalog["packages"].items():
             sha = pkg.get("sha256")
             self.assertIsNotNone(sha, f"Pacote {pkg_id} não possui sha256.")
-            self.assertEqual(len(sha), 64, f"Hash do pacote {pkg_id} não possui 64 caracteres.")
+            self.assertEqual(
+                len(sha), 64, f"Hash do pacote {pkg_id} não possui 64 caracteres."
+            )
             self.assertTrue(
                 all(c in "0123456789abcdef" for c in sha.lower()),
                 f"Hash do pacote {pkg_id} contém caracteres não hexadecimais: {sha}",
@@ -61,7 +63,9 @@ class TestPackagesCatalog(unittest.TestCase):
             "kesl-gui-12.5",
         ]
         for key in required_keys:
-            self.assertIn(key, packages, f"Chave obrigatória ausente no catálogo: {key}")
+            self.assertIn(
+                key, packages, f"Chave obrigatória ausente no catálogo: {key}"
+            )
             self.assertTrue(packages[key]["url"].startswith("https://"))
             self.assertTrue(packages[key]["filename"].endswith((".rpm", ".tar.gz")))
             self.assertIn("path", packages[key])
@@ -69,7 +73,9 @@ class TestPackagesCatalog(unittest.TestCase):
     def test_checksums_sha256_file_consistency(self):
         """Valida que o arquivo configs/ksc/checksums.sha256 reflete o catálogo."""
         checksum_file = Path(DEFAULT_CATALOG_PATH).parent / "checksums.sha256"
-        self.assertTrue(checksum_file.is_file(), f"Arquivo não encontrado: {checksum_file}")
+        self.assertTrue(
+            checksum_file.is_file(), f"Arquivo não encontrado: {checksum_file}"
+        )
 
         catalog = load_package_catalog()
         catalog_hashes = {pkg["sha256"].lower() for pkg in catalog["packages"].values()}
@@ -188,6 +194,7 @@ class TestChecksumVerification(unittest.TestCase):
 
             # Hash simulado
             import hashlib
+
             actual_sha = hashlib.sha256(b"mock ksc payload").hexdigest()
             catalog_copy = {
                 "packages": {

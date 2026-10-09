@@ -10,6 +10,7 @@ Cobre:
 
 Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.9
 """
+
 import sys
 import pytest
 from unittest.mock import MagicMock, patch
@@ -17,7 +18,6 @@ from unittest.mock import MagicMock, patch
 from automation.python import init_config
 from automation.python.init_config import main
 from automation.python.credentials import generate_password
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -27,14 +27,14 @@ from automation.python.credentials import generate_password
 # KSC_DB_HOST, KSC_DB_PORT, KSC_DB_USER, KSC_FQDN, KSC_HOST,
 # KSC_USER, KSC_WEB_PORT, KSC_SELINUX_MODE
 _NON_SENSITIVE_VALUES = [
-    "127.0.0.1",     # KSC_DB_HOST
-    "5432",          # KSC_DB_PORT
-    "kluser",        # KSC_DB_USER
+    "127.0.0.1",  # KSC_DB_HOST
+    "5432",  # KSC_DB_PORT
+    "kluser",  # KSC_DB_USER
     "ksc-abc12345.test",  # KSC_FQDN (valid synthetic FQDN)
-    "127.0.0.1",     # KSC_HOST
-    "suporte",       # KSC_USER
-    "443",           # KSC_WEB_PORT
-    "enforcing",     # KSC_SELINUX_MODE
+    "127.0.0.1",  # KSC_HOST
+    "suporte",  # KSC_USER
+    "443",  # KSC_WEB_PORT
+    "enforcing",  # KSC_SELINUX_MODE
 ]
 
 # Sensitive field passwords — generated at module load, never hardcoded
@@ -48,6 +48,7 @@ _SENSITIVE_VALUES = [_DB_PASS, _ADMIN_PASS, _KSC_PASS]
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestHappyPath:
     """Test: no existing file, all fields entered, file written successfully.
@@ -103,7 +104,9 @@ class TestOverwriteConfirmationRejected:
 
         with (
             patch.object(init_config, "ENV_FILE_PATH", mock_env_path),
-            patch.object(init_config, "_parse_env_file", return_value={"KSC_DB_HOST": "old"}),
+            patch.object(
+                init_config, "_parse_env_file", return_value={"KSC_DB_HOST": "old"}
+            ),
             patch("builtins.input", return_value="N"),
             patch("automation.python.init_config.write_secure_file") as mock_write,
             patch.object(sys, "argv", ["init_config"]),
@@ -163,14 +166,14 @@ class TestInvalidFqdnReprompt:
 
         # First round: invalid FQDN at position 3 (KSC_FQDN)
         first_round = [
-            "127.0.0.1",          # KSC_DB_HOST
-            "5432",               # KSC_DB_PORT
-            "kluser",             # KSC_DB_USER
-            "invalid@host.com",   # KSC_FQDN — invalid, triggers validation failure
-            "127.0.0.1",          # KSC_HOST
-            "suporte",            # KSC_USER
-            "443",                # KSC_WEB_PORT
-            "enforcing",          # KSC_SELINUX_MODE
+            "127.0.0.1",  # KSC_DB_HOST
+            "5432",  # KSC_DB_PORT
+            "kluser",  # KSC_DB_USER
+            "invalid@host.com",  # KSC_FQDN — invalid, triggers validation failure
+            "127.0.0.1",  # KSC_HOST
+            "suporte",  # KSC_USER
+            "443",  # KSC_WEB_PORT
+            "enforcing",  # KSC_SELINUX_MODE
         ]
         # Second round: all valid including a valid FQDN
         second_round = _NON_SENSITIVE_VALUES[:]

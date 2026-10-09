@@ -35,7 +35,9 @@ def recorded(monkeypatch):
     """Intercepta run_command e registra as invocações."""
     calls = []
 
-    def fake_run_command(cmd, check=True, capture_output=True, env=None, input_data=None):
+    def fake_run_command(
+        cmd, check=True, capture_output=True, env=None, input_data=None
+    ):
         calls.append({"cmd": cmd, "input": input_data})
         return ("", "", 0)
 
@@ -50,7 +52,9 @@ def _cmds(calls):
 # --- Pré-requisitos do SO ---------------------------------------------------
 
 
-def test_os_prereqs_installs_on_supported_os(monkeypatch, recorded, logger, ksc_test_config):
+def test_os_prereqs_installs_on_supported_os(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(
         setup_steps, "_read_os_release", lambda: {"ID": "rocky", "VERSION_ID": "9.4"}
     )
@@ -59,7 +63,9 @@ def test_os_prereqs_installs_on_supported_os(monkeypatch, recorded, logger, ksc_
     assert any(c.startswith("dnf install -y tar") for c in _cmds(recorded))
 
 
-def test_os_prereqs_refuses_unsupported_os(monkeypatch, recorded, logger, ksc_test_config):
+def test_os_prereqs_refuses_unsupported_os(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(
         setup_steps, "_read_os_release", lambda: {"ID": "ubuntu", "VERSION_ID": "24.04"}
     )
@@ -88,7 +94,9 @@ def test_postgres_skips_provisioning_when_remote(recorded, logger, ksc_test_conf
     assert recorded == [], "banco remoto não deve ser provisionado localmente"
 
 
-def test_postgres_skips_initdb_when_cluster_exists(monkeypatch, recorded, logger, ksc_test_config):
+def test_postgres_skips_initdb_when_cluster_exists(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(Path, "exists", lambda self: True)
     setup_postgres(ksc_test_config, logger)
 
@@ -96,7 +104,9 @@ def test_postgres_skips_initdb_when_cluster_exists(monkeypatch, recorded, logger
     assert any("systemctl enable --now postgresql-16" == c for c in _cmds(recorded))
 
 
-def test_postgres_password_never_reaches_argv(monkeypatch, recorded, logger, ksc_test_config):
+def test_postgres_password_never_reaches_argv(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(Path, "exists", lambda self: True)
     setup_postgres(ksc_test_config, logger)
 
@@ -108,7 +118,9 @@ def test_postgres_password_never_reaches_argv(monkeypatch, recorded, logger, ksc
     assert ksc_test_config.db_password in role_calls[0]["input"]
 
 
-def test_postgres_creates_both_databases(monkeypatch, recorded, logger, ksc_test_config):
+def test_postgres_creates_both_databases(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(Path, "exists", lambda self: True)
     setup_postgres(ksc_test_config, logger)
 
@@ -158,7 +170,9 @@ def test_install_requires_packages_dir(recorded, logger, ksc_test_config, monkey
         install_ksc_server(config, logger)
 
 
-def test_install_fails_when_rpm_missing(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+def test_install_fails_when_rpm_missing(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(setup_steps, "verify_ksc_packages", lambda *a, **k: None)
     config = ksc_test_config.model_copy(update={"packages_dir": str(tmp_path)})
 
@@ -166,7 +180,9 @@ def test_install_fails_when_rpm_missing(tmp_path, monkeypatch, recorded, logger,
         install_ksc_server(config, logger)
 
 
-def test_install_rejects_duplicate_versions(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+def test_install_rejects_duplicate_versions(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(setup_steps, "verify_ksc_packages", lambda *a, **k: None)
     _stage_rpms(tmp_path)
     (tmp_path / "ksc64-16.2.0-1023.x86_64.rpm").write_bytes(b"")
@@ -234,7 +250,9 @@ def test_answers_removed_even_when_postinstall_fails(
 # --- Hardening --------------------------------------------------------------
 
 
-def test_hardening_writes_ld_library_path_dropin(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+def test_hardening_writes_ld_library_path_dropin(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
     dropin_dir = tmp_path / "kladminserver_srv.service.d"
     monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(dropin_dir))
     monkeypatch.setattr(setup_steps, "KSC_SERVICES", [])
@@ -246,7 +264,9 @@ def test_hardening_writes_ld_library_path_dropin(tmp_path, monkeypatch, recorded
     assert any("daemon-reload" in c for c in _cmds(recorded))
 
 
-def test_hardening_fails_when_services_inactive(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+def test_hardening_fails_when_services_inactive(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
     monkeypatch.setattr(setup_steps, "SYSTEMD_DROPIN_DIR", str(tmp_path / "dropin.d"))
     monkeypatch.setattr(setup_steps, "_unit_is_active", lambda unit: False)
 
@@ -266,7 +286,9 @@ def test_dry_run_without_packages_dir_warns_instead_of_failing(
     assert recorded == []
 
 
-def test_apply_without_packages_dir_still_fails(monkeypatch, recorded, logger, ksc_test_config):
+def test_apply_without_packages_dir_still_fails(
+    monkeypatch, recorded, logger, ksc_test_config
+):
     """O gate permanece fatal fora da simulação."""
     monkeypatch.delenv("KSC_PACKAGES_DIR", raising=False)
     config = ksc_test_config.model_copy(update={"packages_dir": None})
@@ -289,7 +311,9 @@ def test_accounts_created_before_installer(monkeypatch, recorded, logger):
     setup_steps._ensure_ksc_accounts(logger)
 
     cmds = _cmds(recorded)
-    assert any(c.startswith(f"groupadd --system {setup_steps.KSC_ADMINS_GROUP}") for c in cmds)
+    assert any(
+        c.startswith(f"groupadd --system {setup_steps.KSC_ADMINS_GROUP}") for c in cmds
+    )
     assert any("useradd" in c and setup_steps.KSC_SERVICE_USER in c for c in cmds)
 
 
@@ -354,8 +378,12 @@ def test_hardening_grants_group_access_before_removing_world_access(
 
     cmds = _cmds(recorded)
     chgrp_idx = next(i for i, c in enumerate(cmds) if c.startswith("chgrp"))
-    chmod_idx = next(i for i, c in enumerate(cmds) if "o-rwx" in c and "/opt/kaspersky" in c)
-    assert chgrp_idx < chmod_idx, "o grupo precisa ser ajustado antes de fechar 'outros'"
+    chmod_idx = next(
+        i for i, c in enumerate(cmds) if "o-rwx" in c and "/opt/kaspersky" in c
+    )
+    assert (
+        chgrp_idx < chmod_idx
+    ), "o grupo precisa ser ajustado antes de fechar 'outros'"
     assert "g+rX" in cmds[chmod_idx]
 
 
@@ -397,7 +425,10 @@ def test_hardening_restores_traversal_of_data_dir(
     assert f"chmod g+rx,o+rx {setup_steps.KSC_DATA_DIR}" in cmds
     # Nada é alterado recursivamente ali: contas de serviço do instalador, fora
     # do grupo administrativo, dependem das permissões que ele mesmo definiu.
-    assert f"chgrp -R {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}" not in cmds
+    assert (
+        f"chgrp -R {setup_steps.KSC_ADMINS_GROUP} {setup_steps.KSC_DATA_DIR}"
+        not in cmds
+    )
 
 
 def test_failed_units_are_reset_before_enabling(
@@ -435,8 +466,12 @@ def test_web_console_grants_capability_for_privileged_port(
     tmp_path, monkeypatch, recorded, logger, ksc_test_config
 ):
     """A unidade do instalador roda sem privilégio: sem a capacidade não há bind."""
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json")
+    )
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d")
+    )
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
 
     configure_web_console(ksc_test_config.model_copy(update={"web_port": 443}), logger)
@@ -448,8 +483,12 @@ def test_web_console_grants_capability_for_privileged_port(
 def test_web_console_skips_capability_on_unprivileged_port(
     tmp_path, monkeypatch, recorded, logger, ksc_test_config
 ):
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json"))
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_SETUP_FILE", str(tmp_path / "setup.json")
+    )
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d")
+    )
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
 
     configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
@@ -457,10 +496,14 @@ def test_web_console_skips_capability_on_unprivileged_port(
     assert not (tmp_path / "dropin.d").exists()
 
 
-def test_web_console_setup_file_is_0600(tmp_path, monkeypatch, recorded, logger, ksc_test_config):
+def test_web_console_setup_file_is_0600(
+    tmp_path, monkeypatch, recorded, logger, ksc_test_config
+):
     target = tmp_path / "setup.json"
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(target))
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d")
+    )
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
 
     configure_web_console(ksc_test_config.model_copy(update={"web_port": 8080}), logger)
@@ -485,7 +528,9 @@ def test_data_dir_is_not_hardened_recursively(
 # --- Idempotência -----------------------------------------------------------
 
 
-def test_precheck_skips_ports_when_ksc_already_installed(monkeypatch, logger, ksc_test_config):
+def test_precheck_skips_ports_when_ksc_already_installed(
+    monkeypatch, logger, ksc_test_config
+):
     """A segunda execução de setup --apply abortava com as portas do próprio KSC.
 
     Em um host já instalado, 'porta 443 em uso' é o estado correto — tratá-la
@@ -558,7 +603,9 @@ def test_web_console_reconfigured_when_parameters_differ(
     outra_porta = ksc_test_config.model_copy(update={"web_port": 8080})
     setup_file.write_text(setup_steps.build_web_console_setup(outra_porta))
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(setup_file))
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d")
+    )
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
 
     configure_web_console(ksc_test_config, logger)
@@ -573,7 +620,9 @@ def test_web_console_configured_when_unit_absent(
     setup_file = tmp_path / "setup.json"
     setup_file.write_text(setup_steps.build_web_console_setup(ksc_test_config))
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SETUP_FILE", str(setup_file))
-    monkeypatch.setattr(setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d"))
+    monkeypatch.setattr(
+        setup_steps, "WEB_CONSOLE_DROPIN_DIR", str(tmp_path / "dropin.d")
+    )
     monkeypatch.setattr(setup_steps, "WEB_CONSOLE_SERVICES", [])
 
     configure_web_console(ksc_test_config, logger)
@@ -581,7 +630,9 @@ def test_web_console_configured_when_unit_absent(
     assert any("setup.js" in " ".join(c["cmd"]) for c in recorded)
 
 
-def test_group_check_failure_aborts_instead_of_assuming_ok(monkeypatch, recorded, logger):
+def test_group_check_failure_aborts_instead_of_assuming_ok(
+    monkeypatch, recorded, logger
+):
     """Não ler os grupos não permite concluir que a conta está correta.
 
     Seguir em frente deixaria o hardening retirar-lhe o acesso aos binários.

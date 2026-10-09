@@ -72,7 +72,9 @@ def test_invalid_fqdn_rejected(invalid_fqdn):
     constructing KscConfig with that value as ksc_fqdn must raise ValidationError or ValueError.
     """
     with pytest.raises((ValidationError, ValueError)):
-        KscConfig(db_password="x" * 8, ksc_admin_password="x" * 8, ksc_fqdn=invalid_fqdn)
+        KscConfig(
+            db_password="x" * 8, ksc_admin_password="x" * 8, ksc_fqdn=invalid_fqdn
+        )
 
 
 # Feature: credential-sanitization, Property 9: db_sslmode fora do conjunto sempre rejeitado
@@ -85,4 +87,6 @@ def test_invalid_sslmode_rejected(invalid_mode):
     with that value as db_sslmode must raise ValidationError or ValueError.
     """
     with pytest.raises((ValidationError, ValueError)):
-        KscConfig(db_password="x" * 8, ksc_admin_password="x" * 8, db_sslmode=invalid_mode)
+        KscConfig(
+            db_password="x" * 8, ksc_admin_password="x" * 8, db_sslmode=invalid_mode
+        )

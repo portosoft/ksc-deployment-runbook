@@ -8,6 +8,7 @@ Importa exclusivamente:
 
 Nenhuma credencial literal é inserida neste arquivo.
 """
+
 import pathlib
 
 import pytest
@@ -68,15 +69,20 @@ def ksc_test_env_file(tmp_path) -> pathlib.Path:
     """
     env_path = tmp_path / ".env"
 
-    content = "\n".join([
-        "KSC_DB_HOST=127.0.0.1",
-        "KSC_DB_PORT=5432",
-        f"KSC_IAM_NAME={generate_test_db_name()}",
-        f"KSC_DB_USER={generate_username()}",
-        f"KSC_DB_PASS={generate_password()}",
-        f"KSC_ADMIN_PASS={generate_password()}",
-        "KSC_WEB_PORT=443",
-    ]) + "\n"
+    content = (
+        "\n".join(
+            [
+                "KSC_DB_HOST=127.0.0.1",
+                "KSC_DB_PORT=5432",
+                f"KSC_IAM_NAME={generate_test_db_name()}",
+                f"KSC_DB_USER={generate_username()}",
+                f"KSC_DB_PASS={generate_password()}",
+                f"KSC_ADMIN_PASS={generate_password()}",
+                "KSC_WEB_PORT=443",
+            ]
+        )
+        + "\n"
+    )
 
     write_secure_file(str(env_path), content, mode=0o600)
 

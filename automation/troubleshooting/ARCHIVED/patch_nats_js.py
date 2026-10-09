@@ -13,11 +13,25 @@ def patch_nats_js(client, filepath):
 
     # Also, let's fix any other potential Cyrillic characters in logs just in case
     cyrillic_to_latin = {
-        "\u0430": "a", "\u0441": "c", "\u0435": "e", "\u043e": "o",
-        "\u0440": "p", "\u0445": "x", "\u0443": "y", "\u0410": "A",
-        "\u0421": "C", "\u0415": "E", "\u041e": "O", "\u0420": "P",
-        "\u0425": "X", "\u0423": "Y", "\u041c": "M", "\u041d": "H",
-        "\u0422": "T", "\u0412": "B", "\u041a": "K",
+        "\u0430": "a",
+        "\u0441": "c",
+        "\u0435": "e",
+        "\u043e": "o",
+        "\u0440": "p",
+        "\u0445": "x",
+        "\u0443": "y",
+        "\u0410": "A",
+        "\u0421": "C",
+        "\u0415": "E",
+        "\u041e": "O",
+        "\u0420": "P",
+        "\u0425": "X",
+        "\u0423": "Y",
+        "\u041c": "M",
+        "\u041d": "H",
+        "\u0422": "T",
+        "\u0412": "B",
+        "\u041a": "K",
     }
     for cyr, lat in cyrillic_to_latin.items():
         new_content = new_content.replace(cyr, lat)

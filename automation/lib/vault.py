@@ -35,7 +35,9 @@ def ensure_key():
     if not os.path.exists(KEY_PATH):
         key = Fernet.generate_key()
         # 🛡️ Sentinel: Enforce strict permissions (0o600) on vault key creation
-        with os.fdopen(os.open(KEY_PATH, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "wb") as f:
+        with os.fdopen(
+            os.open(KEY_PATH, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "wb"
+        ) as f:
             f.write(key)
     # 🛡️ Sentinel: Verify existing key file permissions before reading
     _assert_secure(KEY_PATH, 0o600)
@@ -54,7 +56,9 @@ def encrypt_secrets(secrets_dict):
     data = json.dumps(secrets_dict).encode()
     encrypted = f.encrypt(data)
     # 🛡️ Sentinel: Enforce strict permissions (0o600) on encrypted secrets file creation
-    with os.fdopen(os.open(SECRETS_PATH, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "wb") as f_out:
+    with os.fdopen(
+        os.open(SECRETS_PATH, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600), "wb"
+    ) as f_out:
         f_out.write(encrypted)
 
 
