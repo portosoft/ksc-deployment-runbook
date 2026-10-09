@@ -121,9 +121,7 @@ def test_report_omits_precheck_when_ksc_already_installed(tmp_path):
     from automation.python.checks import CheckItem, CheckResult
     from automation.python.report_utils import generate_markdown_report
 
-    post = CheckResult(
-        items=[CheckItem(name="web_console", status="ok", message="LISTEN")]
-    )
+    post = CheckResult(items=[CheckItem(name="web_console", status="ok", message="LISTEN")])
     destino = tmp_path / "report.md"
 
     generate_markdown_report(None, post, Path("evidence"), destino)

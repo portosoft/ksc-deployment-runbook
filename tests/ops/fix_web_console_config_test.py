@@ -27,6 +27,6 @@ def test_fix_web_console_config_secure_quoting(
     executed_cmd = sed_call[0][1]
 
     safe_fqdn = ksc_test_config.ksc_fqdn.replace("/", r"\/")
-    expected_expr_addr = f"s/\\$web_console_address\\$/{safe_fqdn}/g"
+    expected_expr_addr = f's/\\$web_console_address\\$/{safe_fqdn}/g'
 
     assert shlex.quote(expected_expr_addr) in executed_cmd

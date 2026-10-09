@@ -61,11 +61,7 @@ def env_to_ansible(
                 yaml_value = value.strip().strip('"').strip("'")
                 parsed_vars[yaml_key] = yaml_value
 
-        yaml_content = (
-            "\n".join(header)
-            + "\n"
-            + yaml.safe_dump(parsed_vars, default_flow_style=False)
-        )
+        yaml_content = "\n".join(header) + "\n" + yaml.safe_dump(parsed_vars, default_flow_style=False)
 
         write_secure_file(output_file, yaml_content, 0o600)
         logger.info(f"Sucesso! Variáveis convertidas para Ansible em: {output_file}")

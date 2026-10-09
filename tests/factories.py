@@ -4,7 +4,6 @@ Factory functions for building CheckResult and CheckItem test objects.
 Provides helpers to construct test fixtures without hardcoded status strings
 or messages scattered across test files.
 """
-
 from automation.python.checks import CheckItem, CheckResult
 
 

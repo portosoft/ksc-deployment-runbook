@@ -20,15 +20,7 @@ def test_main_config_error(mock_load_config, mock_parse_args):
 @patch("automation.python.ksc_audit.log_json")
 @patch("automation.python.ksc_audit.run_precheck")
 @patch("automation.python.ksc_audit.print_summary")
-def test_main_check_success(
-    mock_print_summary,
-    mock_run_precheck,
-    mock_log_json,
-    mock_configure_logger,
-    mock_init_evidence_dir,
-    mock_load_config,
-    mock_parse_args,
-):
+def test_main_check_success(mock_print_summary, mock_run_precheck, mock_log_json, mock_configure_logger, mock_init_evidence_dir, mock_load_config, mock_parse_args):
     args = MagicMock()
     args.check = True
     args.postcheck = False
@@ -52,15 +44,7 @@ def test_main_check_success(
 @patch("automation.python.ksc_audit.log_json")
 @patch("automation.python.ksc_audit.run_precheck")
 @patch("automation.python.ksc_audit.print_summary")
-def test_main_check_critical(
-    mock_print_summary,
-    mock_run_precheck,
-    mock_log_json,
-    mock_configure_logger,
-    mock_init_evidence_dir,
-    mock_load_config,
-    mock_parse_args,
-):
+def test_main_check_critical(mock_print_summary, mock_run_precheck, mock_log_json, mock_configure_logger, mock_init_evidence_dir, mock_load_config, mock_parse_args):
     args = MagicMock()
     args.check = True
     args.postcheck = False
@@ -84,15 +68,7 @@ def test_main_check_critical(
 @patch("automation.python.ksc_audit.log_json")
 @patch("automation.python.ksc_audit.run_postcheck")
 @patch("automation.python.ksc_audit.print_summary")
-def test_main_postcheck_success(
-    mock_print_summary,
-    mock_run_postcheck,
-    mock_log_json,
-    mock_configure_logger,
-    mock_init_evidence_dir,
-    mock_load_config,
-    mock_parse_args,
-):
+def test_main_postcheck_success(mock_print_summary, mock_run_postcheck, mock_log_json, mock_configure_logger, mock_init_evidence_dir, mock_load_config, mock_parse_args):
     args = MagicMock()
     args.check = False
     args.postcheck = True
@@ -116,15 +92,7 @@ def test_main_postcheck_success(
 @patch("automation.python.ksc_audit.log_json")
 @patch("automation.python.ksc_audit.run_postcheck")
 @patch("automation.python.ksc_audit.print_summary")
-def test_main_postcheck_critical(
-    mock_print_summary,
-    mock_run_postcheck,
-    mock_log_json,
-    mock_configure_logger,
-    mock_init_evidence_dir,
-    mock_load_config,
-    mock_parse_args,
-):
+def test_main_postcheck_critical(mock_print_summary, mock_run_postcheck, mock_log_json, mock_configure_logger, mock_init_evidence_dir, mock_load_config, mock_parse_args):
     args = MagicMock()
     args.check = False
     args.postcheck = True
@@ -148,15 +116,7 @@ def test_main_postcheck_critical(
 @patch("automation.python.ksc_audit.run_postcheck")
 @patch("automation.python.ksc_audit.generate_markdown_report")
 @patch("automation.python.ksc_audit.convert_markdown_to_pdf")
-def test_main_report(
-    mock_convert_pdf,
-    mock_gen_md,
-    mock_run_postcheck,
-    mock_run_precheck,
-    mock_init_evidence_dir,
-    mock_load_config,
-    mock_parse_args,
-):
+def test_main_report(mock_convert_pdf, mock_gen_md, mock_run_postcheck, mock_run_precheck, mock_init_evidence_dir, mock_load_config, mock_parse_args):
     args = MagicMock()
     args.check = False
     args.postcheck = False

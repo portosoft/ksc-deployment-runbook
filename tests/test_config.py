@@ -95,9 +95,7 @@ def test_load_config_invalid_fqdn(mock_load_dotenv, mock_exists):
     },
 )
 def test_load_config_invalid_admin_user(mock_load_dotenv, mock_exists):
-    with pytest.raises(
-        ConfigError, match="Erro de validação nas configurações.*admin_user"
-    ):
+    with pytest.raises(ConfigError, match="Erro de validação nas configurações.*admin_user"):
         load_config(_MOCK_ENV_PATH)
 
 
@@ -112,9 +110,7 @@ def test_load_config_invalid_admin_user(mock_load_dotenv, mock_exists):
     },
 )
 def test_load_config_invalid_port_range(mock_load_dotenv, mock_exists):
-    with pytest.raises(
-        ConfigError, match="Erro de validação nas configurações.*db_port"
-    ):
+    with pytest.raises(ConfigError, match="Erro de validação nas configurações.*db_port"):
         load_config(_MOCK_ENV_PATH)
 
 
@@ -129,18 +125,13 @@ def test_load_config_invalid_port_range(mock_load_dotenv, mock_exists):
     },
 )
 def test_load_config_invalid_sslmode(mock_load_dotenv, mock_exists):
-    with pytest.raises(
-        ConfigError, match="Erro de validação nas configurações.*db_sslmode"
-    ):
+    with pytest.raises(ConfigError, match="Erro de validação nas configurações.*db_sslmode"):
         load_config(_MOCK_ENV_PATH)
 
 
 # --- Vault integration tests (Requirements 6.3, 6.4) ---
 
-
-@patch(
-    "automation.lib.vault.decrypt_secrets", return_value={"KSC_DB_PASS": _VAULT_PASS}
-)
+@patch("automation.lib.vault.decrypt_secrets", return_value={"KSC_DB_PASS": _VAULT_PASS})
 @patch("automation.python.config.os.path.exists", side_effect=_exists_env_and_secrets)
 @patch("automation.python.config._load_dotenv")
 @patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS, "KSC_ADMIN_PASS": _ADMIN_PASS})
@@ -154,9 +145,7 @@ def test_load_config_vault_merges_over_env(mock_load_dotenv, mock_exists, mock_d
 @patch("automation.python.config.os.path.exists", side_effect=_exists_env_and_secrets)
 @patch("automation.python.config._load_dotenv")
 @patch.dict(os.environ, {"KSC_DB_PASS": _DB_PASS, "KSC_ADMIN_PASS": _ADMIN_PASS})
-def test_load_config_vault_decrypt_failure_uses_env(
-    mock_load_dotenv, mock_exists, mock_decrypt, caplog
-):
+def test_load_config_vault_decrypt_failure_uses_env(mock_load_dotenv, mock_exists, mock_decrypt, caplog):
     """When vault decrypt raises, falls back to .env values and logs a WARNING (Requirement 6.4)."""
     with caplog.at_level(logging.WARNING):
         config = load_config(_MOCK_ENV_PATH)

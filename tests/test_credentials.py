@@ -3,7 +3,6 @@ Testes de propriedade para automation.python.credentials.
 
 Usa Hypothesis para verificar invariantes universais das funções geradoras.
 """
-
 import string
 
 import pytest
@@ -123,9 +122,9 @@ def test_synthetic_fqdn_format(_):
     Validates: Requirements 1.3
     """
     fqdn = generate_synthetic_fqdn()
-    assert re.fullmatch(
-        r"ksc-[0-9a-f]{8}\.test", fqdn
-    ), f"FQDN fora do formato esperado: {fqdn!r}"
+    assert re.fullmatch(r"ksc-[0-9a-f]{8}\.test", fqdn), (
+        f"FQDN fora do formato esperado: {fqdn!r}"
+    )
 
 
 # Feature: credential-sanitization, Property 6: generate_username e generate_test_db_name respeitam seus formatos
@@ -143,14 +142,14 @@ def test_username_and_db_name_format(prefix):
     Validates: Requirements 1.4, 1.5
     """
     username = generate_username(prefix)
-    assert re.fullmatch(
-        rf"{re.escape(prefix)}_[0-9a-f]{{6}}", username
-    ), f"generate_username({prefix!r}) retornou formato inválido: {username!r}"
+    assert re.fullmatch(rf"{re.escape(prefix)}_[0-9a-f]{{6}}", username), (
+        f"generate_username({prefix!r}) retornou formato inválido: {username!r}"
+    )
 
     db_name = generate_test_db_name(prefix)
-    assert re.fullmatch(
-        rf"{re.escape(prefix)}_[0-9a-f]{{6}}", db_name
-    ), f"generate_test_db_name({prefix!r}) retornou formato inválido: {db_name!r}"
+    assert re.fullmatch(rf"{re.escape(prefix)}_[0-9a-f]{{6}}", db_name), (
+        f"generate_test_db_name({prefix!r}) retornou formato inválido: {db_name!r}"
+    )
 
 
 # Feature: credential-sanitization, Property 7: unicidade probabilística das funções geradoras
@@ -162,9 +161,9 @@ def test_uniqueness_generate_password(_):
     Validates: Requirements 1.6
     """
     results = [generate_password() for _ in range(1000)]
-    assert (
-        len(set(results)) >= 999
-    ), f"generate_password produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    assert len(set(results)) >= 999, (
+        f"generate_password produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    )
 
 
 @given(st.just(None))
@@ -175,9 +174,9 @@ def test_uniqueness_generate_hostile_password(_):
     Validates: Requirements 1.6
     """
     results = [generate_hostile_password() for _ in range(1000)]
-    assert (
-        len(set(results)) >= 999
-    ), f"generate_hostile_password produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    assert len(set(results)) >= 999, (
+        f"generate_hostile_password produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    )
 
 
 @given(st.just(None))
@@ -188,9 +187,9 @@ def test_uniqueness_generate_synthetic_fqdn(_):
     Validates: Requirements 1.6
     """
     results = [generate_synthetic_fqdn() for _ in range(1000)]
-    assert (
-        len(set(results)) >= 999
-    ), f"generate_synthetic_fqdn produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    assert len(set(results)) >= 999, (
+        f"generate_synthetic_fqdn produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    )
 
 
 @given(st.just(None))
@@ -201,9 +200,9 @@ def test_uniqueness_generate_username(_):
     Validates: Requirements 1.6
     """
     results = [generate_username() for _ in range(1000)]
-    assert (
-        len(set(results)) >= 999
-    ), f"generate_username produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    assert len(set(results)) >= 999, (
+        f"generate_username produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    )
 
 
 @given(st.just(None))
@@ -214,6 +213,6 @@ def test_uniqueness_generate_test_db_name(_):
     Validates: Requirements 1.6
     """
     results = [generate_test_db_name() for _ in range(1000)]
-    assert (
-        len(set(results)) >= 999
-    ), f"generate_test_db_name produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    assert len(set(results)) >= 999, (
+        f"generate_test_db_name produziu apenas {len(set(results))} valores distintos em 1000 chamadas"
+    )

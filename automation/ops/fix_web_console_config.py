@@ -33,9 +33,9 @@ def fix_web_console_config(config: KscConfig, apply: bool = False) -> None:
     )
 
     # Comando de correção usando sed com sanitização de delimitadores e quoting seguro
-    safe_fqdn = config.ksc_fqdn.replace("/", r"\/")
-    expr_port = r"s/\$web_console_port\$/8080/g"
-    expr_addr = f"s/\\$web_console_address\\$/{safe_fqdn}/g"
+    safe_fqdn = config.ksc_fqdn.replace('/', r'\/')
+    expr_port = r's/\$web_console_port\$/8080/g'
+    expr_addr = f's/\\$web_console_address\\$/{safe_fqdn}/g'
     expr_port_13000 = 's/"port": "13000"/"port": "13299"/g'
 
     sed_cmd = (
@@ -65,7 +65,9 @@ def fix_web_console_config(config: KscConfig, apply: bool = False) -> None:
         # Executa comando de substituição
         log_json(run_logger, "run_command_start", cmd=sed_cmd)
         out, err, status = run_remote_sudo(client, sed_cmd, config.ksc_pass)
-        log_json(run_logger, "run_command_end", status=status, stdout=out, stderr=err)
+        log_json(
+            run_logger, "run_command_end", status=status, stdout=out, stderr=err
+        )
 
         if status != 0:
             raise OpsError(f"Falha ao executar sed no config.json: {err}")

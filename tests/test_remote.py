@@ -5,13 +5,8 @@ Testes unitários para o módulo remote.py (conexão SSH e execução sudo remot
 Usa a fixture ksc_test_config do conftest.py para credenciais sintéticas,
 sem valores literais hardcoded.
 """
-
 from unittest.mock import MagicMock, patch
-from automation.python.remote import (
-    connect_ksc_host,
-    run_remote_sudo,
-    run_remote_sudo_batch,
-)
+from automation.python.remote import connect_ksc_host, run_remote_sudo, run_remote_sudo_batch
 
 
 @patch("automation.python.remote.paramiko.SSHClient")
@@ -22,7 +17,7 @@ def test_connect_ksc_host(mock_ssh_class, ksc_test_config):
     client = connect_ksc_host(
         host=ksc_test_config.ksc_host,
         user=ksc_test_config.ksc_user,
-        password=ksc_test_config.ksc_pass,
+        password=ksc_test_config.ksc_pass
     )
 
     assert client == mock_client
@@ -30,7 +25,7 @@ def test_connect_ksc_host(mock_ssh_class, ksc_test_config):
         hostname=ksc_test_config.ksc_host,
         username=ksc_test_config.ksc_user,
         password=ksc_test_config.ksc_pass,
-        timeout=15,
+        timeout=15
     )
 
 
@@ -45,9 +40,7 @@ def test_run_remote_sudo():
     mock_stderr.read.return_value = b""
     mock_stdout.channel.recv_exit_status.return_value = 0
 
-    out, err, status = run_remote_sudo(
-        mock_client, "whoami", "secretpass", stdin_inputs=["input1", "input2"]
-    )
+    out, err, status = run_remote_sudo(mock_client, "whoami", "secretpass", stdin_inputs=["input1", "input2"])
 
     assert out == "root"
     assert err == ""
@@ -70,7 +63,9 @@ def test_run_remote_sudo_batch():
     mock_stdout.channel.recv_exit_status.return_value = 1
 
     status, out, err, failed_indices = run_remote_sudo_batch(
-        mock_client, ["cmd0", "cmd1", "cmd2"], "secretpass"
+        mock_client,
+        ["cmd0", "cmd1", "cmd2"],
+        "secretpass"
     )
 
     assert status == 1

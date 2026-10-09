@@ -24,9 +24,7 @@ def recorded(monkeypatch):
     """Intercepta run_command em rollback.py e em setup_steps (via _run)."""
     calls = []
 
-    def fake_run_command(
-        cmd, check=True, capture_output=True, env=None, input_data=None
-    ):
+    def fake_run_command(cmd, check=True, capture_output=True, env=None, input_data=None):
         calls.append({"cmd": cmd, "input": input_data})
         # 'rpm -q <pkg>' responde que o pacote está instalado; as demais, sucesso.
         return ("", "", 0)
@@ -64,9 +62,7 @@ def test_rollback_drops_both_databases_and_the_configured_role(
     assert f'DROP ROLE IF EXISTS "{ksc_test_config.db_user}"' in sql
 
 
-def test_rollback_terminates_connections_before_dropping(
-    recorded, logger, ksc_test_config
-):
+def test_rollback_terminates_connections_before_dropping(recorded, logger, ksc_test_config):
     """Uma sessão remanescente faz o DROP DATABASE falhar."""
     perform_rollback(ksc_test_config, logger)
 
@@ -86,9 +82,7 @@ def test_rollback_preserves_remote_database(recorded, logger, ksc_test_config):
     assert "DROP ROLE" not in sql
 
 
-def test_rollback_removes_accounts_after_files(
-    monkeypatch, recorded, logger, ksc_test_config
-):
+def test_rollback_removes_accounts_after_files(monkeypatch, recorded, logger, ksc_test_config):
     """Remover as contas antes deixaria os arquivos sem dono conhecido."""
     monkeypatch.setattr(rollback.Path, "exists", lambda self: True)
     perform_rollback(ksc_test_config, logger)
@@ -99,9 +93,7 @@ def test_rollback_removes_accounts_after_files(
     assert rm < userdel
 
 
-def test_rollback_removes_systemd_dropins(
-    monkeypatch, recorded, logger, ksc_test_config
-):
+def test_rollback_removes_systemd_dropins(monkeypatch, recorded, logger, ksc_test_config):
     """Drop-ins sobreviviam às unidades que estendiam."""
     monkeypatch.setattr(rollback.Path, "exists", lambda self: True)
     perform_rollback(ksc_test_config, logger)
@@ -184,9 +176,7 @@ def test_rollback_raises_when_a_step_fails(monkeypatch, logger, ksc_test_config)
         perform_rollback(ksc_test_config, logger)
 
 
-def test_remote_database_is_out_of_verification_scope(
-    monkeypatch, logger, ksc_test_config
-):
+def test_remote_database_is_out_of_verification_scope(monkeypatch, logger, ksc_test_config):
     """As bases remotas são preservadas de propósito; reportá-las como resíduo
     faria --verify falhar sempre nesse cenário."""
     monkeypatch.setattr(rollback, "run_command", lambda cmd, **kw: ("", "", 1))
@@ -208,8 +198,5 @@ def test_unit_query_failure_aborts_rollback(monkeypatch, logger, ksc_test_config
 
     monkeypatch.setattr(rollback, "run_command", explode)
 
-    with pytest.raises(
-        rollback.RollbackError,
-        match="não foi possível consultar|Não foi possível consultar",
-    ):
+    with pytest.raises(rollback.RollbackError, match="não foi possível consultar|Não foi possível consultar"):
         perform_rollback(ksc_test_config, logger)

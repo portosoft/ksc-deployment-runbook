@@ -11,7 +11,7 @@ from automation.python.utils.secure_file import (
 
 pytestmark = pytest.mark.skipif(
     sys.platform == "win32",
-    reason="POSIX file permissions are not supported on Windows",
+    reason="POSIX file permissions are not supported on Windows"
 )
 
 

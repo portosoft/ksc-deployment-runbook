@@ -25,21 +25,13 @@ def test_run_command_failure_check_true():
 
     assert exc_info.value.returncode != 0
     assert exc_info.value.cmd == ["ls", "/non_existent_file_path_12345"]
-    assert (
-        "No such file or directory" in exc_info.value.stderr
-        or "non_existent_file_path_12345" in exc_info.value.stderr
-    )
+    assert "No such file or directory" in exc_info.value.stderr or "non_existent_file_path_12345" in exc_info.value.stderr
 
 
 def test_run_command_failure_check_false():
-    stdout, stderr, rc = run_command(
-        ["ls", "/non_existent_file_path_12345"], check=False
-    )
+    stdout, stderr, rc = run_command(["ls", "/non_existent_file_path_12345"], check=False)
     assert rc != 0
-    assert (
-        "No such file or directory" in stderr
-        or "non_existent_file_path_12345" in stderr
-    )
+    assert "No such file or directory" in stderr or "non_existent_file_path_12345" in stderr
 
 
 def test_run_command_file_not_found():

@@ -63,11 +63,7 @@ def purge_iam_mfa(config: KscConfig, apply: bool = False) -> None:
         for q in queries:
             sql_cmd = f"-u postgres psql -d ksciam -c {shlex.quote(q)}"
             # Omitir credenciais nos logs do JSON
-            log_json(
-                run_logger,
-                "run_command_start",
-                cmd=f"psql -d ksciam -c {shlex.quote(q)}",
-            )
+            log_json(run_logger, "run_command_start", cmd=f"psql -d ksciam -c {shlex.quote(q)}")
             out, err, status = run_remote_sudo(client, sql_cmd, config.ksc_pass)
             log_json(
                 run_logger, "run_command_end", status=status, stdout=out, stderr=err
