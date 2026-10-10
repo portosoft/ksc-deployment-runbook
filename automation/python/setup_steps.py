@@ -12,6 +12,7 @@ o contrato ``--check`` da CLI.
 """
 
 import json
+import uuid
 import logging
 import os
 import tempfile
@@ -369,21 +370,32 @@ def setup_postgres(
     _run(["systemctl", "enable", "--now", PG_SERVICE], logger, dry_run)
 
     # Role de aplicação: criada apenas se ausente; a senha vai por stdin.
+    tag = f"$q{uuid.uuid4().hex}$"
+    safe_db_user = config.db_user.replace('"', '""')
+    safe_db_user_str = config.db_user.replace("'", "''")
+    safe_db_password = config.db_password.replace("'", "''")
+
     role_sql = (
-        "DO $$ BEGIN "
-        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{config.db_user}') THEN "
-        f"CREATE ROLE \"{config.db_user}\" LOGIN PASSWORD '{config.db_password}'; "
-        "END IF; END $$;"
+        f"DO {tag} BEGIN "
+        f"IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{safe_db_user_str}') THEN "
+        f"CREATE ROLE \"{safe_db_user}\" LOGIN PASSWORD '{safe_db_password}'; "
+        f"END IF; END {tag};"
     )
     _psql(role_sql, logger, dry_run, redacted=True)
 
     # O KSC usa duas bases: a operacional (ksc) e a do serviço IAM (ksciam).
     for db_name in ("ksc", config.db_name):
+        safe_db_name = db_name.replace('"', '""')
+        safe_db_name_str = db_name.replace("'", "''")
+
+        inner_query = f'CREATE DATABASE "{safe_db_name}" OWNER "{safe_db_user}"'
+        escaped_inner = inner_query.replace("'", "''")
+
         # CREATE DATABASE não roda dentro de bloco DO; o \gexec do psql executa
         # o comando apenas quando o SELECT retorna linha (base ainda ausente).
         create_sql = (
-            f'SELECT \'CREATE DATABASE "{db_name}" OWNER "{config.db_user}"\' '
-            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{db_name}')\n"
+            f"SELECT '{escaped_inner}' "
+            f"WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '{safe_db_name_str}')\n"
             "\\gexec\n"
         )
         _psql(create_sql, logger, dry_run)
