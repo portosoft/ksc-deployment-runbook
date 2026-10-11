@@ -105,8 +105,7 @@ def test_postgres_password_never_reaches_argv(monkeypatch, recorded, logger, ksc
 
     role_calls = [c for c in recorded if c["input"] and "CREATE ROLE" in c["input"]]
     assert len(role_calls) == 1
-    safe_pass_lit = ksc_test_config.db_password.replace("'", "''")
-    assert safe_pass_lit in role_calls[0]["input"]
+    assert ksc_test_config.db_password in role_calls[0]["input"]
 
 
 def test_postgres_creates_both_databases(monkeypatch, recorded, logger, ksc_test_config):
@@ -115,8 +114,7 @@ def test_postgres_creates_both_databases(monkeypatch, recorded, logger, ksc_test
 
     sql = " ".join(c["input"] or "" for c in recorded)
     assert 'CREATE DATABASE "ksc"' in sql
-    safe_db_name = ksc_test_config.db_name.replace('"', '""')
-    assert f'CREATE DATABASE "{safe_db_name}"' in sql
+    assert f'CREATE DATABASE "{ksc_test_config.db_name}"' in sql
 
 
 # --- Arquivo de respostas ---------------------------------------------------
