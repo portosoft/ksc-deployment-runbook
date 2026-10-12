@@ -105,7 +105,7 @@ def test_postgres_password_never_reaches_argv(monkeypatch, recorded, logger, ksc
 
     role_calls = [c for c in recorded if c["input"] and "CREATE ROLE" in c["input"]]
     assert len(role_calls) == 1
-    assert ksc_test_config.db_password in role_calls[0]["input"]
+    assert ksc_test_config.db_password.replace("'", "''") in role_calls[0]["input"]
 
 
 def test_postgres_creates_both_databases(monkeypatch, recorded, logger, ksc_test_config):

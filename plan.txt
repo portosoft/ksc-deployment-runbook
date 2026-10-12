@@ -1,0 +1,11 @@
+1. Update `automation/python/setup_steps.py` to fix SQL injection in PostgreSQL anonymous blocks (CWE-89). I will import `uuid`, dynamically generate a `tag` variable to replace `$$` with a securely randomized quoting tag (e.g., `tag = f"$q{uuid.uuid4().hex}$"`). Additionally, I will properly escape the single quotes for `db_user` and `db_password` where they are interpolated into SQL literals using `.replace("'", "''")` and use replace `"` with `""` where needed for SQL identifiers. This aligns directly with the "Security Convention: To prevent SQL injection in PostgreSQL anonymous code blocks... generate a randomized tag". I will also do the same replacement for double quotes (`""`) for `config.db_user` in the `create_sql` in `automation/python/setup_steps.py`.
+
+2. Update `tests/test_setup_steps.py` to ensure unit tests check for escaped payloads. Specifically, in `test_postgres_password_never_reaches_argv`, ensure the assertion uses the escaped version of `db_password`, i.e., `assert ksc_test_config.db_password.replace("'", "''") in role_calls[0]["input"]`. Wait, I don't need to change it if `ksc_test_config.db_password` is generated randomly without single quotes in tests, but it's safer. Let's see if the test fails after step 1.
+
+3. Run tests using `PYTHONPATH=. python -m pytest tests/test_setup_steps.py`.
+
+4. Run `flake8` on modified files.
+
+5. Pre commit step.
+
+6. Submit using branch `develop`.
