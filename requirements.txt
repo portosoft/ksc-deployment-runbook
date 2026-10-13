@@ -8,7 +8,7 @@
 # 3.9, use o interpretador do AppStream — ver docs/03-pre-requisitos.md e #231.
 
 # Configuração e validação
-pydantic==2.13.5
+pydantic==2.14.0
 
 # Execução remota e criptografia do vault
 paramiko==5.0.0
