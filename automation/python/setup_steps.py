@@ -370,6 +370,7 @@ def setup_postgres(
 
     # Role de aplicação: criada apenas se ausente; a senha vai por stdin.
     import uuid
+
     tag = f"$q{uuid.uuid4().hex}$"
     safe_db_user = config.db_user.replace("'", "''")
     safe_db_user_id = config.db_user.replace('"', '""')
