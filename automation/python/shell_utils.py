@@ -1,0 +1,55 @@
+import subprocess
+from typing import List, Tuple
+
+
+class ShellCommandError(Exception):
+    def __init__(self, cmd: List[str], returncode: int, stdout: str, stderr: str):
+        """Inicializa a exceção com o comando, código de retorno e saídas capturadas.
+
+        Args:
+            cmd: Lista de argumentos do comando executado.
+            returncode: Código de retorno do processo.
+            stdout: Saída padrão capturada.
+            stderr: Saída de erro capturada.
+        """
+        super().__init__(f"Command failed: {' '.join(cmd)}")
+        self.cmd = cmd
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
+
+
+def run_command(
+    cmd: List[str],
+    check: bool = True,
+    capture_output: bool = True,
+    env: dict = None,
+    input_data: str = None,
+) -> Tuple[str, str, int]:
+    """
+    Executa comando via subprocess.
+    Retorna (stdout, stderr, returncode).
+    Se check=True e retorno != 0, lança ShellCommandError.
+    input_data é enviado ao stdin do processo; use-o para dados sensíveis
+    (senhas, SQL com segredos) que não devem aparecer na lista de processos.
+    """
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=capture_output,
+            text=True,
+            env=env,
+            input=input_data,
+        )
+        stdout = result.stdout if result.stdout else ""
+        stderr = result.stderr if result.stderr else ""
+        rc = result.returncode
+    except FileNotFoundError:
+        stdout = ""
+        stderr = f"Command not found: {cmd[0]}"
+        rc = 127
+
+    if check and rc != 0:
+        raise ShellCommandError(cmd, rc, stdout, stderr)
+
+    return stdout, stderr, rc

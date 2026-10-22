@@ -1,0 +1,76 @@
+# Proxmox VE em Container — Laboratório de Testes KSC
+
+Infraestrutura containerizada para execução e validação ponta a ponta (E2E) do Kaspersky Security Center 16.x em Rocky Linux 9 / Oracle Linux 9, utilizando o projeto [dockur/proxmox](https://github.com/dockur/proxmox).
+
+---
+
+## 🏗️ Visão Geral
+
+Este ambiente sobe um nó Proxmox VE 9.x isolado via **Podman rootless** e sidecars `socat` para encaminhamento transparente de portas de rede para a VM de testes (IP interno sugerido: `172.30.5.10`).
+
+### Mapa de Portas Encaminhadas
+
+| Porta no Host (127.0.0.1) | Porta na VM (${KSC_VM_IP}) | Serviço / Finalidade |
+| :--- | :--- | :--- |
+| `8006` | — | Interface Web do Proxmox VE (`https://127.0.0.1:8006/`) |
+| `2222` | `22` | SSH para a VM de teste |
+| `8443` | `443` | Web Console HTTPS do KSC |
+| `8080` | `8080` | Web Console HTTP / Alternativa |
+| `13291` | `13291` | KSC Administration Server (Console API) |
+| `13000` | `13000` | Kaspersky Network Agent (SSL) |
+| `14000` | `14000` | Kaspersky Network Agent (Plain/Non-SSL) |
+| `5432` | `5432` | PostgreSQL 16 |
+
+---
+
+## 🚀 Como Subir o Ambiente
+
+### 1. Criar o arquivo de variáveis do Proxmox (fora do Git)
+
+Gere a senha do Proxmox e configure o IP inicial da VM de testes:
+
+```bash
+mkdir -p ~/.secrets
+install -m 600 /dev/null ~/.secrets/ksc-proxmox.env
+printf 'PROXMOX_PASSWORD=%s\nKSC_VM_IP=172.30.5.10\n' "$(openssl rand -base64 24 | tr -d '/+=')" > ~/.secrets/ksc-proxmox.env
+```
+
+> [!TIP]
+> Caso o container `ksc-proxmox` aloque uma sub-rede diferente para a bridge `vmbr0` (ex: `172.31.0.0/24`), configure a VM com um IP nessa sub-rede e atualize `KSC_VM_IP` em `~/.secrets/ksc-proxmox.env` (ex: `KSC_VM_IP=172.31.0.10`). Em seguida, reinicie os sidecars com `podman compose --env-file ~/.secrets/ksc-proxmox.env -f infra/proxmox/compose.yml up -d`.
+
+### 2. Inicializar os Containers
+
+```bash
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml up -d
+```
+
+### 3. Verificar o Status
+
+```bash
+podman ps --filter name=ksc-proxmox
+curl -sk -o /dev/null -w '%{http_code}\n' https://127.0.0.1:8006/
+# Código HTTP esperado: 200
+```
+
+### 4. Parar, Reiniciar ou Destruir o Ambiente
+
+> [!WARNING]
+> Como os sidecars `socat` compartilham o namespace de rede do container `proxmox` (`network_mode: "service:proxmox"`), **nunca reinicie o container `ksc-proxmox` individualmente** (ex: `podman restart ksc-proxmox`). Sempre reinicie a stack completa via `podman compose` para evitar perda de interface nos sidecars.
+
+```bash
+# Para reiniciar a stack completa de forma segura
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml restart
+
+# Para pausar/parar a execução
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml stop
+
+# Para destruir os containers mantendo os dados dos volumes
+podman compose --env-file ~/.secrets/ksc-proxmox.env \
+  -f infra/proxmox/compose.yml down
+```
+
+Para detalhes completos de provisionamento da VM Rocky Linux 9, configuração de IP e ciclo de testes, consulte o documento oficial:
+👉 [docs/14-ambiente-testes-proxmox.md](../../docs/14-ambiente-testes-proxmox.md)

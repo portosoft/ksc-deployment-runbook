@@ -1,0 +1,11 @@
+
+=== RESUMO DOS CHECKS ===
+- [OK] postgresql: Ativo (postgresql-16).
+- [OK] klnagent_srv: Ativo.
+- [OK] kladminserver_srv: Ativo.
+- [OK] db_query: SELECT 1 executado com sucesso.
+- [OK] web_console: Porta 443 em LISTEN.
+- [OK] selinux: SELinux em modo 'enforcing'.
+
+Status geral: OK (sem falhas críticas).
+exit=0

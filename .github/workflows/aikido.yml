@@ -1,0 +1,50 @@
+---
+name: Aikido Security Scan
+
+'on':
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  aikido-scan:
+    if: github.actor != 'dependabot[bot]'
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Install Aikido CI API Client
+        run: npm install --global @aikidosec/ci-api-client
+
+      - name: Run Aikido Scan
+        env:
+          AIKIDO_API_KEY: ${{ secrets.AIKIDO_CLIENT_API_KEY }}
+        run: |
+          OUTPUT_FILE=$(mktemp)
+          if ! aikido-api-client scan-release \
+            ${{ github.event.repository.name }} \
+            ${{ github.sha }} \
+            --apikey "$AIKIDO_API_KEY" \
+            --fail-on-sast-scan \
+            --fail-on-iac-scan \
+            --fail-on-secrets-scan 2>&1 | tee "$OUTPUT_FILE"; then
+            if grep -q "402 You need be on a paid plan" "$OUTPUT_FILE"; then
+              echo "::warning::Aikido release gating requires a paid plan (HTTP 402). Gating bypassed for billing limit."
+              exit 0
+            fi
+            exit 1
+          fi

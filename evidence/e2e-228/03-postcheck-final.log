@@ -1,0 +1,10 @@
+- [OK] postgresql: Ativo (postgresql-16).
+- [OK] klnagent_srv: Ativo.
+- [OK] kladminserver_srv: Ativo.
+- [OK] db_query: SELECT 1 executado com sucesso.
+- [OK] web_console: Porta 443 em LISTEN.
+- [OK] selinux: SELinux em modo 'enforcing'.
+Status geral: OK (sem falhas críticas).
+=== certificado preservado ===
+2C:99:3B:E7:24:9F:1E:78:1B:DE:8F:29:80:2C:3B:33:73:41:9E:AC:D8:9A:C2:D8:2C:50:7E:6C:AA:7C:E9:41
+HTTP 200 em https://127.0.0.1:8443/login

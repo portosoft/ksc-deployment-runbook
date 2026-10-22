@@ -1,0 +1,28 @@
+---
+# Configurações de Hostname
+ksc_hostname: "kscserver"
+
+# Gerenciamento de Firewall
+ksc_manage_firewall: true
+ksc_firewall_ports:
+  - "8080/tcp"
+  - "8443/tcp"
+  - "13000/tcp"
+  - "13001/tcp"
+
+# Configurações de Banco de Dados
+postgresql_service_name: "postgresql-16"
+
+# Pacotes Base
+ksc_base_packages:
+  - vim
+  - curl
+  - wget
+  - tar
+  - firewalld
+  - postgresql16-server
+  - postgresql16
+  - policycoreutils-python-utils
+  - perl
+  - zip
+  - unzip
