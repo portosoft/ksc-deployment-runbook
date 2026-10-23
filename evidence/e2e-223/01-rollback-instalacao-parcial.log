@@ -1,0 +1,66 @@
+### rollback --check (simulação)
+[INFO] Iniciando rollback do KSC...
+[INFO] Parando 4 unidade(s) do KSC...
+[INFO] [CHECK] Seria executado: systemctl disable --now kladminserver_srv.service
+[INFO] [CHECK] Seria executado: systemctl disable --now klnagent_srv.service
+[INFO] [CHECK] Seria executado: systemctl disable --now kliam_srv.service
+[INFO] [CHECK] Seria executado: systemctl disable --now klwebsrv_srv.service
+[INFO] Removendo pacotes: ['ksc64', 'klnagent64', 'ksc-web-console']
+[INFO] [CHECK] Seria executado: dnf remove -y ksc64 klnagent64 ksc-web-console
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria executado: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] [CHECK] Seria removido: /opt/kaspersky
+[INFO] [CHECK] Seria removido: /var/opt/kaspersky
+[INFO] [CHECK] Seria removido: /var/log/kaspersky
+[INFO] [CHECK] Seria removido: /var/lib/ksc-web-console
+[INFO] [CHECK] Seria removido: /etc/ksc-web-console-setup.json
+[INFO] [CHECK] Seria removido o drop-in: /etc/systemd/system/kladminserver_srv.service.d
+[INFO] [CHECK] Seria removido o drop-in: /etc/systemd/system/KSCWebConsole.service.d
+
+### rollback --apply --verify
+[INFO] Complete!
+[INFO] Executando: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO]  pg_terminate_backend
+[INFO] ----------------------
+[INFO] (0 rows)
+[INFO]
+[INFO] Executando: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] Executando: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO]  pg_terminate_backend
+[INFO] ----------------------
+[INFO] (0 rows)
+[INFO]
+[INFO] Executando: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] Executando: runuser -u postgres -- psql -v ON_ERROR_STOP=1 -q
+[INFO] Executando: rm -rf /opt/kaspersky
+[INFO] Executando: rm -rf /var/opt/kaspersky
+[INFO] Ausente, nada a remover: /var/log/kaspersky
+[INFO] Ausente, nada a remover: /var/lib/ksc-web-console
+[INFO] Ausente, nada a remover: /etc/ksc-web-console-setup.json
+[INFO] Executando: systemctl daemon-reload
+[INFO] Executando: userdel ksc
+[INFO] Executando: groupdel kladmins
+[INFO] Rollback concluído.
+
+Verificação: nenhum resíduo do KSC encontrado no host.
+exit=0
+=== verificação independente ===
+RPMs:
+0
+Bases ksc/ksciam:
+0
+Role kluser:
+0
+Conta ksc:
+ausente
+Grupo kladmins:
+ausente
+Diretórios:
+0
+Drop-ins:
+0
+Unidades:
+0

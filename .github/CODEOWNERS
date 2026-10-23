@@ -1,0 +1,7 @@
+# CODEOWNERS - Definição de Proprietários de Código
+# Define os responsáveis por aprovar alterações em diretórios críticos.
+
+*                   @mendsec
+.github/workflows/  @mendsec
+automation/         @mendsec
+configs/            @mendsec

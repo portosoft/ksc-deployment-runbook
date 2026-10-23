@@ -1,0 +1,61 @@
+{
+  "environment": {
+    "hypervisor": "Proxmox VE 9.2.11 (Podman rootless)",
+    "vm_specs": {
+      "vcpus": 4,
+      "ram_gb": 16,
+      "disk_gb": 120,
+      "disk_type": "SSD NVMe"
+    },
+    "os": "Rocky Linux 9.8 (Blue Onyx)",
+    "kernel": "5.14.0-687.10.1.el9_8.0.1.x86_64",
+    "python_version": "3.11.13",
+    "ksc_version": "16.3.0.1207",
+    "db_version": "PostgreSQL 16",
+    "selinux_mode": "Enforcing"
+  },
+  "deployment_metrics": {
+    "clean_deploy_seconds": 93.15,
+    "idempotent_reexecution_seconds": 14.2,
+    "time_reduction_percentage": 84.7,
+    "steps_breakdown_seconds": {
+      "so_prerequisites_dnf": 12.3,
+      "postgresql_provisioning": 17.9,
+      "rpm_packages_installation": 25.1,
+      "ksc_postinstall_pl": 21.8,
+      "web_console_setup_js": 11.2,
+      "hardening_systemd_startup": 4.8
+    }
+  },
+  "resource_usage": {
+    "cpu": {
+      "peak_usage_percentage": 75.0,
+      "idle_usage_percentage": 1.8
+    },
+    "ram_mb": {
+      "clean_so_baseline": 450,
+      "with_postgresql_16": 1400,
+      "total_with_ksc_active": 4100,
+      "free_margin_mb": 12284,
+      "utilization_percentage": 25.6
+    },
+    "disk_gb": {
+      "clean_so_baseline": 2.1,
+      "temporary_rpms": 1.1,
+      "postgresql_data": 0.22,
+      "ksc_binaries": 2.8,
+      "final_disk_usage": 5.1
+    }
+  },
+  "success_rate": {
+    "total_executions": 3,
+    "successful_executions": 3,
+    "failed_executions": 0,
+    "rate_percentage": 100.0,
+    "reference_runs": [
+      "evidence/e2e-209/",
+      "evidence/e2e-223/",
+      "evidence/e2e-228/"
+    ]
+  }
+}

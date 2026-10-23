@@ -1,0 +1,21 @@
+# Configuração do projeto e das ferramentas de formatação (#231).
+
+[project]
+name = "ksc-deployment-runbook"
+version = "0.1.0"
+description = "Kaspersky Security Center Deployment Runbook"
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests", "automation/smoke-tests"]
+python_files = ["test_*.py", "*_test.py", "verify_*.py"]
+markers = [
+    "smoke: Smoke tests que dependem de ambiente real KSC ativo (desabilitados por padrão no CI)",
+]
+addopts = "-m 'not smoke'"

@@ -1,0 +1,7 @@
+752cca1 fix(setup): permitir reexecução de setup --apply em host já instalado (#228)
+=== SEGUNDA EXECUÇÃO ===
+[INFO] Restaurando SELinux para o modo enforcing (Segurança por Padrão).
+[INFO] SELinux alterado para modo: 1
+[INFO] {"event": "setup_apply_success", "timestamp": "2026-09-13T04:50:36.402170Z"}
+Instalação concluída com sucesso.
+exit=0

@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag de release (ex: v2.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Build, Validate and Publish Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.x (Node 24)
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest pyyaml detect-secrets
+
+      - name: Run Test Suite
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m pytest -v
+
+      - name: Validate Secrets Baseline
+        run: |
+          detect-secrets scan --baseline .secrets.baseline \
+            --exclude-files '(\.example|\.md|.*raw_output\.txt)$' \
+            --exclude-lines '^(from|import)\s|"sha256":\s*"[a-f0-9]{64}"'
+
+      - name: Determine Release Tag
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Package Distributable and Generate Checksums
+        run: |
+          python scripts/package_release.py --version "${{ steps.vars.outputs.tag }}" --output-dir dist
+
+      - name: Extract Release Notes
+        run: |
+          python scripts/package_release.py --version "${{ steps.vars.outputs.tag }}" --extract-notes > dist/RELEASE_NOTES.md || true
+          if [ ! -s dist/RELEASE_NOTES.md ]; then
+            echo "Release ${{ steps.vars.outputs.tag }}" > dist/RELEASE_NOTES.md
+          fi
+
+      - name: Publish GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.vars.outputs.tag }}"
+          # Verifica se a release já existe para fazer update ou create
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG já existe. Fazendo upload dos novos artefatos..."
+            gh release upload "$TAG" dist/ksc-deployment-runbook-*.tar.gz dist/SHA256SUMS --clobber
+          else
+            echo "Criando nova release $TAG..."
+            gh release create "$TAG" dist/ksc-deployment-runbook-*.tar.gz dist/SHA256SUMS \
+              --title "$TAG" \
+              --notes-file dist/RELEASE_NOTES.md
+          fi

@@ -1,0 +1,57 @@
+# Credenciais e Segredos
+.env
+.env.*
+*.env
+**/*.env
+*.key
+*.pem
+*.pfx
+*.p12
+*.crt
+*.csr
+secrets.yml
+vault.yml
+configs/.env
+configs/env/*.env
+
+# Arquivos gerados pelo Ansible
+automation/ansible/group_vars/generated_from_env.yml
+*.retry
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+ENV/
+build/
+dist/
+.coverage
+.coverage.*
+htmlcov/
+
+# Sistema e Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs e Temporários
+*.log
+# Exceção: as evidências das validações ponta a ponta são citadas nos READMEs
+# de evidence/ e no pacote de revisão. Sem versioná-las, o material aponta para
+# arquivos que quem clona o repositório não consegue abrir.
+!evidence/e2e-*/*.log
+tmp/
+temp/
+alerts.json
+
+# Arquivos de resposta com dados reais
+ksc-web-console-setup.json
+/etc/ksc-web-console-setup.json
+configs/secrets.bin
+alerts.json
+scratch/setup.js
+scratch/all_extracted_sql.txt
