@@ -59,7 +59,8 @@ def test_rollback_drops_both_databases_and_the_configured_role(
     sql = " ".join(c["input"] or "" for c in recorded)
     assert 'DROP DATABASE IF EXISTS "ksc"' in sql
     assert 'DROP DATABASE IF EXISTS "ksciam"' in sql
-    assert f'DROP ROLE IF EXISTS "{ksc_test_config.db_user}"' in sql
+    safe_db_user = ksc_test_config.db_user.replace('"', '""')
+    assert f'DROP ROLE IF EXISTS "{safe_db_user}"' in sql
 
 
 def test_rollback_terminates_connections_before_dropping(recorded, logger, ksc_test_config):
