@@ -1,0 +1,7 @@
+name: Sync Public
+on: push
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "docs/internal .jules .kiro .agents AGENTS.md scripts docs/kiro-credential-sanitization-report.md .github/dependabot.yml .github/workflows/sync-public.yml"
