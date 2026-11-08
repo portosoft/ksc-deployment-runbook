@@ -1,0 +1,4 @@
+## 2026-11-08 - SQL Injection via Unescaped Identifiers in PostgreSQL Wrapper Scripts
+**Vulnerability:** String interpolation was used directly in SQL queries executed via the command line (`psql -c "DROP DATABASE {db}"` and `psql -c "SELECT ... WHERE datname = '{db}'"`). If `{db}` can be manipulated, this leads to a direct SQL injection vulnerability.
+**Learning:** Even if a variable seems hardcoded upstream (e.g., `["ksc", "ksciam"]`), wrapper functions must enforce proper escaping at the point of query construction to prevent future regressions if the script is modified to accept user input.
+**Prevention:** Always escape identifiers (e.g., `db.replace('"', '""')` for double quotes) and literals (e.g., `db.replace("'", "''")` for single quotes) before embedding them in dynamically constructed SQL queries when parameterized execution is not available (like in `psql -c`).
