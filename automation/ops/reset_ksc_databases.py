@@ -64,10 +64,11 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
         # Drop e Recreate
         for db in dbs:
             # Terminar conexões ativas
+            safe_db_literal = db.replace("'", "''")
             term_query = (
                 f"SELECT pg_terminate_backend(pg_stat_activity.pid) "
                 f"FROM pg_stat_activity "
-                f"WHERE pg_stat_activity.datname = '{db}' "
+                f"WHERE pg_stat_activity.datname = '{safe_db_literal}' "
                 f"AND pid <> pg_backend_pid();"
             )
             term_cmd = f"-u postgres psql -c {shlex.quote(term_query)}"
@@ -84,7 +85,9 @@ def reset_ksc_databases(config: KscConfig, apply: bool = False) -> None:
                 )
 
             # Drop database
-            drop_query = f"DROP DATABASE {db};"
+            # Ensure the database name is properly quoted as a SQL identifier
+            safe_db = db.replace('"', '""')
+            drop_query = f'DROP DATABASE "{safe_db}";'
             drop_cmd = f"-u postgres psql -c {shlex.quote(drop_query)}"
             log_json(run_logger, "run_command_start", cmd=f"DROP DATABASE {db}")
             out, err, status = run_remote_sudo(client, drop_cmd, config.ksc_pass)

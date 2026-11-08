@@ -49,16 +49,18 @@ def test_reset_ksc_databases_secure_quoting(
     call_idx = 1
 
     for db in dbs:
+        safe_db_literal = db.replace("'", "''")
         term_query = (
             f"SELECT pg_terminate_backend(pg_stat_activity.pid) "
             f"FROM pg_stat_activity "
-            f"WHERE pg_stat_activity.datname = '{db}' "
+            f"WHERE pg_stat_activity.datname = '{safe_db_literal}' "
             f"AND pid <> pg_backend_pid();"
         )
         assert calls[call_idx][0][1] == f"-u postgres psql -c {shlex.quote(term_query)}"
         call_idx += 1
 
-        drop_query = f"DROP DATABASE {db};"
+        safe_db = db.replace('"', '""')
+        drop_query = f'DROP DATABASE "{safe_db}";'
         assert calls[call_idx][0][1] == f"-u postgres psql -c {shlex.quote(drop_query)}"
         call_idx += 1
 
