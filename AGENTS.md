@@ -1,3 +1,4 @@
+Sentinel Security Invariants TOCTOU
 ## 2024-05-15 - SQL Injection in Role Deletion
 **Vulnerability:** SQL Injection in 'rollback.py' when executing DROP ROLE via psql.
 **Learning:** Dynamic identifiers (like usernames) used directly in formatted SQL strings passed to the psql command-line tool can lead to SQL injection if not properly escaped, even when enclosed in double quotes.
