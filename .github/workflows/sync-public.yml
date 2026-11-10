@@ -1,0 +1,20 @@
+name: Sync Public
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo docs/internal
+          echo .jules
+          echo .kiro
+          echo .agents
+          echo AGENTS.md
+          echo scripts
+          echo docs/kiro-credential-sanitization-report.md
+          echo .github/dependabot.yml
+          echo .github/workflows/sync-public.yml
